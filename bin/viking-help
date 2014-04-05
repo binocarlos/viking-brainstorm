@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+var exec = require('child_process').exec;
+var program = require('commander');
+
+// parse argv
+
+program.parse(process.argv);
+
+// output --help
+
+var cmd = program.args[0]
+  ? 'viking ' + program.args[0] + ' --help'
+  : 'viking --help';
+
+exec(cmd, function(err, stdout){
+  if (err) throw err;
+  process.stdout.write(stdout);
+});

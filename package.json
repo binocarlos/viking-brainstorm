@@ -1,0 +1,45 @@
+{
+  "name": "viking",
+  "version": "0.0.1",
+  "description": "Docker PaaS Platform for node.js applications",
+  "main": "src/index.js",
+  "bin": {
+    "viking": "bin/viking",
+    "viking-help": "bin/viking-help",
+    "viking-build": "bin/viking-build",
+    "viking-start": "bin/viking-start",
+    "viking-stop": "bin/viking-stop",
+    "viking-config": "bin/viking-config"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/binocarlos/viking.git"
+  },
+  "keywords": [
+    "docker",
+    "etcd",
+    "paas",
+    "deploy"
+  ],
+  "author": "Kai Davenport",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/binocarlos/viking/issues"
+  },
+  "homepage": "https://github.com/binocarlos/viking",
+  "dependencies": {
+    "commander": "^2.2.0",
+    "win-fork": "^1.1.1",
+    "toml": "^2.0.4",
+    "component-consoler": "^1.0.1",
+    "dockerode": "^1.2.9",
+    "async": "^0.6.2",
+    "wrench": "^1.5.8"
+  }
+}
