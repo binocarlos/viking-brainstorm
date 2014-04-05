@@ -51,5 +51,6 @@ viking is also configured via environment variables - if these are set they will
 
 special environment variables:
 
- * VIKING_CONFIG - alternative location for config file to load from
+ * VIKING_CONFIG - alternative location for config file to load from (/etc/viking/viking.conf)
+ * VIKING_VOLUMES - alternative data folder for volumes (/var/lib/viking/volumes)
 

@@ -6,24 +6,38 @@ NODE_VERSION ?= 0.10.26
 
 .PHONY: install dependencies basics sshcommand docker aufs nodejs network links developer recentgit vagrant
 
-install: dependencies
+install: dependencies setup
+
+setup:
 	usermod -aG docker viking
 	usermod -aG sudo viking
 	mkdir -p /etc/viking
+	mkdir -p /var/lib/viking
+	chown viking:viking /var/lib/viking
+	chmod g+w /var/lib/viking
 
-vagrant: install
+vagrant: install vagrantsetup
+
+vagrantsetup:
 	usermod -aG docker vagrant
+	usermod -aG viking vagrant
 
-dependencies: basics sshcommand docker vpc nodejs
+dependencies: basics sshcommand docker vpc nodejs mon
+
+basics:
+	apt-get update
+	apt-get install -y git curl software-properties-common python-software-properties python g++
 
 sshcommand:
 	wget -qO /usr/local/bin/sshcommand ${SSHCOMMAND_URL}
 	chmod +x /usr/local/bin/sshcommand
 	sshcommand create viking /usr/local/bin/viking
 
-basics:
-	apt-get update
-	apt-get install -y git curl software-properties-common python-software-properties python
+mon:
+	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install)
+	(mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install)
+	rm -rf /tmp/mon
+	rm -rf /tmp/mongroup
 
 docker: aufs
 	egrep -i "^docker" /etc/group || groupadd docker
@@ -49,6 +63,10 @@ nodejs:
 	wget -qO /usr/local/bin/nave ${NAVE_URL}
 	chmod a+x /usr/local/bin/nave
 	nave usemain ${NODE_VERSION}
+
+token:
+	@curl https://discovery.etcd.io/new
+	@echo
 
 #links:
 #	rm -f /usr/local/bin/viking
