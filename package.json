@@ -35,11 +35,12 @@
   "homepage": "https://github.com/binocarlos/viking",
   "dependencies": {
     "commander": "^2.2.0",
-    "win-fork": "^1.1.1",
     "toml": "^2.0.4",
     "component-consoler": "^1.0.1",
     "dockerode": "^1.2.9",
     "async": "^0.6.2",
-    "wrench": "^1.5.8"
+    "wrench": "^1.5.8",
+    "minimist": "0.0.8",
+    "spawn-args": "0.0.2"
   }
 }

@@ -41,6 +41,19 @@ async.series([
     utils.log('etcd', 'starting');
 
     var etcd = Etcd(config);
+
+    etcd.on('running', function(){
+      utils.log('etcd', 'already running');
+    })
+
+    etcd.on('removed', function(){
+      utils.log('etcd', 'removed old container');
+    })
+
+    etcd.on('started', function(){
+      utils.log('etcd', 'running');
+    })
+
     etcd.start(next);
   },
 
