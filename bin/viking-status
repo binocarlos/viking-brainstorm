@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .usage('')
+ 
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  process.exit();
+});
+
+// parse argv
+
+program.parse(process.argv);
+
+var spawn = require('child_process').spawn;
+var async = require('async');
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+var log = utils.log;
+
+var config = require('../lib/config')();
+var Etcd = require('../lib/etcd');
+
+console.log('');
+async.series([
+  function(next){
+    console.log('');
+    utils.log('viking', 'config');
+    console.log('');
+    console.log(JSON.stringify(config, null, 4));
+    next();
+  },
+
+  function(next){
+    console.log('');
+    utils.log('viking', 'processes');
+    console.log('');
+    var ps = spawn('docker', ['ps'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+    ps.on('close', function(code){
+      console.log('');
+      next();
+    });
+
+  }
+
+
+], function(){
+  
+})
+
+//etcdid=$(
+/*  
+  docker run 
+  --name etcd -d -p 4001:4001 -p 7001:7001 -v $QUARRY_ROOT/volumes/core/etcd:/data/db
+   coreos/etcd -name quarryhq -addr 0.0.0.0:4001 -peer-addr 0.0.0.0:7001 -data-dir /data/db -snapshotCount 100 -snapshot)
+*/
