@@ -24,11 +24,31 @@ var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
+var async = require('async');
 
-var Config = require('../lib/config')
-var config = Config();
+var config = require('../lib/config')();
+var Etcd = require('../lib/etcd');
 
+async.series([
+  function(next){
+    utils.log('etcd', 'stopping');
 
+    var etcd = Etcd(config);
+
+    etcd.on('stopped', function(){
+      utils.log('etcd', 'stopped');
+    })
+
+    etcd.on('removed', function(){
+      utils.log('etcd', 'removed');
+    })
+
+    etcd.stop(true, next);
+  }
+
+], function(){
+  utils.log('viking', 'stopped');
+})
 
 
 

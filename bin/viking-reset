@@ -20,10 +20,11 @@ program.on('--help', function(){
 
 program.parse(process.argv);
 
-
+var spawn = require('child_process').spawn;
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
+var wrench = require('wrench');
 var fs = require('fs');
 var log = utils.log;
 
@@ -33,27 +34,27 @@ var Etcd = require('../lib/etcd');
 console.log('');
 async.series([
   function(next){
-    utils.log('etcd', 'starting');
+    var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+    stop.on('close', function(code){
+      next();
+    });
+  },
+
+  function(next){
 
     var etcd = Etcd(config);
 
-    etcd.on('running', function(){
-      utils.log('etcd', 'already running');
+    etcd.on('reset', function(path){
+      utils.log('remove', path);
     })
 
-    etcd.on('removed', function(){
-      utils.log('etcd', 'removed old container');
-    })
-
-    etcd.on('started', function(){
-      utils.log('etcd', 'running');
-    })
-
-    etcd.start(next);
+    etcd.reset(next);
+    
   }
 
 ], function(){
-  utils.log('viking', 'started');
+  utils.log('viking', 'reset');
 })
 
 //etcdid=$(

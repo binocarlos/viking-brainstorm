@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -eo pipefail
+DOCKERIP=$(ifconfig docker0 | grep "inet addr" | sed 's/inet addr://' | awk '{ print $1 }' || "127.0.0.1")
+export VIKING_ROOT=${VIKING_ROOT:="/var/lib/viking"}
+
+case "$1" in
+  vagrant)
+    touch /etc/viking/vagranthost
+    touch /etc/viking/vagrantip
+
+    host=$(cat /etc/viking/vagranthost)
+    ip=$(cat /etc/viking/vagrantip)
+
+    # we need this each time because an etcd discovery cluster freaks out if everyone leaves
+    if [[ $host == "viking-0" ]]; then
+      wget -qO- https://discovery.etcd.io/new > /vagrant/.vagrant/vikingtoken
+    fi
+
+    cat<<EOF > /etc/viking/auto.conf
+[network]
+hostname="$host"
+public="$ip"
+private="$ip"
+tokenpath="/vagrant/.vagrant/vikingtoken"
+EOF
+    ;;
+
+  help)
+    echo
+    cat<<EOF | sort
+    help                                         Print the list of commands
+    vagrant                                      Install a vagrant node
+EOF
+    echo
+    ;;
+
+  *)
+    $0 help
+    ;;
+
+esac

@@ -18,9 +18,14 @@ setup:
 
 vagrant: install vagrantsetup
 
-vagrantsetup:
+vagrantgroups:
 	usermod -aG docker vagrant
 	usermod -aG viking vagrant
+
+vagrantinit:
+	./admintools vagrant
+
+vagrantsetup: vagrantgroups vagrantinit
 
 dependencies: basics sshcommand docker vpc nodejs mon
 

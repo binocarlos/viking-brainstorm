@@ -18,12 +18,19 @@ Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|
     config.vm.define "viking-#{i}" do |slave|
       slave.vm.network :private_network, ip: "192.168.8.12#{i}"
 
+      if i == 0
+        slave.vm.network :forwarded_port, guest: 443, host: 443
+      end
+
       $provision_script = <<PROVISION_SCRIPT
 echo "Installing viking"
-export VIKING_HOSTNAME="viking-#{i}"
-export VIKING_NETWORK_PUBLIC="192.168.8.12#{i}"
-export VIKING_NETWORK_PRIVATE="192.168.8.12#{i}"
+
+echo "viking-#{i}" > /etc/hostname
+echo "viking-#{i}" > /etc/viking/vagranthost
+echo "192.168.8.12#{i}" > /etc/viking/vagrantip
+
 cd /vagrant && make vagrant
+
 echo "         _  _     _               "
 echo " /\\   /\\(_)| | __(_) _ __    __ _ "
 echo " \\ \\ / /| || |/ /| ||  _,\  / _,  |"
@@ -33,13 +40,9 @@ echo "                            |___/ "
 echo ""
 PROVISION_SCRIPT
 
-      if i == 0
-        slave.vm.network :forwarded_port, guest: 443, host: 443
-        slave.vm.synced_folder PROJECTS_HOME, "/srv/projects"
-      end
-
       slave.vm.provider :virtualbox do |vb, override|
         slave.vm.network :forwarded_port, guest: 80, host: (8080 + i)
+        slave.vm.synced_folder PROJECTS_HOME, "/srv/projects"
         override.vm.provision :shell, :inline => $provision_script
         vb.memory = 512
         vb.cpus = 1

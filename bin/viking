@@ -37,6 +37,14 @@ var args = process.argv.slice(3);
 var cmd = program.args[0];
 if (!cmd) program.help();
 
+if(cmd=='up'){
+  cmd = 'start';
+}
+
+if(cmd=='down'){
+  cmd = 'stop';
+}
+
 var bin = 'viking-' + cmd;
 
 var local = join(__dirname, bin);

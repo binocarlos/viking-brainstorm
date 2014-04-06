@@ -4,6 +4,8 @@ var program = require('commander');
 
 program
   .usage('')
+  .option('-i, --index <url>', 'commit the docker images to this index')
+  .option('-a, --app <folder>', 'the folder to build the app from')
  
 program.on('--help', function(){
   console.log('  Examples:');
@@ -20,40 +22,33 @@ program.on('--help', function(){
 
 program.parse(process.argv);
 
-
+var spawn = require('child_process').spawn;
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
 
-var config = require('../lib/config')();
-var Etcd = require('../lib/etcd');
-
 console.log('');
 async.series([
   function(next){
-    utils.log('etcd', 'starting');
+    var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
-    var etcd = Etcd(config);
+    stop.on('close', function(code){
+      next();
+    });
+  },
 
-    etcd.on('running', function(){
-      utils.log('etcd', 'already running');
-    })
+  function(next){
+    var start = spawn('viking', ['start'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
-    etcd.on('removed', function(){
-      utils.log('etcd', 'removed old container');
-    })
-
-    etcd.on('started', function(){
-      utils.log('etcd', 'running');
-    })
-
-    etcd.start(next);
+    start.on('close', function(code){
+      next();
+    });
   }
 
 ], function(){
-  utils.log('viking', 'started');
+  utils.log('viking', 'restarted');
 })
 
 //etcdid=$(

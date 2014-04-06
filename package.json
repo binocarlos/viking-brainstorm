@@ -8,8 +8,9 @@
     "viking-help": "bin/viking-help",
     "viking-build": "bin/viking-build",
     "viking-start": "bin/viking-start",
-    "viking-stop": "bin/viking-stop",
-    "viking-config": "bin/viking-config"
+    "viking-reset": "bin/viking-reset",
+    "viking-restart": "bin/viking-restart",
+    "viking-stop": "bin/viking-stop"
   },
   "directories": {
     "doc": "docs"
@@ -41,6 +42,7 @@
     "async": "^0.6.2",
     "wrench": "^1.5.8",
     "minimist": "0.0.8",
-    "spawn-args": "0.0.2"
+    "spawn-args": "0.0.2",
+    "extend": "^1.2.1"
   }
 }
