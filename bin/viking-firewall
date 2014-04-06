@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .usage('')
+ 
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log('    # start viking firewall');
+  console.log('    $ viking firewall start');
+  console.log();
+  console.log('    # stop viking firewall');
+  console.log('    $ viking firewall stop');
+  console.log();
+  console.log('    # restart viking firewall');
+  console.log('    $ viking firewall restart');
+  console.log();
+  console.log('    # viking firewall status');
+  console.log('    $ viking firewall status');
+  console.log();
+  process.exit();
+});
+
+var spawn = require('child_process').spawn;
+var async = require('async');
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+var log = utils.log;
+
+var config = require('../lib/config')();
+var Etcd = require('../lib/etcd');
+
+program.parse(process.argv);
+
+var args = ['vpc'].concat(program.args || []);
+var vpc = spawn('sudo', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+
+vpc.on('close', function(code){
+  process.exit(code);  
+});

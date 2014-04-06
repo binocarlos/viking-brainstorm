@@ -42,6 +42,14 @@ async.series([
   },
 
   function(next){
+    var resetfirewall = spawn('viking', ['firewall', 'reset'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+    resetfirewall.on('close', function(code){
+      next();
+    });
+  },
+
+  function(next){
 
     var etcd = Etcd(config);
 

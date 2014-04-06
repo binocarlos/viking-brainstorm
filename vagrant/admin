@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -eo pipefail
+export VIKING_ROOT=${VIKING_ROOT:="/var/lib/viking"}
+
+case "$1" in
+  init)
+    touch /etc/viking/vagranthost
+    touch /etc/viking/vagrantip
+
+    host=$(cat /etc/viking/vagranthost)
+    ip=$(cat /etc/viking/vagrantip)
+
+    # the viking masters have both keys
+    cp -f /vagrant/vagrant/keys/test_id_rsa /home/vagrant/.ssh/id_rsa
+    cp -f /vagrant/vagrant/keys/test_id_rsa.pub /home/vagrant/.ssh/id_rsa.pub
+
+    filtered=$(cat /home/vagrant/.ssh/authorized_keys | grep viking.digger.io) || true
+
+    if [[ -z $filtered ]]; then
+        cat /vagrant/vagrant/keys/test_id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+    fi
+
+    cat<<EOF > /etc/hosts
+127.0.0.1 localhost
+192.168.8.120 viking-0
+192.168.8.121 viking-1
+192.168.8.122 viking-2
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
+
+    hostname $host
+    echo $host /etc/hostname
+
+    # we need this each time because an etcd discovery cluster freaks out if everyone leaves
+    if [[ $host == "viking-0" ]]; then
+      wget -qO- https://discovery.etcd.io/new > /vagrant/.vagrant/vikingtoken
+    fi
+
+    cat<<EOF > /etc/viking/auto.conf
+[network]
+hostname="$host"
+public="$ip"
+private="$ip"
+tokenpath="/vagrant/.vagrant/vikingtoken"
+EOF
+
+    viking firewall add-host 192.168.8.120
+    viking firewall add-host 192.168.8.121
+    viking firewall add-host 192.168.8.122
+    viking firewall apply
+    ;;
+
+  help)
+    echo
+    cat<<EOF | sort
+    help                                         Print the list of commands
+    vagrant                                      Install a vagrant node
+EOF
+    echo
+    ;;
+
+  *)
+    $0 help
+    ;;
+
+esac

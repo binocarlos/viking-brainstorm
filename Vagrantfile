@@ -24,13 +24,9 @@ Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|
 
       $provision_script = <<PROVISION_SCRIPT
 echo "Installing viking"
-
-echo "viking-#{i}" > /etc/hostname
 echo "viking-#{i}" > /etc/viking/vagranthost
 echo "192.168.8.12#{i}" > /etc/viking/vagrantip
-
 cd /vagrant && make vagrant
-
 echo "         _  _     _               "
 echo " /\\   /\\(_)| | __(_) _ __    __ _ "
 echo " \\ \\ / /| || |/ /| ||  _,\  / _,  |"
