@@ -10,13 +10,6 @@ program
 
 // sub-command help
 
-program.on('--help', function(){
-  console.log('  Commands:');
-  console.log();
-  console.log('    help <command>          command help');
-  console.log();
-  process.exit();
-});
 
 // parse argv
 
@@ -40,8 +33,10 @@ if (!cmd) program.help();
 
 var bin = 'viking-' + cmd;
 
-console.log('-------------------------------------------');
-console.dir(bin);
+if(cmd=='master'){
+  bin = 'master/' + program.args[1]
+  args = args.slice(1)
+}
 
 var local = join(__dirname, bin);
 

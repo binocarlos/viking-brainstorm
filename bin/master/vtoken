@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+var async = require('async');
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+var token = require('../../lib/tools/etcdtoken')
+var log = utils.log;
+
+token(function(err, token){
+  fs.writeFileSync('/vagrant/.vagrant/vikingtoken', token, 'utf8')
+})

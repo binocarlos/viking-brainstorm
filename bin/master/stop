@@ -4,7 +4,7 @@ var program = require('commander');
 
 program
   .usage('')
- 
+
 program.on('--help', function(){
   console.log('  Examples:');
   console.log();
@@ -22,29 +22,46 @@ var path = require('path');
 var fs = require('fs');
 var log = utils.log;
 var spawn = require('child_process').spawn
-var config = require('../lib/config')();
-var Etcd = require('../lib/etcd');
-var Registry = require('../lib/registry');
+var config = require('../../lib/config')();
+var Etcd = require('../../lib/services/etcd');
+var Registry = require('../../lib/services/registry');
 
 
 console.log('');
+
 async.series([
   function(next){
-    var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    utils.log('etcd', 'stopping');
 
-    stop.on('close', function(code){
-      next();
-    });
+    var etcd = Etcd(config);
+
+    etcd.on('stopped', function(){
+      utils.log('etcd', 'stopped');
+    })
+
+    etcd.on('removed', function(){
+      utils.log('etcd', 'removed');
+    })
+
+    etcd.stop(true, next);
   },
 
   function(next){
-    var start = spawn('viking', ['start'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    utils.log('registry', 'stopping');
 
-    start.on('close', function(code){
-      next();
-    });
+    var registry = Registry(config);
+
+    registry.on('stopped', function(){
+      utils.log('registry', 'stopped');
+    })
+
+    registry.on('removed', function(){
+      utils.log('registry', 'removed');
+    })
+
+    registry.stop(true, next);
   }
 
 ], function(){
-  utils.log('viking-master', 'restarted');
+  utils.log('viking-master', 'stopped');
 })

@@ -46,6 +46,8 @@
     "minimist": "0.0.8",
     "spawn-args": "0.0.2",
     "extend": "^1.2.1",
-    "js-yaml": "^3.0.2"
+    "js-yaml": "^3.0.2",
+    "hyperquest": "^0.3.0",
+    "concat-stream": "^1.4.5"
   }
 }

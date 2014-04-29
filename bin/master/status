@@ -16,11 +16,6 @@ program.on('--help', function(){
   process.exit();
 });
 
-// parse argv
-
-
-
-
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
@@ -31,26 +26,29 @@ var config = require('../../lib/config')();
 var Etcd = require('../../lib/services/etcd');
 var Registry = require('../../lib/services/registry');
 
-
 console.log('');
-    
 async.series([
   function(next){
-    var stop = spawn('viking', ['master', 'stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
-
-    stop.on('close', function(code){
-      next();
-    });
+    console.log('');
+    utils.log('viking', 'config');
+    console.log('');
+    console.log(JSON.stringify(config, null, 4));
+    next();
   },
 
   function(next){
-    var start = spawn('viking', ['master', 'start'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    console.log('');
+    utils.log('viking', 'processes');
+    console.log('');
+    var ps = spawn('docker', ['ps'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
-    start.on('close', function(code){
+    ps.on('close', function(code){
+      console.log('');
       next();
     });
+
   }
 
 ], function(){
-  utils.log('viking-master', 'restarted');
+  
 })
