@@ -1,5 +1,6 @@
 common:
     loglevel: info
+    secret_key: 7jC9THnLDjPOldE7qPPajmR1qNPwmtUarOxRMmhHzGmSLgIvy20xTjcpyduw7gbP
 
 #production:
 #    storage: swift
