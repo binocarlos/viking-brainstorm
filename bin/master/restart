@@ -8,8 +8,8 @@ program
 program.on('--help', function(){
   console.log('  Examples:');
   console.log();
-  console.log('    # stop viking');
-  console.log('    $ viking stop');
+  console.log('    # start viking');
+  console.log('    $ viking start');
   console.log();
   console.log();
   console.log();
@@ -18,17 +18,22 @@ program.on('--help', function(){
 
 // parse argv
 
-program.parse(process.argv);
 
+
+
+var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
-var async = require('async');
-
+var spawn = require('child_process').spawn
 var config = require('../lib/config')();
 var Etcd = require('../lib/etcd');
+var Registry = require('../lib/registry');
 
+
+console.log('');
+    
 async.series([
   function(next){
     utils.log('etcd', 'stopping');
@@ -44,11 +49,24 @@ async.series([
     })
 
     etcd.stop(true, next);
+  },
+
+  function(next){
+    utils.log('registry', 'stopping');
+
+    var registry = Registry(config);
+
+    registry.on('stopped', function(){
+      utils.log('registry', 'stopped');
+    })
+
+    registry.on('removed', function(){
+      utils.log('registry', 'removed');
+    })
+
+    registry.stop(true, next);
   }
 
 ], function(){
-  utils.log('viking', 'stopped');
+  utils.log('viking-master', 'stopped');
 })
-
-
-

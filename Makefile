@@ -83,4 +83,4 @@ token:
 #	apt-get install -y git
 
 #developer: recentgit links
-#	npm install -g browserify component
+#  ./vagrant/installphantom

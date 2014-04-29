@@ -14,6 +14,9 @@ case "$1" in
     cp -f /vagrant/vagrant/keys/test_id_rsa /home/vagrant/.ssh/id_rsa
     cp -f /vagrant/vagrant/keys/test_id_rsa.pub /home/vagrant/.ssh/id_rsa.pub
 
+    chown vagrant:vagrant /home/vagrant/.ssh/id_rsa /home/vagrant/.ssh/id_rsa.pub
+    chmod 600 /home/vagrant/.ssh/id_rsa /home/vagrant/.ssh/id_rsa.pub
+
     filtered=$(cat /home/vagrant/.ssh/authorized_keys | grep viking.digger.io) || true
 
     if [[ -z $filtered ]]; then

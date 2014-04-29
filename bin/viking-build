@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-
+var Stack = require('../lib/stack')
 // options
 
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-i, --index <url>', 'commit the docker images to this index')
-  .option('-a, --app <folder>', 'the folder to build the app from')
+  .option('-d, --dir <folder>', 'the folder to build the app from')
+  .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
  
 program.on('--help', function(){
   console.log('  Examples:');
@@ -42,3 +43,9 @@ var log = utils.log;
 
 var config = Config();
 
+var folder = program.dir || process.cwd()
+
+var stack = Stack(folder, program.config)
+stack.load(function(){
+
+})

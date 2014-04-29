@@ -1,0 +1,230 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .usage('')
+ 
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log('    # start viking');
+  console.log('    $ viking start');
+  console.log();
+  console.log();
+  console.log();
+  process.exit();
+});
+
+// parse argv
+
+
+
+
+var async = require('async');
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+var log = utils.log;
+var spawn = require('child_process').spawn
+var config = require('../lib/config')();
+var Etcd = require('../lib/etcd');
+var Registry = require('../lib/registry');
+
+program
+  .command('start')
+  .description('start the viking master')
+  .action(function(){
+
+    console.log('');
+    async.series([
+      function(next){
+        utils.log('etcd', 'starting');
+
+        var etcd = Etcd(config);
+
+        etcd.on('running', function(){
+          utils.log('etcd', 'already running');
+        })
+
+        etcd.on('removed', function(){
+          utils.log('etcd', 'removed old container');
+        })
+
+        etcd.on('started', function(){
+          utils.log('etcd', 'running');
+        })
+
+        etcd.start(next);
+      },
+
+      function(next){
+        utils.log('registry', 'starting');
+
+        var registry = Registry(config);
+
+        registry.on('running', function(){
+          utils.log('registry', 'already running');
+        })
+
+        registry.on('removed', function(){
+          utils.log('registry', 'removed old container');
+        })
+
+        registry.on('started', function(){
+          utils.log('registry', 'running');
+        })
+
+        registry.start(next);
+      }
+
+    ], function(){
+      utils.log('viking-master', 'started');
+    })
+  })
+
+
+program
+  .command('stop')
+  .description('stop the viking master')
+  .action(function(){
+
+    console.log('');
+    async.series([
+      function(next){
+        var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+        stop.on('close', function(code){
+          next();
+        });
+      },
+
+      function(next){
+        var start = spawn('viking', ['start'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+        start.on('close', function(code){
+          next();
+        });
+      }
+
+    ], function(){
+      utils.log('viking-master', 'restarted');
+    })
+
+
+
+  })
+
+
+
+program
+  .command('restart')
+  .description('restart the viking master')
+  .action(function(){
+
+    console.log('');
+        
+    async.series([
+      function(next){
+        utils.log('etcd', 'stopping');
+
+        var etcd = Etcd(config);
+
+        etcd.on('stopped', function(){
+          utils.log('etcd', 'stopped');
+        })
+
+        etcd.on('removed', function(){
+          utils.log('etcd', 'removed');
+        })
+
+        etcd.stop(true, next);
+      },
+
+      function(next){
+        utils.log('registry', 'stopping');
+
+        var registry = Registry(config);
+
+        registry.on('stopped', function(){
+          utils.log('registry', 'stopped');
+        })
+
+        registry.on('removed', function(){
+          utils.log('registry', 'removed');
+        })
+
+        registry.stop(true, next);
+      }
+
+    ], function(){
+      utils.log('viking-master', 'stopped');
+    })
+
+
+  })
+
+
+
+program
+  .command('reset')
+  .description('reset the viking master')
+  .action(function(){
+
+    console.log('');
+        
+    async.series([
+      function(next){
+            
+        var etcd = Etcd(config);
+
+        etcd.on('reset', function(path){
+          utils.log('remove', path);
+        })
+
+        etcd.reset(next);
+      }
+
+    ], function(){
+      utils.log('viking-master', 'reset');
+    })
+
+
+  })
+
+program
+  .command('status')
+  .description('status for the viking master')
+  .action(function(){
+
+    console.log('');
+    async.series([
+      function(next){
+        console.log('');
+        utils.log('viking', 'config');
+        console.log('');
+        console.log(JSON.stringify(config, null, 4));
+        next();
+      },
+
+      function(next){
+        console.log('');
+        utils.log('viking', 'processes');
+        console.log('');
+        var ps = spawn('docker', ['ps'], { stdio: 'inherit', customFds: [0, 1, 2] });
+
+        ps.on('close', function(code){
+          console.log('');
+          next();
+        });
+
+      }
+
+    ], function(){
+      
+    })
+
+
+  })  
+
+program.parse(process.argv);

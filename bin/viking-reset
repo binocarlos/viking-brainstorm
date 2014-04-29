@@ -34,7 +34,7 @@ var Etcd = require('../lib/etcd');
 console.log('');
 async.series([
   function(next){
-    var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    var stop = spawn('viking', ['master', 'reset'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
     stop.on('close', function(code){
       next();
@@ -47,18 +47,6 @@ async.series([
     resetfirewall.on('close', function(code){
       next();
     });
-  },
-
-  function(next){
-
-    var etcd = Etcd(config);
-
-    etcd.on('reset', function(path){
-      utils.log('remove', path);
-    })
-
-    etcd.reset(next);
-    
   }
 
 ], function(){

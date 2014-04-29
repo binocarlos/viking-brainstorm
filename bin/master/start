@@ -8,27 +8,23 @@ program
 program.on('--help', function(){
   console.log('  Examples:');
   console.log();
-  console.log('    # start viking');
-  console.log('    $ viking start');
+  console.log('    # start the viking master');
+  console.log('    $ viking master start');
   console.log();
   console.log();
   console.log();
   process.exit();
 });
 
-// parse argv
-
-program.parse(process.argv);
-
-
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
-
+var spawn = require('child_process').spawn
 var config = require('../lib/config')();
 var Etcd = require('../lib/etcd');
+var Registry = require('../lib/registry');
 
 console.log('');
 async.series([
@@ -50,15 +46,28 @@ async.series([
     })
 
     etcd.start(next);
+  },
+
+  function(next){
+    utils.log('registry', 'starting');
+
+    var registry = Registry(config);
+
+    registry.on('running', function(){
+      utils.log('registry', 'already running');
+    })
+
+    registry.on('removed', function(){
+      utils.log('registry', 'removed old container');
+    })
+
+    registry.on('started', function(){
+      utils.log('registry', 'running');
+    })
+
+    registry.start(next);
   }
 
 ], function(){
-  utils.log('viking', 'started');
+  utils.log('viking-master', 'started');
 })
-
-//etcdid=$(
-/*  
-  docker run 
-  --name etcd -d -p 4001:4001 -p 7001:7001 -v $QUARRY_ROOT/volumes/core/etcd:/data/db
-   coreos/etcd -name quarryhq -addr 0.0.0.0:4001 -peer-addr 0.0.0.0:7001 -data-dir /data/db -snapshotCount 100 -snapshot)
-*/

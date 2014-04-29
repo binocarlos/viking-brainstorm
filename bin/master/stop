@@ -4,30 +4,28 @@ var program = require('commander');
 
 program
   .usage('')
-  .option('-i, --index <url>', 'commit the docker images to this index')
-  .option('-a, --app <folder>', 'the folder to build the app from')
  
 program.on('--help', function(){
   console.log('  Examples:');
   console.log();
-  console.log('    # start viking');
-  console.log('    $ viking start');
+  console.log('    # stop the viking master');
+  console.log('    $ viking master stop');
   console.log();
   console.log();
   console.log();
   process.exit();
 });
 
-// parse argv
-
-program.parse(process.argv);
-
-var spawn = require('child_process').spawn;
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
+var spawn = require('child_process').spawn
+var config = require('../lib/config')();
+var Etcd = require('../lib/etcd');
+var Registry = require('../lib/registry');
+
 
 console.log('');
 async.series([
@@ -48,12 +46,5 @@ async.series([
   }
 
 ], function(){
-  utils.log('viking', 'restarted');
+  utils.log('viking-master', 'restarted');
 })
-
-//etcdid=$(
-/*  
-  docker run 
-  --name etcd -d -p 4001:4001 -p 7001:7001 -v $QUARRY_ROOT/volumes/core/etcd:/data/db
-   coreos/etcd -name quarryhq -addr 0.0.0.0:4001 -peer-addr 0.0.0.0:7001 -data-dir /data/db -snapshotCount 100 -snapshot)
-*/

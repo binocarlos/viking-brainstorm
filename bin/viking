@@ -14,9 +14,6 @@ program.on('--help', function(){
   console.log('  Commands:');
   console.log();
   console.log('    help <command>          command help');
-  console.log('    build                   build the current app');
-  console.log('    start                   start viking');
-  console.log('    stop                    stop viking');
   console.log();
   process.exit();
 });
@@ -33,19 +30,18 @@ var stat = fs.statSync;
 var exists = fs.existsSync;
 var resolve = path.resolve;
 
+var submodules = {
+  master:true
+}
+
 var args = process.argv.slice(3);
 var cmd = program.args[0];
 if (!cmd) program.help();
 
-if(cmd=='up'){
-  cmd = 'start';
-}
-
-if(cmd=='down'){
-  cmd = 'stop';
-}
-
 var bin = 'viking-' + cmd;
+
+console.log('-------------------------------------------');
+console.dir(bin);
 
 var local = join(__dirname, bin);
 
