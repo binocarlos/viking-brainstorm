@@ -49,6 +49,11 @@ hostname="$host"
 public="$ip"
 private="$ip"
 tokenpath="/vagrant/.vagrant/vikingtoken"
+[cluster]
+etcd="127.0.0.1:4001"
+[roles]
+master
+slave
 EOF
 
     viking firewall add-host 192.168.8.120

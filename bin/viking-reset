@@ -1,25 +1,5 @@
 #!/usr/bin/env node
 
-var program = require('commander');
-
-program
-  .usage('')
- 
-program.on('--help', function(){
-  console.log('  Examples:');
-  console.log();
-  console.log('    # start viking');
-  console.log('    $ viking start');
-  console.log();
-  console.log();
-  console.log();
-  process.exit();
-});
-
-// parse argv
-
-program.parse(process.argv);
-
 var spawn = require('child_process').spawn;
 var async = require('async');
 var utils = require('component-consoler');
@@ -29,16 +9,27 @@ var fs = require('fs');
 var log = utils.log;
 
 var config = require('../lib/config')();
-var Etcd = require('../lib/etcd');
+var Etcd = require('../lib/services/etcd');
+
+
+var uid = parseInt(process.env.SUDO_UID);
+
+if(!uid){
+  console.error('you must use sudo for viking master reset')
+  process.exit(1);
+}
 
 console.log('');
 async.series([
   function(next){
-    var stop = spawn('viking', ['master', 'reset'], { stdio: 'inherit', customFds: [0, 1, 2] });
+      
+    var etcd = Etcd(config);
 
-    stop.on('close', function(code){
-      next();
-    });
+    etcd.on('reset', function(path){
+      utils.log('remove', path);
+    })
+
+    etcd.reset(next);
   },
 
   function(next){

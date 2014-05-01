@@ -27,16 +27,16 @@ var path = require('path');
 var fs = require('fs');
 var log = utils.log;
 var spawn = require('child_process').spawn
-var config = require('../../lib/config')();
-var Etcd = require('../../lib/services/etcd');
-var Registry = require('../../lib/services/registry');
+var config = require('../lib/config')();
+var Etcd = require('../lib/services/etcd');
+var Registry = require('../lib/services/registry');
 
 
 console.log('');
     
 async.series([
   function(next){
-    var stop = spawn('viking', ['master', 'stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    var stop = spawn('viking', ['stop'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
     stop.on('close', function(code){
       next();
@@ -44,7 +44,7 @@ async.series([
   },
 
   function(next){
-    var start = spawn('viking', ['master', 'start'], { stdio: 'inherit', customFds: [0, 1, 2] });
+    var start = spawn('viking', ['start'], { stdio: 'inherit', customFds: [0, 1, 2] });
 
     start.on('close', function(code){
       next();

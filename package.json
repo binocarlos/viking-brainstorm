@@ -48,7 +48,8 @@
     "extend": "^1.2.1",
     "js-yaml": "^3.0.2",
     "hyperquest": "^0.3.0",
-    "concat-stream": "^1.4.5"
+    "concat-stream": "^1.4.5",
+    "etcdjs": "^1.1.1"
   },
   "devDependencies": {
     "tape": "^2.12.3"

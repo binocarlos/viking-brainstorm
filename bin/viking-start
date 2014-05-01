@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+var program = require('commander')
+var spawn = require('child_process').spawn
+var path = require('path')
+var fs = require('fs')
+var async = require('async')
+var utils = require('component-consoler');
+var Etcd = require('../lib/services/etcd');
+var config = require('../lib/config')();
+var token = require('../lib/tools/etcdtoken')
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-s, --seed', 'generate a new etcd cluster token', true)
+  .option('-d, --deamon', 'deamonize the process')
+ 
+program.parse(process.argv);
+
+function getToken(done){
+	if(!program.seed){
+		return done()
+	}
+
+	token(function(err, token){
+	  fs.writeFileSync(config.network.tokenpath, token, 'utf8')
+	  done()
+	})
+}
+
+function startEtcd(done){
+  var etcd = Etcd(config);
+
+  etcd.on('running', function(){
+    utils.log('etcd', 'already running');
+  })
+
+  etcd.on('removed', function(){
+    utils.log('etcd', 'removed old container');
+  })
+
+  etcd.on('started', function(){
+    utils.log('etcd', 'running');
+  })
+
+  etcd.start(done);
+}
+
+function startHost(done){
+
+	var args = ["node lib/host"]
+
+	if(program.deamon){
+		args.push('-d')
+	}
+
+	var mon = spawn('mon', args, {
+	  cwd:path.normalize(__dirname + '/..'),
+	  detached: true
+	})
+
+	mon.stdout.pipe(process.stdout)
+
+	mon.on('error', function(err){
+		console.error(err)
+		process.exit(1);
+	})
+
+	mon.on('done', done)
+}
+
+async.series([
+	getToken,
+	startEtcd,
+	startHost
+], function(){
+
+})

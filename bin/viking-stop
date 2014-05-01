@@ -22,14 +22,15 @@ var path = require('path');
 var fs = require('fs');
 var log = utils.log;
 var spawn = require('child_process').spawn
-var config = require('../../lib/config')();
-var Etcd = require('../../lib/services/etcd');
-var Registry = require('../../lib/services/registry');
+var config = require('../lib/config')();
+var Etcd = require('../lib/services/etcd');
+var Registry = require('../lib/services/registry');
 
 
 console.log('');
 
 async.series([
+
   function(next){
     utils.log('etcd', 'stopping');
 
@@ -44,7 +45,7 @@ async.series([
     })
 
     etcd.stop(true, next);
-  },
+  }/*,
 
   function(next){
     utils.log('registry', 'stopping');
@@ -60,7 +61,7 @@ async.series([
     })
 
     registry.stop(true, next);
-  }
+  }*/
 
 ], function(){
   utils.log('viking-master', 'stopped');
