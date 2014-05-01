@@ -2,16 +2,10 @@ common:
     loglevel: info
     secret_key: 7jC9THnLDjPOldE7qPPajmR1qNPwmtUarOxRMmhHzGmSLgIvy20xTjcpyduw7gbP
 
-#production:
-#    storage: swift
-#    storage_path: /registry
-#    swift_authurl: _env:OS_AUTH_URL
-#    swift_container: _env:OS_CONTAINER
-#    swift_user: _env:OS_USERNAME
-#    swift_password: _env:OS_PASSWORD
-#    swift_tenant_name: _env:OS_TENANT_NAME
-#    swift_region_name: _env:OS_REGION_NAM
-
 development:
+    storage: local
+    storage_path: /tmp/registry
+
+production:
     storage: local
     storage_path: /tmp/registry
