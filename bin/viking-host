@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+var program = require('commander')
+var Host = require('../lib/host')
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-h, --host [host]', 'etcd host', '127.0.0.1:4001')
+ 
+program.parse(process.argv);
+
+Host(program.host)

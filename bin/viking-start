@@ -13,6 +13,7 @@ program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
+  .option('-h, --host [host]', 'etcd host', '127.0.0.1:4001')
   .option('-d, --deamon', 'deamonize the process')
  
 program.parse(process.argv);
@@ -48,7 +49,8 @@ function startEtcd(done){
 
 function startHost(done){
 
-	var args = ["node lib/host"]
+
+	var args = ["node bin/viking-host --host=" + program.host]
 
 	if(program.deamon){
 		args.push('-d')
