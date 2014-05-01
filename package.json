@@ -18,7 +18,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "make test"
+    "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "repository": {
     "type": "git",
@@ -49,5 +49,8 @@
     "js-yaml": "^3.0.2",
     "hyperquest": "^0.3.0",
     "concat-stream": "^1.4.5"
+  },
+  "devDependencies": {
+    "tape": "^2.12.3"
   }
 }

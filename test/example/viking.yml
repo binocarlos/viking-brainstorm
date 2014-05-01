@@ -1,0 +1,65 @@
+# the viking object configures the stack itself
+viking:
+  # the name of the stack is used for container names - teststack/website in this case
+  name: teststack
+  # the very first viking to sail West!
+  comment: Ragnar Lothbrok
+
+# containers are built from your source code and pushed to a private docker registry
+# you can use local containers in FROM statements by using:
+# FROM viking:<stackname>/<nodename>
+containers:
+  # the base container - the other nodes will extend from this
+  base: |
+    FROM quarry/monnode
+    ADD . /srv/app
+    RUN cd /srv/app && npm install
+
+  # the FROM viking: syntax means a local container not from the public index
+  website: |
+    FROM viking:teststack/base
+    WORKDIR /srv/app/website
+    ENTRYPOINT mon "node ./index.js --port 80"
+
+  logic: |
+    FROM viking:teststack/base
+    WORKDIR /srv/app/service
+    ENTRYPOINT mon "node ./index.js --port 6787"
+
+# workers are processes that we are deploying
+# each worker has an ideal 'scale' that is the minimum number of workers
+workers:
+  logic:
+    container: viking:teststack/logic
+    scale: 2
+    route:
+      - "tcp 6787"
+  website:
+    container: viking:teststack/website
+    scale: 2
+    route:
+      - "http thetracktube.com"
+      - "http www.thetracktube.com"
+      - "http tracktube.local.digger.io"
+      - "http tracktube.lan.digger.io"
+
+# services - these are persistent (like databases) and are not restarted on each push
+services:
+  mongo:
+    # the service can be from any docker container
+    container: quarry/mongo
+    # services normally save data that we want in a volume
+    volumes:
+      - /data/db
+    # ports exposed by services are published to etcd and are injected into the environment of workers
+    expose:
+      - 27017
+
+  # you can run as many services as you want in a single stack
+  redis:
+    type: service
+    container: quarry/redis
+    volumes:
+      - /data/db
+    expose:
+      - 6379
