@@ -28,8 +28,13 @@ var config = require('../../lib/config')();
 var Etcd = require('../../lib/services/etcd');
 var Registry = require('../../lib/services/registry');
 
-console.log('');
-    
+var uid = parseInt(process.env.SUDO_UID);
+
+if(!uid){
+  console.error('you must use sudo for viking master reset')
+  process.exit(1);
+}
+
 async.series([
   function(next){
         

@@ -38,7 +38,7 @@ async.series([
 
   function(next){
     console.log('');
-    utils.log('viking', 'processes');
+    utils.log('viking', 'docker processes');
     console.log('');
     var ps = spawn('docker', ['ps'], { stdio: 'inherit', customFds: [0, 1, 2] });
 

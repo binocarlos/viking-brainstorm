@@ -5,7 +5,8 @@ var path = require('path');
 var fs = require('fs');
 var token = require('../../lib/tools/etcdtoken')
 var log = utils.log;
+var config = require('../../lib/config')();
 
 token(function(err, token){
-  fs.writeFileSync('/vagrant/.vagrant/vikingtoken', token, 'utf8')
+  fs.writeFileSync(config.network.tokenpath, token, 'utf8')
 })
