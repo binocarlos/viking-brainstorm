@@ -20,6 +20,11 @@ program
 program.parse(process.argv);
 
 function getToken(done){
+
+  if(!config.master){
+    throw new Error('cannot seed a viking server unless it is a master')
+  }
+
 	if(!program.seed){
 		return done()
 	}
@@ -31,6 +36,10 @@ function getToken(done){
 }
 
 function startEtcd(done){
+
+  if(!config.master){
+    return done()
+  }
   var etcd = Etcd(config);
 
   etcd.on('running', function(){
@@ -45,7 +54,9 @@ function startEtcd(done){
     utils.log('etcd', 'running')
   })
 
-  etcd.start(done)
+  etcd.start(function(){
+    setTimeout(done, 1000)
+  })
 }
 
 function startHost(done){

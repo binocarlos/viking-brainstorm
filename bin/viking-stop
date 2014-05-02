@@ -12,6 +12,9 @@ var Etcd = require('../lib/services/etcd');
 var Host = require('../lib/services/host');
 
 function stopEtcd(done){
+  if(!config.master){
+    return done()
+  }
   var etcd = Etcd(config);
 
   etcd.on('stopped', function(){
