@@ -9,6 +9,7 @@ var log = utils.log;
 var spawn = require('child_process').spawn
 var config = require('../lib/config')();
 var Etcd = require('../lib/services/etcd');
+var Registry = require('../lib/services/registry');
 var Host = require('../lib/services/host');
 
 function stopEtcd(done){
@@ -26,6 +27,24 @@ function stopEtcd(done){
   })
 
   etcd.stop(done)
+}
+
+
+function stopRegistry(done){
+  if(!config.master){
+    return done()
+  }
+  var registry = Registry(config);
+
+  registry.on('stopped', function(){
+    utils.log('registry', 'stopped')
+  })
+
+  registry.on('alreadystopped', function(){
+    utils.log('registry', 'already stopped')
+  })
+
+  registry.stop(done)
 }
 
 function stopHost(done){
@@ -51,6 +70,8 @@ console.log('');
 async.series([
 
   stopEtcd,
+
+  stopRegistry,
 
   stopHost
   

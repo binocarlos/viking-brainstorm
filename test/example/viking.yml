@@ -12,47 +12,46 @@ containers:
   # the base container - the other nodes will extend from this
   base: |
     FROM quarry/monnode
-    ADD . /srv/app
     RUN cd /srv/app && npm install
 
-  # the FROM viking: syntax means a local container not from the public index
-  website: |
-    FROM viking:teststack/base
-    WORKDIR /srv/app/website
-    EXPOSE 80
-    ENTRYPOINT mon "node ./index.js"
-
-  db: |
-    FROM viking:teststack/base
-    WORKDIR /srv/app/db
-    EXPOSE 5400
-    ENTRYPOINT mon "node ./index.js"
-
-  logic: |
-    FROM viking:teststack/base
-    WORKDIR /srv/app/service
-    EXPOSE 5401
-    ENTRYPOINT mon "node ./index.js --port 5401"
-
+# static websites dont consume memory - they are all routed to the generic HTTP server
+static:
+  help:
+    document_root: help/www
+    route:
+      - "help.thetracktube.com"
+      - "*.help.thetracktube.com"
+      
 # workers are processes that we are deploying
 # each worker has an ideal 'scale' that is the minimum number of workers
 workers:
   db:
-    container: viking:teststack/db
+    container: viking:teststack/base
+    run: node db/index.js
+    # static means there will be only one and it will be launched on the same server each time
     static: true
+    # the ports to write to etcd
+    expose:
+      - 5000
+    # using a volume automatically infers static
+    volume:
+      - /var/lib/testdata
   logic:
-    container: viking:teststack/logic
+    container: viking:teststack/base
+    run: node logic/index.js
     scale: 2
   website:
-    container: viking:teststack/website
+    container: viking:teststack/base
+    run: node website/index.js
     scale: 2
-    http:
+    route:
       - "thetracktube.com"
       - "www.thetracktube.com"
       - "tracktube.local.digger.io"
       - "tracktube.lan.digger.io"
 
 # services - these are persistent (like databases) and are not restarted on each push
+# the connection data for services is written to etcd and to the environment of each container
 services:
   mongo:
     # the service can be from any docker container
@@ -63,7 +62,6 @@ services:
     # ports exposed by services are published to etcd and are injected into the environment of workers
     expose:
       - 27017
-
   # you can run as many services as you want in a single stack
   redis:
     type: service
