@@ -19,29 +19,38 @@ containers:
   website: |
     FROM viking:teststack/base
     WORKDIR /srv/app/website
-    ENTRYPOINT mon "node ./index.js --port 80"
+    EXPOSE 80
+    ENTRYPOINT mon "node ./index.js"
+
+  db: |
+    FROM viking:teststack/base
+    WORKDIR /srv/app/db
+    EXPOSE 5400
+    ENTRYPOINT mon "node ./index.js"
 
   logic: |
     FROM viking:teststack/base
     WORKDIR /srv/app/service
-    ENTRYPOINT mon "node ./index.js --port 6787"
+    EXPOSE 5401
+    ENTRYPOINT mon "node ./index.js --port 5401"
 
 # workers are processes that we are deploying
 # each worker has an ideal 'scale' that is the minimum number of workers
 workers:
+  db:
+    container: viking:teststack/db
+    static: true
   logic:
     container: viking:teststack/logic
     scale: 2
-    route:
-      - "tcp 6787"
   website:
     container: viking:teststack/website
     scale: 2
-    route:
-      - "http thetracktube.com"
-      - "http www.thetracktube.com"
-      - "http tracktube.local.digger.io"
-      - "http tracktube.lan.digger.io"
+    http:
+      - "thetracktube.com"
+      - "www.thetracktube.com"
+      - "tracktube.local.digger.io"
+      - "tracktube.lan.digger.io"
 
 # services - these are persistent (like databases) and are not restarted on each push
 services:

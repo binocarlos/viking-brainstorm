@@ -9,11 +9,13 @@ var Etcd = require('../lib/services/etcd');
 var config = require('../lib/config')();
 var token = require('../lib/tools/etcdtoken')
 var Host = require('../lib/services/host')
+var Tail = require('tail').Tail;
 
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
+  .option('-t, --tail', 'tail the host logs')
  
 program.parse(process.argv);
 
@@ -65,10 +67,33 @@ function startHost(done){
   host.start(done)
 }
 
+function tailLogs(next){
+  if(program.tail){
+
+    var host = Host(config)
+    var files = host.files()
+
+    if(!fs.existsSync(files.log)){
+      console.error('the viking host is not running - cannot tail')
+      return next()
+    }
+    var tail = new Tail(files.log);
+
+    tail.on("line", function(data) {
+      console.log(data);
+    });
+    
+  }
+  else{
+    next()
+  }
+}
+
 async.series([
 	getToken,
 	startEtcd,
-	startHost
+	startHost,
+  tailLogs
 ], function(){
 	process.exit();
 })
