@@ -32,12 +32,6 @@ var cmd = program.args[0];
 if (!cmd) program.help();
 
 var bin = 'viking-' + cmd;
-
-if(cmd=='master'){
-  bin = 'master/' + program.args[1]
-  args = args.slice(1)
-}
-
 var local = join(__dirname, bin);
 
 if (exists(local)) {
