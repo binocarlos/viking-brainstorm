@@ -50,7 +50,8 @@
     "hyperquest": "^0.3.0",
     "concat-stream": "^1.4.5",
     "etcdjs": "^1.1.1",
-    "tail": "^0.3.5"
+    "tail": "^0.3.5",
+    "dockerfile-parse": "0.0.2"
   },
   "devDependencies": {
     "tape": "^2.12.3"

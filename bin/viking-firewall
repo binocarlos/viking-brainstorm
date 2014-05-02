@@ -4,6 +4,7 @@ var program = require('commander');
 var spawn = require('child_process').spawn;
 var path = require('path');
 var fs = require('fs');
+var utils = require('component-consoler');
 var log = utils.log;
 
 var config = require('../lib/config')();
