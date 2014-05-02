@@ -8,13 +8,12 @@ var utils = require('component-consoler');
 var Etcd = require('../lib/services/etcd');
 var config = require('../lib/config')();
 var token = require('../lib/tools/etcdtoken')
+var Host = require('../lib/services/host')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
-  .option('-h, --host [host]', 'etcd host', '127.0.0.1:4001')
-  .option('-d, --deamon', 'deamonize the process')
  
 program.parse(process.argv);
 
@@ -33,42 +32,37 @@ function startEtcd(done){
   var etcd = Etcd(config);
 
   etcd.on('running', function(){
-    utils.log('etcd', 'already running');
+    utils.log('etcd', 'already running')
   })
 
   etcd.on('removed', function(){
-    utils.log('etcd', 'removed old container');
+    utils.log('etcd', 'removed old container')
   })
 
   etcd.on('started', function(){
-    utils.log('etcd', 'running');
+    utils.log('etcd', 'running')
   })
 
-  etcd.start(done);
+  etcd.start(done)
 }
 
 function startHost(done){
 
+	var host = Host(config)
 
-	var args = ["node bin/viking-host --host=" + program.host]
+	host.on('running', function(){
+    utils.log('viking-host', 'already running')
+  })
 
-	if(program.deamon){
-		args.push('-d')
-	}
+  host.on('removed', function(){
+    utils.log('viking-host', 'removed old container')
+  })
 
-	var mon = spawn('mon', args, {
-	  cwd:path.normalize(__dirname + '/..'),
-	  detached: true
-	})
+  host.on('started', function(){
+    utils.log('viking-host', 'running')
+  })
 
-	mon.stdout.pipe(process.stdout)
-
-	mon.on('error', function(err){
-		console.error(err)
-		process.exit(1);
-	})
-
-	mon.on('done', done)
+  host.start(done)
 }
 
 async.series([
@@ -76,5 +70,5 @@ async.series([
 	startEtcd,
 	startHost
 ], function(){
-
+	process.exit();
 })

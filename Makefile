@@ -13,6 +13,7 @@ setup:
 	usermod -aG sudo viking
 	mkdir -p /etc/viking
 	mkdir -p /var/lib/viking
+	mkdir -p /var/lib/viking/volumes
 	mkdir -p /var/lib/viking/run
 	mkdir -p /var/lib/viking/log
 	chown -R viking:viking /var/lib/viking

@@ -1,21 +1,6 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-
-program
-  .usage('')
-
-program.on('--help', function(){
-  console.log('  Examples:');
-  console.log();
-  console.log('    # stop the viking master');
-  console.log('    $ viking master stop');
-  console.log();
-  console.log();
-  console.log();
-  process.exit();
-});
-
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
@@ -24,45 +9,48 @@ var log = utils.log;
 var spawn = require('child_process').spawn
 var config = require('../lib/config')();
 var Etcd = require('../lib/services/etcd');
-var Registry = require('../lib/services/registry');
+var Host = require('../lib/services/host');
+
+function stopEtcd(done){
+  var etcd = Etcd(config);
+
+  etcd.on('stopped', function(){
+    utils.log('etcd', 'stopped')
+  })
+
+  etcd.on('alreadystopped', function(){
+    utils.log('etcd', 'already stopped')
+  })
+
+  etcd.stop(done)
+}
+
+function stopHost(done){
+
+  var host = Host(config)
+
+  host.on('stopped', function(){
+    utils.log('viking-host', 'stopped')
+  })
+
+  host.on('alreadystopped', function(){
+    utils.log('viking-host', 'already stopped')
+  })
+
+  host.stop(function(){
+    setTimeout(done,100)
+  })
+}
 
 
 console.log('');
 
 async.series([
 
-  function(next){
-    utils.log('etcd', 'stopping');
+  stopEtcd,
 
-    var etcd = Etcd(config);
-
-    etcd.on('stopped', function(){
-      utils.log('etcd', 'stopped');
-    })
-
-    etcd.on('removed', function(){
-      utils.log('etcd', 'removed');
-    })
-
-    etcd.stop(true, next);
-  }/*,
-
-  function(next){
-    utils.log('registry', 'stopping');
-
-    var registry = Registry(config);
-
-    registry.on('stopped', function(){
-      utils.log('registry', 'stopped');
-    })
-
-    registry.on('removed', function(){
-      utils.log('registry', 'removed');
-    })
-
-    registry.stop(true, next);
-  }*/
-
+  stopHost
+  
 ], function(){
   utils.log('viking-master', 'stopped');
 })

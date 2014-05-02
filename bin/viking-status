@@ -2,29 +2,24 @@
 
 var program = require('commander');
 
-program
-  .usage('')
- 
-program.on('--help', function(){
-  console.log('  Examples:');
-  console.log();
-  console.log('    # start viking');
-  console.log('    $ viking start');
-  console.log();
-  console.log();
-  console.log();
-  process.exit();
-});
-
 var async = require('async');
 var utils = require('component-consoler');
 var path = require('path');
 var fs = require('fs');
 var log = utils.log;
 var spawn = require('child_process').spawn
-var config = require('../../lib/config')();
-var Etcd = require('../../lib/services/etcd');
-var Registry = require('../../lib/services/registry');
+var config = require('../lib/config')();
+var Etcd = require('../lib/services/etcd');
+var Registry = require('../lib/services/registry');
+var Tail = require('tail').Tail;
+var Host = require('../lib/services/host')
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-t, --tail', 'tail the host logs')
+ 
+program.parse(process.argv);
 
 console.log('');
 async.series([
@@ -45,8 +40,31 @@ async.series([
     ps.on('close', function(code){
       console.log('');
       next();
-    });
+    })
 
+  },
+
+  function(next){
+    if(program.tail){
+
+
+      var host = Host(config)
+      var files = host.files()
+
+      if(!fs.existsSync(files.log)){
+        console.error('the viking host is not running - cannot tail')
+        return next()
+      }
+      var tail = new Tail(files.log);
+
+      tail.on("line", function(data) {
+        console.log(data);
+      });
+      
+    }
+    else{
+      next()
+    }
   }
 
 ], function(){
