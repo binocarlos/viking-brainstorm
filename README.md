@@ -36,78 +36,76 @@ viking:
 # containers are built from your source code and pushed to a private docker registry
 # you can use local containers in FROM statements by using:
 # FROM viking:<stackname>/<nodename>
-container:
+image:
   # the base container - the other nodes will extend from this
   base: |
     FROM quarry/monnode
     ADD . /srv/app
+    WORKDIR /srv/app
     RUN cd /srv/app && npm install
   db: |
     FROM viking:teststack/base
     EXPOSE 5000
     VOLUME /var/db
-    WORKDIR /srv/app/db
-    ENTRYPOINT mon node index.js
+    ENTRYPOINT mon node db/index.js
   logic: |
     FROM viking:teststack/base
     EXPOSE 5001
-    WORKDIR /srv/app/logic
-    ENTRYPOINT mon node index.js
+    ENTRYPOINT mon node logic/index.js
   website: |
     FROM viking:teststack/base
     EXPOSE 80
-    WORKDIR /srv/app/website
-    ENTRYPOINT mon node index.js
+    ENTRYPOINT mon node website/index.js
+  mongo: |
+    FROM quarry/mongo
+    VOLUME /data/db
+    EXPOSE 27017
+  redis: |
+    FROM quarry/redis
+    VOLUME /data/db
+    EXPOSE 6379
+
 
 # workers are processes that we are deploying
 # each worker has an ideal 'scale' that is the minimum number of workers
-proc:
+container:
   db:
-    # the container 
-    container: viking:teststack/db
-    # static means there will be only one and it will be launched on the same server each time
-    # if the dockerfile has volumes then static is automatically true
-    static: true
+    image: db
+    # this means deploy to the same server each time
+    # volumes in images trigger this automatically
+    fixed: true
   logic:
-    container: viking:teststack/base
-    run: node logic/index.js
+    image: logic
     scale: 2
+    args: mode=1
+  # multiple workers from the same image using arguments to the entrypoint
+  logic2:
+    image: logic
+    scale: 1
+    args: mode=2
   website:
-    container: viking:teststack/base
-    run: node website/index.js
-    scale: 2
-    route:
+    image: website
+    scale: 3
+    # each domain is automapped to the front end HTTP router
+    # this applies to each of the exposed ports in the image
+    domains:
       - "thetracktube.com"
       - "www.thetracktube.com"
       - "tracktube.local.digger.io"
       - "tracktube.lan.digger.io"
-
-# services - these are persistent (like databases) and are not restarted on each push
-# the connection data for services is written to etcd and to the environment of each container
-service:
   mongo:
-    # the service can be from any docker container
-    container: quarry/mongo
-    # services normally save data that we want in a volume
-    volumes:
-      - /data/db
-    # ports exposed by services are published to etcd and are injected into the environment of workers
-    expose:
-      - 27017
-  # you can run as many services as you want in a single stack
+    image: mongo
+    # static is the same as fixed but also never restart (good for database servers)
+    static: true
   redis:
-    type: service
-    container: quarry/redis
-    volumes:
-      - /data/db
-    expose:
-      - 6379
+    image: redis
+    static: true
 
-# static websites dont consume memory - they are all routed to the generic HTTP server
-static:
+# websites are static HTML and can be served by the generic web server
+website:
   help:
-    document_root: help/www
-    route:
+    document_root: ./help/www
+    domains:
       - "help.thetracktube.com"
       - "*.help.thetracktube.com"
 ```

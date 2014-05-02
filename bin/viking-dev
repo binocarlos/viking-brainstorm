@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+var Stack = require('../lib/stack')
+var async = require('async');
+// options
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-d, --dir <folder>', 'the folder to test the app from')
+  .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
+
+program.parse(process.argv);
+
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+
+var Config = require('../lib/config')
+
+var exists = fs.existsSync || path.existsSync;
+var args = program.args;
+var log = utils.log;
+
+var config = Config();
+
+var folder = program.dir || process.cwd()
+
+var stack = Stack(folder, {
+  config:program.config,
+  index:program.index
+})
+
+stack.dev(function(){
+  console.log('stack dev');
+})
