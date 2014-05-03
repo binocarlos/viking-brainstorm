@@ -8,8 +8,8 @@ The main objective of viking is to help you move westward and colonize server-fa
 STATUS - PRE-ALPHA - do not try to use at the moment
 
 ```
-  _    _                          
- / \  //\ ,(_)   _  __ ,(_)   _ __    _____ 
+                                
+ / \  //\  (_)   _  __  (_)   ____    _____ 
  \\ \// / || | || |/ / || | ||  _ \  // _, |
   \\ V /  || | ||   <  || | || ||| ||| (_| |
    \\_/   ||_| ||_|\_\ ||_| ||_|||_| \\__, |
