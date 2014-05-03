@@ -4,8 +4,10 @@ var express = require('express');
 var app = express()
 var server = http.createServer(app)
 
+var val = process.argv[3]
+
 app.use(function(req, res){
-	res.end('10')
+	res.end(val)
 })
 
 server.listen(5401, function(){
