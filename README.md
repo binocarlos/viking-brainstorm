@@ -30,8 +30,8 @@ This is an example stack that has 3 node.js workers - 1 one them with a volume a
 viking:
   # the name of the stack is used for container names - teststack/website in this case
   name: teststack
-  # the very first viking to sail West!
-  comment: Ragnar Lothbrok
+  # viking hamster raaaaaaaar
+  comment: Ragnar Hamster Lothbrok
 
 # containers are built from your source code and pushed to a private docker registry
 # you can use local containers in FROM statements by using:
@@ -41,8 +41,8 @@ image:
   base: |
     FROM quarry/monnode
     ADD . /srv/app
-    WORKDIR /srv/app
     RUN cd /srv/app && npm install
+    WORKDIR /srv/app
   db: |
     FROM viking:teststack/base
     EXPOSE 5000
@@ -64,7 +64,6 @@ image:
     FROM quarry/redis
     VOLUME /data/db
     EXPOSE 6379
-
 
 # workers are processes that we are deploying
 # each worker has an ideal 'scale' that is the minimum number of workers
