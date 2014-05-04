@@ -7,6 +7,7 @@ var path = require('path');
 var wrench = require('wrench');
 var fs = require('fs');
 var log = utils.log;
+var etcdjs = require('etcdjs')
 
 var config = require('../lib/config')();
 var Etcd = require('../lib/services/etcd');
@@ -21,8 +22,24 @@ if(!uid){
 
 console.log('');
 async.series([
+
   function(next){
-      
+    var etcdclient = etcdjs(config.network.etcd)
+
+    async.forEachSeries(['/host', '/proc', '/run'], function(path, nextPath){
+      utils.log('remove etcd path', path);
+      etcdclient.rmdir(path, {
+        recursive:true
+      }, function(){
+        nextPath()
+      })
+    }, next)
+    
+  },
+
+
+  function(next){
+    utils.log('reset etcd', 'data');
     var etcd = Etcd(config);
 
     etcd.on('reset', function(path){
