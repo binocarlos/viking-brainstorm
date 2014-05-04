@@ -17,12 +17,12 @@ image:
     WORKDIR /srv/app
   db: |
     FROM viking:teststack/base
-    EXPOSE 5000
+    EXPOSE 8000
     VOLUME /var/db
     ENTRYPOINT mon node db/index.js
   logic: |
     FROM viking:teststack/base
-    EXPOSE 5001
+    EXPOSE 8001
     ENTRYPOINT mon node logic/index.js
   website: |
     FROM viking:teststack/base
@@ -67,10 +67,10 @@ container:
   mongo:
     image: mongo
     # static is the same as fixed but also never restart (good for database servers)
-    static: true
+    fixed: true
   redis:
     image: redis
-    static: true
+    fixed: true
 
 # websites are static HTML and can be served by the generic web server
 website:
