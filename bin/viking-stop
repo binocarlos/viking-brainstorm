@@ -12,8 +12,19 @@ var Etcd = require('../lib/services/etcd');
 var Registry = require('../lib/services/registry');
 var Host = require('../lib/services/host');
 
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-h, --host', 'just stop the host not etcd')
+
+program.parse(process.argv);
+
 function stopEtcd(done){
   if(!config.master){
+    return done()
+  }
+  if(program.host){
     return done()
   }
   var etcd = Etcd(config);
