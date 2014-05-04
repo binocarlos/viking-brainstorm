@@ -51,7 +51,8 @@
     "etcdjs": "^1.1.1",
     "tail": "^0.3.5",
     "dockerfile-parse": "^0.0.2",
-    "pingstat": "0.0.1"
+    "pingstat": "0.0.1",
+    "deck": "0.0.4"
   },
   "devDependencies": {
     "tape": "^2.12.3"
