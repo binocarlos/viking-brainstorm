@@ -12,7 +12,6 @@ var Etcd = require('../lib/services/etcd');
 var Registry = require('../lib/services/registry');
 var Host = require('../lib/services/host');
 
-
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
