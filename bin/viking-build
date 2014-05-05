@@ -46,7 +46,7 @@ var config = Config();
 
 var folder = program.dir || process.cwd()
 
-var stack = Stack(folder, {
+var stack = Stack(config, folder, {
   config:program.config,
   index:program.index
 })
