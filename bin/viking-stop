@@ -11,6 +11,7 @@ var config = require('../lib/config')();
 var etcdjs = require('etcdjs')
 var Etcd = require('../lib/services/etcd');
 var Registry = require('../lib/services/registry');
+var Deployment = require('../lib/deployment')
 var Host = require('../lib/services/host');
 
 program
@@ -41,6 +42,8 @@ function stopStack(done){
   if(program.filter && program.filter!='stack'){
     return done()
   }
+  var etcd = etcdjs(config.network.etcd)
+  var deployment = Deployment(config, etcd)
   utils.log('stack: ' + program.stack, 'stopping')
   deployment.removeStack(program.stack, function(err){
     utils.log('stack: ' + program.stack, 'stopped')
