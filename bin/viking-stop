@@ -37,9 +37,9 @@ if(program.stack){
 
 function stopStack(etcd, deployment, name, done){
   
-  utils.log('stack: ' + program.stack, 'stopping')
-  deployment.removeStack(program.stack, function(err){
-    utils.log('stack: ' + program.stack, 'stopped')
+  utils.log('stack: ' + name, 'stopping')
+  deployment.removeStack(name, function(err){
+    utils.log('stack: ' + name, 'stopped')
     done(err)
   })
 
@@ -53,15 +53,12 @@ function stopStacks(done){
   var deployment = Deployment(config, etcd)
 
   deployment.getStackNames(function(err, stacks){
-    stacks = stacks || []
-    stacks = stacks.filter(function(stack){
-      if(program.stack && program.stack!=stack){
-        return false
-      }
-      else{
-        return true
-      }
+    stacks = (stacks || []).filter(function(stack){
+
+      return program.stack && program.stack!=stack ? false : true
+      
     })
+
     async.forEachSeries(stacks, function(stack, nextStack){
       stopStack(etcd, deployment, stack, nextStack)
     }, function(err){
