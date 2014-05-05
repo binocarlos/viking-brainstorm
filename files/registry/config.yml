@@ -4,8 +4,8 @@ common:
 
 development:
     storage: local
-    storage_path: /tmp/registry
+    storage_path: /data/registry
 
 production:
     storage: local
-    storage_path: /tmp/registry
+    storage_path: /data/registry

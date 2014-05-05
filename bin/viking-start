@@ -15,9 +15,19 @@ program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
+  .option('-e, --etcd', 'only start etcd')
+  .option('-h, --host', 'only start the host')
   .option('-t, --tail', 'tail the host logs')
  
 program.parse(process.argv);
+
+if(program.etcd){
+  program.filter = 'etcd'
+}
+
+if(program.host){
+  program.filter = 'host'
+}
 
 function getToken(done){
 
@@ -38,6 +48,9 @@ function getToken(done){
 function startEtcd(done){
 
   if(!config.master){
+    return done()
+  }
+  if(program.filter && program.filter!='etcd'){
     return done()
   }
   var etcd = Etcd(config);
@@ -61,6 +74,9 @@ function startEtcd(done){
 
 function startHost(done){
 
+  if(program.filter && program.filter!='host'){
+    return done()
+  }
 	var host = Host(config)
 
 	host.on('running', function(){
