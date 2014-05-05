@@ -11,6 +11,7 @@ program
   .option('-i, --index <url>', 'commit the docker images to this index')
   .option('-d, --dir <folder>', 'the folder to build the app from')
   .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
+  .option('-v, --dev', 'dev mode')
  
 program.on('--help', function(){
   console.log('  Examples:');
@@ -48,7 +49,8 @@ var folder = program.dir || process.cwd()
 
 var stack = Stack(config, folder, {
   config:program.config,
-  index:program.index
+  index:program.index,
+  dev:program.dev
 })
 
 stack.build(function(){
