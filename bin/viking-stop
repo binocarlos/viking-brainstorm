@@ -47,6 +47,7 @@ function stopStack(done){
   utils.log('stack: ' + program.stack, 'stopping')
   deployment.removeStack(program.stack, function(err){
     utils.log('stack: ' + program.stack, 'stopped')
+    done(err)
   })
 
 }
