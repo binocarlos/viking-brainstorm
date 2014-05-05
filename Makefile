@@ -30,7 +30,7 @@ vagrantgroups:
 vagrantinit:
 	./vagrant/admin init
 
-dependencies: basics sshcommand docker vpc nodejs mon
+dependencies: basics sshcommand docker vpc nodejs etcdctl mon
 
 basics:
 	apt-get update
@@ -71,6 +71,12 @@ nodejs:
 	wget -qO /usr/local/bin/nave ${NAVE_URL}
 	chmod a+x /usr/local/bin/nave
 	nave usemain ${NODE_VERSION}
+
+etcdctl:
+	curl -L https://github.com/coreos/etcd/releases/download/v0.3.0/etcd-v0.3.0-linux-amd64.tar.gz -o /tmp/etcd-v0.3.0-linux-amd64.tar.gz
+	cd /tmp && gzip -dc etcd-v0.3.0-linux-amd64.tar.gz | tar -xof -
+	cp -f /tmp/etcd-v0.3.0-linux-amd64/etcdctl /usr/local/bin
+	rm -rf /tmp/etcd-v0.3.0-linux-amd64.tar.gz
 
 token:
 	@curl https://discovery.etcd.io/new

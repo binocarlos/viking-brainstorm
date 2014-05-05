@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+var program = require('commander')
+var spawn = require('child_process').spawn
+
+program.parse(process.argv);
+
+spawn('etcdctl', program.args, {
+  stdio:'inherit'
+})
