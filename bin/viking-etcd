@@ -2,8 +2,8 @@
 var program = require('commander')
 var spawn = require('child_process').spawn
 
-program.parse(process.argv);
+var args = process.argv.slice(2)
 
-spawn('etcdctl', program.args, {
+spawn('etcdctl', args, {
   stdio:'inherit'
 })
