@@ -49,11 +49,27 @@ function stopStacks(done){
   if(program.filter && program.filter!='stack'){
     return done()
   }
-  if(!program.stack){
-    return done()
-  }
   var etcd = etcdjs(config.network.etcd)
   var deployment = Deployment(config, etcd)
+
+  deployment.getStackNames(function(err, stacks){
+    stacks = stacks || []
+    stacks = stacks.filter(function(stack){
+      if(program.stack && program.stack!=stack){
+        return false
+      }
+      else{
+        return true
+      }
+    })
+    async.forEachSeries(stacks, function(stack, nextStack){
+      stopStack(etcd, deployment, stack, nextStack)
+    }, function(err){
+      if(err) return done(err)
+      setTimeout(done, 2000)
+
+    })
+  })
 }
 
 function stopEtcd(done){
@@ -98,9 +114,6 @@ function stopHost(done){
     setTimeout(done,100)
   })
 }
-
-
-console.log('');
 
 async.series([
 
