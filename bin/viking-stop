@@ -35,21 +35,25 @@ if(program.stack){
   program.filter = 'stack'
 }
 
-function stopStack(done){
-  if(!program.stack){
-    return done()
-  }
-  if(program.filter && program.filter!='stack'){
-    return done()
-  }
-  var etcd = etcdjs(config.network.etcd)
-  var deployment = Deployment(config, etcd)
+function stopStack(etcd, deployment, name, done){
+  
   utils.log('stack: ' + program.stack, 'stopping')
   deployment.removeStack(program.stack, function(err){
     utils.log('stack: ' + program.stack, 'stopped')
     done(err)
   })
 
+}
+
+function stopStacks(done){
+  if(program.filter && program.filter!='stack'){
+    return done()
+  }
+  if(!program.stack){
+    return done()
+  }
+  var etcd = etcdjs(config.network.etcd)
+  var deployment = Deployment(config, etcd)
 }
 
 function stopEtcd(done){
@@ -100,7 +104,7 @@ console.log('');
 
 async.series([
 
-  stopStack,
+  stopStacks,
 
   stopEtcd,
 
