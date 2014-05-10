@@ -1,3 +1,4 @@
 FROM quarry/monnode
 ADD . /srv/app
-RUN npm install /srv/app
+RUN cd /srv/app && npm install
+WORKDIR /srv/app
