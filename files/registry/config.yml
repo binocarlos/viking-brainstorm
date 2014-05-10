@@ -6,7 +6,7 @@ development:
     storage: local
     storage_path: /data/registry
 
-prod:
+production:
     storage: s3
     boto_bucket: _env:AWS_BUCKET
     s3_access_key: _env:AWS_KEY

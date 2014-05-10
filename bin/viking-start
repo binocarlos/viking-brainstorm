@@ -6,6 +6,7 @@ var fs = require('fs')
 var async = require('async')
 var utils = require('component-consoler');
 var Etcd = require('../lib/services/etcd');
+var etcdjs = require('etcdjs')
 var config = require('../lib/config')();
 var token = require('../lib/tools/etcdtoken')
 var Host = require('../lib/services/host')
@@ -15,19 +16,11 @@ program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
-  .option('-e, --etcd', 'only start etcd')
-  .option('-h, --host', 'only start the host')
+  .option('-e, --env [filepath]', 'a file containing the core env for booting (s3, do etc)')
+  .option('-f, --filter', 'only start the named service (etcd, host)')
   .option('-t, --tail', 'tail the host logs')
  
 program.parse(process.argv);
-
-if(program.etcd){
-  program.filter = 'etcd'
-}
-
-if(program.host){
-  program.filter = 'host'
-}
 
 function getToken(done){
 
@@ -47,9 +40,11 @@ function getToken(done){
 
 function startEtcd(done){
 
+  // only run etcd on masters
   if(!config.master){
     return done()
   }
+
   if(program.filter && program.filter!='etcd'){
     return done()
   }
@@ -74,6 +69,40 @@ function startEtcd(done){
     })
   })
 
+}
+
+function injectEnv(done){
+  if(program.filter && program.filter!='etcd'){
+    return done()
+  }
+
+  if(!fs.existsSync(program.env)){
+    return done()
+  }
+
+  var etcdParts = (config.network.etcd || '127.0.0.1:4001').split(':')
+
+  var spawnArgs = [
+    __dirname + '/../node_modules/denver/cli.js',
+    '--hostname',
+    etcdParts[0],
+    '--port',
+    etcdParts[1]
+  ].concat([
+    'inject',
+    'vikingcore'
+  ])
+
+  var envFile = fs.createReadStream(program.env, 'utf8')
+
+  var inject = spawn('node', spawnArgs, {
+    stdio:['pipe', process.stdout, process.stderr]
+  })
+
+  envFile.pipe(inject.stdin)
+
+  inject.on('error', done)
+  inject.on('close', done)
 }
 
 function startHost(done){
@@ -127,6 +156,7 @@ function tailLogs(next){
 async.series([
 	getToken,
 	startEtcd,
+  injectEnv,
 	startHost,
   tailLogs
 ], function(){

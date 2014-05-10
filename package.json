@@ -54,7 +54,7 @@
     "pingstat": "^0.0.1",
     "deck": "^0.0.4",
     "etcd-flatten": "^0.0.2",
-    "denver": "^0.1.0"
+    "denver": "^0.3.0"
   },
   "devDependencies": {
     "tape": "^2.12.3"

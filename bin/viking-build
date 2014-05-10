@@ -9,7 +9,7 @@ program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-i, --index <url>', 'commit the docker images to this index')
-  .option('-t, --tag <tag>', 'append a tag to the image for this commit')
+  .option('-t, --tag <tag>', 'the tag for images')
   .option('-d, --dir <folder>', 'the folder to build the app from')
   .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
   .option('-v, --dev', 'dev mode')

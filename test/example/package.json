@@ -2,13 +2,13 @@
   "name": "teststack",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {},
   "author": "",
   "license": "MIT",
   "private": true,
   "dependencies": {
     "express": "^4.1.1",
-    "ecstatic": "^0.5.1"
+    "ecstatic": "^0.5.1",
+    "async":"*"
   }
 }
