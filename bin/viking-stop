@@ -17,19 +17,10 @@ var Host = require('../lib/services/host');
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
-  .option('-e, --etcd', 'only start etcd')
-  .option('-h, --host', 'only start the host')
+  .option('-f, --filter [filter]', 'only start the named service (etcd, host)')
   .option('-s, --stack [stackname]', 'stop a single stack')
 
 program.parse(process.argv);
-
-if(program.etcd){
-  program.filter = 'etcd'
-}
-
-if(program.host){
-  program.filter = 'host'
-}
 
 if(program.stack){
   program.filter = 'stack'

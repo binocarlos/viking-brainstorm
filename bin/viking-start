@@ -17,7 +17,7 @@ program
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token', true)
   .option('-e, --env [filepath]', 'a file containing the core env for booting (s3, do etc)')
-  .option('-f, --filter', 'only start the named service (etcd, host)')
+  .option('-f, --filter [filter]', 'only start the named service (etcd, host)')
   .option('-t, --tail', 'tail the host logs')
  
 program.parse(process.argv);
@@ -131,6 +131,10 @@ function startHost(done){
 }
 
 function tailLogs(next){
+  if(program.filter && program.filter!='host'){
+    return next()
+  }
+
   if(program.tail){
     Host(config, function(err, host){
       if(err) return done(err)
