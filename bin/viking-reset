@@ -40,13 +40,15 @@ async.series([
 
   function(next){
     utils.log('reset etcd', 'data');
-    var etcd = Etcd(config);
+    Etcd(config, function(err, etcd){
+        
+      etcd.on('reset', function(path){
+        utils.log('remove', path);
+      })
 
-    etcd.on('reset', function(path){
-      utils.log('remove', path);
-    })
+      etcd.reset(next);      
+    });
 
-    etcd.reset(next);
   },
 
   function(next){

@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+var program = require('commander')
+var spawn = require('child_process').spawn
+var config = require('../lib/config')();
+
+var etcdParts = (config.network.etcd || '127.0.0.1:4001').split(':')
+
+var denverArgs = process.argv.slice(2)
+var spawnArgs = [
+	__dirname + '/../node_modules/denver/cli.js',
+	'--hostname',
+	etcdParts[0],
+	'--port',
+	etcdParts[1]
+].concat(denverArgs)
+
+spawn('node', spawnArgs, {
+  stdio:'inherit'
+})

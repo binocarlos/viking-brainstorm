@@ -79,17 +79,20 @@ function stopEtcd(done){
   if(program.filter && program.filter!='etcd'){
     return done()
   }
-  var etcd = Etcd(config);
+  Etcd(config, function(err, etcd){
+    if(err) return done(err)
 
-  etcd.on('stopped', function(){
-    utils.log('etcd', 'stopped')
-  })
+    etcd.on('stopped', function(){
+      utils.log('etcd', 'stopped')
+    })
 
-  etcd.on('alreadystopped', function(){
-    utils.log('etcd', 'already stopped')
-  })
+    etcd.on('alreadystopped', function(){
+      utils.log('etcd', 'already stopped')
+    })
 
-  etcd.stop(done)
+    etcd.stop(done)
+  });
+
 }
 
 function stopHost(done){
@@ -97,19 +100,22 @@ function stopHost(done){
   if(program.filter && program.filter!='host'){
     return done()
   }
-  var host = Host(config)
+  Host(config, function(err, host){
+    if(err) return done(err)
+        
+    host.on('stopped', function(){
+      utils.log('viking-host', 'stopped')
+    })
 
-  host.on('stopped', function(){
-    utils.log('viking-host', 'stopped')
+    host.on('alreadystopped', function(){
+      utils.log('viking-host', 'already stopped')
+    })
+
+    host.stop(function(){
+      setTimeout(done,100)
+    })
   })
 
-  host.on('alreadystopped', function(){
-    utils.log('viking-host', 'already stopped')
-  })
-
-  host.stop(function(){
-    setTimeout(done,100)
-  })
 }
 
 async.series([

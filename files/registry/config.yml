@@ -1,11 +1,21 @@
 common:
     loglevel: info
-    secret_key: 7jC9THnLDjPOldE7qPPajmR1qNPwmtUarOxRMmhHzGmSLgIvy20xTjcpyduw7gbP
+    secret_key: _env:SECRET_KEY
 
 development:
     storage: local
     storage_path: /data/registry
 
-production:
-    storage: local
-    storage_path: /data/registry
+prod:
+    storage: s3
+    boto_bucket: _env:AWS_BUCKET
+    s3_access_key: _env:AWS_KEY
+    s3_secret_key: _env:AWS_SECRET
+    s3_bucket: _env:AWS_BUCKET
+    s3_encrypt: true
+    s3_secure: true
+    secret_key: REPLACEME
+    s3_encrypt: true
+    s3_secure: true
+    storage_path: /images
+    storage_redirect: False

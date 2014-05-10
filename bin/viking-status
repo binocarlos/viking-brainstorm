@@ -9,8 +9,6 @@ var fs = require('fs');
 var log = utils.log;
 var spawn = require('child_process').spawn
 var config = require('../lib/config')();
-var Etcd = require('../lib/services/etcd');
-var Registry = require('../lib/services/registry');
 var Tail = require('tail').Tail;
 var Host = require('../lib/services/host')
 
@@ -47,19 +45,20 @@ async.series([
   function(next){
     if(program.tail){
 
+      Host(config, function(err, host){
+        if(err) return done(err)
+        var files = host.files()
 
-      var host = Host(config)
-      var files = host.files()
+        if(!fs.existsSync(files.log)){
+          console.error('the viking host is not running - cannot tail')
+          return next()
+        }
+        var tail = new Tail(files.log);
 
-      if(!fs.existsSync(files.log)){
-        console.error('the viking host is not running - cannot tail')
-        return next()
-      }
-      var tail = new Tail(files.log);
-
-      tail.on("line", function(data) {
-        console.log(data);
-      });
+        tail.on("line", function(data) {
+          console.log(data);
+        });
+      })
       
     }
     else{

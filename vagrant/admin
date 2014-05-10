@@ -57,6 +57,7 @@ EOF
 $master
 $meta
 slave: true
+env: development
 network:
     hostname: "$host"
     public: "$ip"

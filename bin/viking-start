@@ -53,23 +53,27 @@ function startEtcd(done){
   if(program.filter && program.filter!='etcd'){
     return done()
   }
-  var etcd = Etcd(config);
+  Etcd(config, function(err, etcd){
 
-  etcd.on('running', function(){
-    utils.log('etcd', 'already running')
+    if(err) return done(err)
+
+    etcd.on('running', function(){
+      utils.log('etcd', 'already running')
+    })
+
+    etcd.on('removed', function(){
+      utils.log('etcd', 'removed old container')
+    })
+
+    etcd.on('started', function(){
+      utils.log('etcd', 'running')
+    })
+
+    etcd.start(function(){
+      setTimeout(done, 1000)
+    })
   })
 
-  etcd.on('removed', function(){
-    utils.log('etcd', 'removed old container')
-  })
-
-  etcd.on('started', function(){
-    utils.log('etcd', 'running')
-  })
-
-  etcd.start(function(){
-    setTimeout(done, 1000)
-  })
 }
 
 function startHost(done){
@@ -77,39 +81,43 @@ function startHost(done){
   if(program.filter && program.filter!='host'){
     return done()
   }
-	var host = Host(config)
+	Host(config, function(err, host){
+    if(err) return done(err)
 
-	host.on('running', function(){
-    utils.log('viking-host', 'already running')
+    host.on('running', function(){
+      utils.log('viking-host', 'already running')
+    })
+
+    host.on('removed', function(){
+      utils.log('viking-host', 'removed old container')
+    })
+
+    host.on('started', function(){
+      utils.log('viking-host', 'running')
+    })
+
+    host.start(done)
   })
 
-  host.on('removed', function(){
-    utils.log('viking-host', 'removed old container')
-  })
-
-  host.on('started', function(){
-    utils.log('viking-host', 'running')
-  })
-
-  host.start(done)
 }
 
 function tailLogs(next){
   if(program.tail){
+    Host(config, function(err, host){
+      if(err) return done(err)
 
-    var host = Host(config)
-    var files = host.files()
+        var files = host.files()
 
-    if(!fs.existsSync(files.log)){
-      console.error('the viking host is not running - cannot tail')
-      return next()
-    }
-    var tail = new Tail(files.log);
+        if(!fs.existsSync(files.log)){
+          console.error('the viking host is not running - cannot tail')
+          return next()
+        }
+        var tail = new Tail(files.log);
 
-    tail.on("line", function(data) {
-      console.log(data);
-    });
-    
+        tail.on("line", function(data) {
+          console.log(data);
+        });
+    })
   }
   else{
     next()
