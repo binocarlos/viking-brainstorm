@@ -1,1 +1,1 @@
-FROM quarry/mongo
+FROM quarry/redis

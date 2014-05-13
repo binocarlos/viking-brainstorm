@@ -7,54 +7,47 @@ viking:
 # can use local boats in FROM statements using:
 # FROM viking:<stackname>/<boatname>
 build:
-  base: |
+  src: |
     FROM quarry/monnode
     ADD . /srv/app
     RUN cd /srv/app && npm install
-    WORKDIR /srv/app
-  db: |
-    FROM viking:teststack/base
-    EXPOSE 80
-    VOLUME /data/db
-    ENTRYPOINT mon node db/index.js --volume=/data/db
-  logic: |
-    FROM viking:teststack/base
-    EXPOSE 80
-    ENTRYPOINT mon node logic/index.js
-  website: |
-    FROM viking:teststack/base
-    EXPOSE 80
-    ENTRYPOINT mon node website/index.js
-  mongo: |
-    FROM quarry/mongo
-    VOLUME /data/db
-    EXPOSE 27017
-  redis: |
-    FROM quarry/redis
-    VOLUME /data/db
-    EXPOSE 6379
 
 # our warrior viking formation
 deploy:
+  # the db viking - this is a node.js process that wraps a leveldb
+  # we save the leveldb data into a volume so when we push new code - the data is still there
   db:
     # what boat this warrior will use
-    image: viking:teststack/base
-    # this viking always goes the same place
-    fixed: true
+    image: viking:teststack/src
+    # expose docker ports - this automatically writes an endpoint to etcd for everything to see
+    expose:
+      - 80
+    # allow persistent data - if a container has a volume it means it will be run on the same server each time
+    volume:
+      - /data/db
+    # the command we run for this node
+    run: mon node index.js --volume=/data/db
+    # where the command is run
+    cwd: /srv/app/db
+  # a stateless service - this can be scaled and will run anywhere
   logic:
-    image: viking:teststack/logic
-    # there are two of these warriors in the field at any one time
+    # we use the same base codebase
+    image: viking:teststack/src
+    # this means 2 processes will be run on different servers (if possible)
     scale: 2
+    expose:
+      - 80
     # and they have specific instructions
-    args: mode=1
-  # multiple workers from the same image using arguments to the entrypoint
-  logic2:
-    image: viking:teststack/logic
-    scale: 1
-    args: mode=2
+    run: mon node index.js
+    cwd: /srv/app/logic
+  # a HTTP serving process - this is stateless and will expose domains to the front router
   website:
-    image: viking:teststack/website
+    image: viking:teststack/src
     scale: 3
+    expose:
+      - 80
+    run: mon node index.js
+    cwd: /srv/app/website
     # each domain is automapped to the front end HTTP router
     # this applies to each of the exposed ports in the image
     domains:
@@ -62,19 +55,29 @@ deploy:
       - "www.thetracktube.com"
       - "tracktube.local.digger.io"
       - "tracktube.lan.digger.io"
-  # there are other viking modules like 'website' - the docker module is default
+  # a static website - this required no memory it will be virtuall hosted by the generic web server
   help:
-    type: website
+    # the document_root triggers static website mode
     document_root: ./help/www
+    # static websites get hooked up to the front router too
     domains:
       - "help.thetracktube.com"
       - "*.help.thetracktube.com"
+  # a service - these are fixed containers (with volumes) that are not restarted
   mongo:
-    image: mongo
-    # static is the same as fixed but also never restart (good for database servers)
-    fixed: true
+    image: quarry/mongo
+    # dont restart this process when we push code - multiple versions of code can use the same service this way
+    service: true
+    expose:
+      - 27017
+    volume:
+      - /data/db
   redis:
-    image: redis
-    fixed: true
+    image: quarry/redis
+    service: true
+    expose:
+      - 6379
+    volume:
+      - /data/db
 
   
