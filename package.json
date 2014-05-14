@@ -50,7 +50,7 @@
     "concat-stream": "^1.4.5",
     "etcdjs": "^1.1.1",
     "tail": "^0.3.5",
-    "dockerfile-parse": "^0.0.2",
+    "dockerfile-parse": "^0.0.3",
     "pingstat": "^0.0.1",
     "deck": "^0.0.4",
     "etcd-flatten": "^0.0.2",
