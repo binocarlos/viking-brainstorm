@@ -1,1 +1,0 @@
-FROM quarry/redis
