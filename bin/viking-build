@@ -8,11 +8,12 @@ var async = require('async');
 program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
-  .option('-i, --index <url>', 'commit the docker images to this index')
   .option('-t, --tag <tag>', 'the tag for images')
-  .option('-d, --dir <folder>', 'the folder to build the app from')
+  .option('-a, --app <folder>', 'the folder to build the app from')
   .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
-  .option('-v, --dev', 'dev mode')
+  .option('-r, --registry <url>', 'url of the registry to push to')
+  .option('-p, --push', 'push the created images to an index after building')
+  .option('-d, --dev', 'dev mode')
  
 program.on('--help', function(){
   console.log('  Examples:');
@@ -20,12 +21,17 @@ program.on('--help', function(){
   console.log('    # build current app into local docker images');
   console.log('    $ viking build');
   console.log();
-  console.log('    # build current app to remote docker index');
-  console.log('    $ viking build --index http://127.0.0.1:5001');
+  console.log('    # build a specific app');
+  console.log('    $ viking build --app /home/myapp');
   console.log();
-  console.log('    # build a specific app to remote docker index');
-  console.log('    $ viking build --app /home/myapp --index http://127.0.0.1:5001');
+  console.log('    # build a specific app and tag the images');
+  console.log('    $ viking build --app /home/myapp --tag stage3');
   console.log();
+  console.log('    # push the images to the registry after building');
+  console.log('    $ viking build --push');
+  console.log();
+  console.log('    # push the images to a specific registry after building');
+  console.log('    $ viking build --push --registry http://1.2.3.4:5000');
   console.log();
   process.exit();
 });
@@ -52,9 +58,16 @@ var stack = Stack(config, folder, {
   config:program.config,
   index:program.index,
   dev:program.dev,
-  tag:program.tag
+  tag:program.tag,
+  push:program.push,
+  registry:program.registry
 })
 
-stack.build(function(){
-  console.log('stack built');
+stack.build(function(err){
+  if(err){
+    return utils.error(err)
+  }
+  else{
+    utils.log('stack built', 'done')
+  }
 })
