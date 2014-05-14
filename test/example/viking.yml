@@ -11,6 +11,11 @@ build:
     FROM quarry/monnode
     ADD . /srv/app
     RUN cd /srv/app && npm install
+# images can inherit from other images in viking
+# this image inherits from ragnar/src
+  inherit: |
+    FROM viking:ragnar/src
+    RUN echo "setting" > /etc/mysetting
 
 # our warrior viking formation
 deploy:
@@ -18,7 +23,7 @@ deploy:
   # we save the leveldb data into a volume so when we push new code - the data is still there
   db:
     # what boat this warrior will use
-    image: viking:teststack/src
+    image: viking:ragnar/src
     # expose docker ports - this automatically writes an endpoint to etcd for everything to see
     expose:
       - 80
@@ -32,7 +37,7 @@ deploy:
   # a stateless service - this can be scaled and will run anywhere
   logic:
     # we use the same base codebase
-    image: viking:teststack/src
+    image: viking:ragnar/src
     # this means 2 processes will be run on different servers (if possible)
     scale: 2
     expose:
@@ -42,7 +47,7 @@ deploy:
     cwd: /srv/app/logic
   # a HTTP serving process - this is stateless and will expose domains to the front router
   website:
-    image: viking:teststack/src
+    image: viking:ragnar/src
     scale: 3
     expose:
       - 80
@@ -57,6 +62,7 @@ deploy:
       - "tracktube.lan.digger.io"
   # a static website - this required no memory it will be virtuall hosted by the generic web server
   help:
+    type: website
     # the document_root triggers static website mode
     document_root: ./help/www
     # static websites get hooked up to the front router too
