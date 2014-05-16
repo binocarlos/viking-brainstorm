@@ -12,7 +12,6 @@ program
   .option('-a, --app <folder>', 'the folder to build the app from')
   .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
   .option('-r, --registry <url>', 'url of the registry to push to')
-  .option('-p, --push', 'push the created images to an index after building')
   .option('-d, --dev', 'dev mode')
  
 program.on('--help', function(){
