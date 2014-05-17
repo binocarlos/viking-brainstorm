@@ -1,5 +1,7 @@
 var spawn = require('child_process').spawn
 var exec = require('child_process').exec
+var etcdjs = require('etcdjs')
+var flatten = require('etcd-flatten')
 var tape     = require('tape')
 
 tape('initialize', function(t){
@@ -26,14 +28,9 @@ tape('initialize', function(t){
 
 				// we should have a registry and etcd running
 
-				t.ok(content.match(/etcd/, 'etcd running')
-				t.ok(content.match(/core-registry-system/, 'registry running')
+				t.ok(content.match(/etcd/, 'etcd running'))
+				t.ok(content.match(/core-registry-system/, 'registry running'))
 
-
-
-				console.log('-------------------------------------------');
-				console.log('-------------------------------------------');
-				console.dir(stdout)
 				t.end()
 
 			})
@@ -42,7 +39,40 @@ tape('initialize', function(t){
 	})
 })
 
-tape('boot a simple stack', function(t){
+
+tape('etcd keys', function(t){
+
+
+	var etcd = etcdjs('127.0.0.1:4001')
+
+	etcd.get('/', {
+		recursive:true
+	}, function(err, result){
+
+		if(err) throw new Error(err)
+
+		result = flatten(result.node)
+
+		t.ok(result['/host/viking-0'], 'the host has registered')
+		t.ok(result['/proc/core/registry/system'], 'registry /proc is written')
+		t.equal(result['/run/core/registry/system'], 'viking-0', 'registry is allocated to viking-0')
+		t.equal(result['/fixed/core/registry/system'], 'viking-0', 'registry is fixed to viking-0')
+		t.equal(result['/deploy/viking-0/core/registry/system'], 'core-registry-system', 'registry /deploy is written')
+		t.equal(result['/ports/core/registry/system/5000/tcp/core/registry/system'], 'core-registry-system', 'registry /deploy is written')
+
+
+
+		console.log(JSON.stringify(result, null, 4))
+		process.exit()
+
+		t.end()
+	})
+	
+  
+
+})
+
+tape('build a simple stack and commit to the registry', function(t){
 
 	t.end()
   
