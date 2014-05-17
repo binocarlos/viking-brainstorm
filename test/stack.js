@@ -150,8 +150,6 @@ tape('pull an image from the registry when docker run is used', function(t){
 
 tape('check the right image was pulled correctly', function(t){
 
-	console.log('RUNNING 2: ' + state.testImage)
-
 	var run = spawn('docker', [
 		'run',
 		'-t',

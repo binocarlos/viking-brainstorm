@@ -13,6 +13,7 @@ var Etcd = require('../lib/services/etcd');
 var Registry = require('../lib/services/registry');
 var Deployment = require('../lib/deployment')
 var Host = require('../lib/services/host');
+var tools = require('../lib/tools')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
@@ -109,13 +110,19 @@ function stopHost(done){
 
 }
 
+function cleanUp(done){
+  tools.cleanAll(done)
+}
+
 async.series([
 
   stopStacks,
 
   stopEtcd,
 
-  stopHost
+  stopHost,
+
+  cleanUp
   
 ], function(){
   utils.log('viking-master', 'stopped');

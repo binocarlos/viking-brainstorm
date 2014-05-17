@@ -4,13 +4,6 @@
 var async = require('async');
 var tools = require('../lib/tools')
 
-async.series([
-  function(next){
-    tools.cleanContainers(next)
-  },
-  function(next){
-    tools.cleanImages(next)
-  }
-], function(){
-  console.log('done')
+tools.cleanAll(function(){
+	console.log('done')
 })
