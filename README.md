@@ -32,8 +32,8 @@ viking:
   comment: Ragnar Hamster Lothbrok
 
 # must build boats before sail
-# can use local boats in FROM statements using:
-# FROM viking:<stackname>/<boatname>
+# can use local images in FROM statements using:
+# FROM viking:<stackname>/<imagename>
 build:
   src: |
     FROM quarry/monnode
