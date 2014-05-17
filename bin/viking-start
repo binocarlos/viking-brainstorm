@@ -33,6 +33,11 @@ function getToken(done){
 	}
 
 	token(function(err, token){
+    console.log('-------------------------------------------');
+    console.log('writing token')
+    console.dir(config.network.tokenpath)
+    console.dir(token)
+    config.network.token = token
 	  fs.writeFileSync(config.network.tokenpath, token, 'utf8')
 	  done()
 	})
