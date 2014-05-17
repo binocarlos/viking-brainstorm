@@ -82,6 +82,9 @@ token:
 	@curl https://discovery.etcd.io/new
 	@echo
 
+clean:
+	viking stop && sudo viking reset
+
 #links:
 #	rm -f /usr/local/bin/viking
 #	ln -s $(CURDIR)/viking /usr/local/bin/viking

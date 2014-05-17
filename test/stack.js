@@ -71,8 +71,40 @@ tape('etcd keys', function(t){
 
 tape('build a simple stack and commit to the registry', function(t){
 
-	t.end()
-  
+	var build = spawn('viking', [
+		'build'
+	], {
+		stdio:'inherit',
+		cwd:__dirname + '/example'
+	})
+
+	var etcd = etcdjs('127.0.0.1:4001')
+
+	build.on('error', function(e){
+		throw new Error(e)
+	})
+
+	build.on('close', function(){
+
+		console.log('stack has been built and uploaded to the registry')
+
+		setTimeout(function(){
+
+			etcd.get('/', {
+				recursive:true
+			}, function(err, result){
+				if(err) throw err
+
+				result = flatten(result.node)
+
+				console.log('-------------------------------------------');
+				console.log('-------------------------------------------');
+				console.dir(result)
+				console.log(JSON.stringify(result, null, 4))
+				t.end()
+			})
+		}, 2000)
+	})
 
 })
 
