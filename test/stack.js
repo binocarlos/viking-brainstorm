@@ -3,6 +3,7 @@ var exec = require('child_process').exec
 var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var tape     = require('tape')
+var config = require('../lib/config')()
 
 tape('initialize', function(t){
 	var start = spawn('viking', [
@@ -18,6 +19,7 @@ tape('initialize', function(t){
 
 	start.on('close', function(){
 
+		console.log('wait a few seconds to let everything get setup')
 		setTimeout(function(){
 			exec('docker ps', function(err, stdout, stderr){
 				if(err || stderr){
@@ -58,12 +60,7 @@ tape('etcd keys', function(t){
 		t.equal(result['/run/core/registry/system'], 'viking-0', 'registry is allocated to viking-0')
 		t.equal(result['/fixed/core/registry/system'], 'viking-0', 'registry is fixed to viking-0')
 		t.equal(result['/deploy/viking-0/core/registry/system'], 'core-registry-system', 'registry /deploy is written')
-		t.equal(result['/ports/core/registry/system/5000/tcp/core/registry/system'], 'core-registry-system', 'registry /deploy is written')
-
-
-
-		console.log(JSON.stringify(result, null, 4))
-		process.exit()
+		t.equal(result['/ports/core/registry/system/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
 
 		t.end()
 	})
