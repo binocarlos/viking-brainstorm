@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+var program = require('commander')
+var spawn = require('child_process').spawn
+var path = require('path')
+var fs = require('fs')
+var async = require('async')
+var utils = require('component-consoler');
+var Etcd = require('../lib/services/etcd');
+var etcdjs = require('etcdjs')
+var config = require('../lib/config')();
+var token = require('../lib/tools/etcdtoken')
+var Host = require('../lib/services/host')
+var Tail = require('tail').Tail;
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+   
+program.parse(process.argv);
+
+function tailLogs(next){
+  
+  Host(config, function(err, host){
+    if(err) return done(err)
+
+      var files = host.files()
+
+      if(!fs.existsSync(files.log)){
+        console.error('the viking host is not running - cannot tail')
+        return next()
+      }
+      var tail = new Tail(files.log);
+
+      tail.on("line", function(data) {
+        console.log(data);
+      });
+  })
+  
+}
+
+async.series([	
+  tailLogs
+], function(){
+	process.exit();
+})
