@@ -4,7 +4,10 @@ var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var tape     = require('tape')
 var config = require('../lib/config')()
+var concat = require('concat-stream')
+var state = {}
 
+// start viking - this will boot etcd and get the registry running
 tape('initialize', function(t){
 	var start = spawn('viking', [
 		'start',
@@ -14,7 +17,8 @@ tape('initialize', function(t){
 	})
 
 	start.on('error', function(e){
-		throw new Error(e)
+		t.fail(e.toString())
+		t.end()
 	})
 
 	start.on('close', function(){
@@ -23,7 +27,8 @@ tape('initialize', function(t){
 		setTimeout(function(){
 			exec('docker ps', function(err, stdout, stderr){
 				if(err || stderr){
-					throw new Error(stderr)
+					t.fail(stderr.toString())
+					return t.end()
 				}
 
 				var content = stdout.toString()
@@ -41,7 +46,8 @@ tape('initialize', function(t){
 	})
 })
 
-
+// sanity check for the registry having booted
+// to boot - it will have gone throught he dispatch and written etcd keys
 tape('etcd keys', function(t){
 
 
@@ -51,7 +57,10 @@ tape('etcd keys', function(t){
 		recursive:true
 	}, function(err, result){
 
-		if(err) throw new Error(err)
+		if(err){
+			t.fail(err.toString())
+			return t.end()
+		}
 
 		result = flatten(result.node)
 
@@ -81,7 +90,8 @@ tape('build a simple stack and commit to the registry', function(t){
 	var etcd = etcdjs('127.0.0.1:4001')
 
 	build.on('error', function(e){
-		throw new Error(e)
+		t.fail(e.toString())
+		return t.end()
 	})
 
 	build.on('close', function(){
@@ -90,21 +100,84 @@ tape('build a simple stack and commit to the registry', function(t){
 
 		setTimeout(function(){
 
-			etcd.get('/', {
+			etcd.get('/images', {
 				recursive:true
 			}, function(err, result){
-				if(err) throw err
+				if(err){
+					t.fail(err.toString())
+					return t.end()	
+				}
+				
 
 				result = flatten(result.node)
 
-				console.log('-------------------------------------------');
-				console.log('-------------------------------------------');
-				console.dir(result)
-				console.log(JSON.stringify(result, null, 4))
+				state.testImage = result['/images/ragnar/inherit/default']
+
+				t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')
+
 				t.end()
 			})
 		}, 2000)
 	})
+
+})
+
+tape('pull an image from the registry when docker run is used', function(t){
+
+	console.log('RUNNING: ' + state.testImage)
+
+	var run = spawn('docker', [
+		'run',
+		'-t',
+		state.testImage,
+		'echo',
+		'/etc/mysetting'
+	], {
+		stdio:'inherit'
+	})
+
+	run.on('error', function(err){
+		t.fail(e.toString())
+		t.end()
+	})
+	run.on('close', function(){
+		t.end()
+	})
+
+
+})
+
+
+tape('check the right image was pulled correctly', function(t){
+
+	console.log('RUNNING 2: ' + state.testImage)
+
+	var run = spawn('docker', [
+		'run',
+		'-t',
+		state.testImage,
+		'echo',
+		'/etc/mysetting'
+	])
+
+	var pass = false
+
+	run.stdout.on('data', function (data) {
+		if(data.toString().match(/\/etc\/mysetting/)){
+			pass = true
+		}
+	  console.log('stdout: ' + data);
+	});
+
+	run.stderr.on('data', function (data) {
+	  console.log('stderr: ' + data);
+	  t.fail(data.toString())
+	});
+
+	run.on('close', function (code) {
+	  t.ok(pass, 'the output contained the value buried in the uploaded image')
+	  t.end()
+	});
 
 })
 
@@ -118,7 +191,8 @@ tape('shutdown', function(t){
 	})
 
 	stop.on('error', function(e){
-		throw new Error(e)
+		t.fail(e.toString())
+		t.end()
 	})
 
 	stop.on('close', function(){
