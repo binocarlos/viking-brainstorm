@@ -216,14 +216,57 @@ The database for the stack is distributed using [etcd](https://github.com/coreos
 
 The keys are:
 
- * /image/stack/node/tag - the images we have uploaded to the local registry
+ * /image/stack/tag/node - the images we have uploaded to the local registry
  * /host/hostname - a list of the servers currently on our network
- * /proc/stack/node/tag - the list of processes to run
- * /run/stack/node/tag = hostname - allocation table
- * /deploy/hostname/stack/node/tag = <containerName> - deployment table
- * /counter/hostname/stack/node/tag - failed run table
- * /ports/stack/node/port/proto/ip/hostPort/jobId - network
- * /images/stack/node/tag - images uploaded to the registry
+ * /proc/stack/tag/node - the list of processes to run
+ * /run/stack/tag/node = hostname - allocation table
+ * /deploy/hostname/stack/tag/node = <containerName> - deployment table
+ * /counter/hostname/stack/tag/node - failed run table
+ * /ports/stack/tag/node/port/proto/ip/hostPort/jobId - network
+ * /images/stack/tag/node - images uploaded to the registry
+
+
+## api
+
+The rest api:
+
+### `GET /v1/ping`
+
+return true if the API is working
+
+### `GET /v1/info`
+
+return a JSON object of the current state
+
+### `GET /v1/network`
+
+list the servers on the network
+
+### `GET /v1/server/SERVERNAME`
+
+get the full JSON for a single server
+
+### `GET /v1/stacks`
+
+get a list of the current stacks
+
+### `GET /v1/stack/STACKNAME`
+
+get the info for a stack
+
+### `GET /v1/tags/STACKNAME`
+
+get a list of the tags for a stack
+
+### `GET /v1/nodes/STACKNAME/TAG`
+
+get a list of the nodes for a stack + tag
+
+### `GET /v1/allocate/STACKNAME/TAG/NODENAME`
+
+
+
+
 
 ## license
 
