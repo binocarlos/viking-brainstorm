@@ -36,7 +36,7 @@ tape('initialize', function(t){
 				// we should have a registry and etcd running
 
 				t.ok(content.match(/etcd/, 'etcd running'))
-				t.ok(content.match(/core-registry-system/, 'registry running'))
+				t.ok(content.match(/core-system-registry/, 'registry running'))
 
 				t.end()
 
@@ -65,11 +65,11 @@ tape('etcd keys', function(t){
 		result = flatten(result.node)
 
 		t.ok(result['/host/viking-0'], 'the host has registered')
-		t.ok(result['/proc/core/registry/system'], 'registry /proc is written')
-		t.equal(result['/run/core/registry/system'], 'viking-0', 'registry is allocated to viking-0')
-		t.equal(result['/fixed/core/registry/system'], 'viking-0', 'registry is fixed to viking-0')
-		t.equal(result['/deploy/viking-0/core/registry/system'], 'core-registry-system', 'registry /deploy is written')
-		t.equal(result['/ports/core/registry/system/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
+		t.ok(result['/proc/core/system/registry'], 'registry /proc is written')
+		t.equal(result['/run/core/system/registry'], 'viking-0', 'registry is allocated to viking-0')
+		t.equal(result['/fixed/core/system/registry'], 'viking-0', 'registry is fixed to viking-0')
+		t.equal(result['/deploy/viking-0/core/system/registry'], 'core-system-registry', 'registry /deploy is written')
+		t.equal(result['/ports/core/system/registry/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
 
 		t.end()
 	})
@@ -111,7 +111,7 @@ tape('build a simple stack and commit to the registry', function(t){
 
 				result = flatten(result.node)
 
-				state.testImage = result['/images/ragnar/inherit/default']
+				state.testImage = result['/images/ragnar/default/inherit']
 
 				t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')
 
@@ -125,6 +125,11 @@ tape('build a simple stack and commit to the registry', function(t){
 tape('pull an image from the registry when docker run is used', function(t){
 
 	console.log('RUNNING: ' + state.testImage)
+
+	if(!state.testImage){
+		t.fail('has no test image name')
+		return t.end()
+	}
 
 	var run = spawn('docker', [
 		'run',
@@ -149,6 +154,12 @@ tape('pull an image from the registry when docker run is used', function(t){
 
 
 tape('check the right image was pulled correctly', function(t){
+
+
+	if(!state.testImage){
+		t.fail('has no test image name')
+		return t.end()
+	}
 
 	var run = spawn('docker', [
 		'run',

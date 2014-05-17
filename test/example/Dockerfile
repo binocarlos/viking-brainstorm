@@ -1,3 +1,2 @@
-FROM quarry/monnode
-ADD . /srv/app
-RUN cd /srv/app && npm install
+FROM ragnar-default-src
+RUN echo "setting" > /etc/mysetting
