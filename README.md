@@ -6,13 +6,15 @@ Docker PaaS Platform for node.js applications.
 The main objective of viking is to help you move westward and colonize server-farms with viking apps.
 
 STATUS - PRE-ALPHA - do not try to use at the moment
-                               
-` /-\  //\ (-)  ~  ~  (-)  ~~~~     ~~~~ `
-` \\-\//-/ |-| |-|/-/ |-| |----\   /----|`
-`  \\-V-/  |-| |- -<  |-| |-|||-| |-(_|-|`
-`   \\-/   |-| |-|\-\ |-| |-|||-|  \----|`
-`                                   __|-|`
-`                                  |---/ `
+
+```
+ /-\  //\ (-)  ~  ~  (-)  ~~~~     ~~~~ 
+ \\-\//-/ |-| |-|/-/ |-| |----\   /----|
+  \\-V-/  |-| |- -<  |-| |-|||-| |-(_|-|
+   \\-/   |-| |-|\-\ |-| |-|||-|  \----|
+                                   __|-|
+                                  |---/ 
+```
 
 ## installation
 
@@ -147,7 +149,7 @@ the main planner function - dowding knows what resources (servers) we have and t
 monitors all running services and keeps /ports up to date with current endpoints
 
 ### slave
-runs on each viking slave - listens to /deploy/<hostname>
+runs on each viking slave - listens to /deploy/hostname
 
 ## config
 load the config from /etc/viking and env
@@ -180,7 +182,7 @@ represent a single process to be run
 keep a log of images uploaded to the registry
 
 ## hostmonitor
-running on every viking host - update /host/<hostname>
+running on every viking host - update /host/hostname
 
 ## endpoints
 load the network information for running processes
@@ -201,12 +203,12 @@ The flow for the keys when deploying a job:
  3. dowding choose which server from /host
  4. dowding use /fixed to keep services locked onto one server
  5. deployment runJob which writes to 
-   * /run/<stack>/<node>/<tag> = <hostname>
-   * /deploy/<hostname>/<stack>/<node>/<tag> = ''
- 6. slave which is listening to /deploy/<hostname>
+   * /run/stack/node/tag = hostname
+   * /deploy/hostname/stack/node/tag = ''
+ 6. slave which is listening to /deploy/hostname
  7. use /count (via deployment) for sanity check against failing containers
- 8. write /deploy/<hostname>/<stack>/<node>/<tag> = container_name
- 9. write /ports/<stack>/<node>/<port>/<proto>/<ip>/<hostPort>/<jobId>
+ 8. write /deploy/hostname/stack/node/tag = container_name
+ 9. write /ports/stack/node/port/proto/ip/hostPort/jobId
 
 ## etcd keys
 
@@ -214,14 +216,14 @@ The database for the stack is distributed using [etcd](https://github.com/coreos
 
 The keys are:
 
- * /image/<stack>/<node>/<tag> - the images we have uploaded to the local registry
- * /host/<hostname> - a list of the servers currently on our network
- * /proc/<stack>/<node>/<tag> - the list of processes to run
- * /run/<stack>/<node>/<tag> = <hostname> - allocation table
- * /deploy/<hostname>/<stack>/<node>/<tag> = <containerName> - deployment table
- * /counter/<hostname>/<stack>/<node>/<tag> - failed run table
- * /ports/<stack>/<node>/<port>/<proto>/<ip>/<hostPort>/<jobId> - network
- * /images/<stack>/<node>/<tag> - images uploaded to the registry
+ * /image/stack/node/tag - the images we have uploaded to the local registry
+ * /host/hostname - a list of the servers currently on our network
+ * /proc/stack/node/tag - the list of processes to run
+ * /run/stack/node/tag = hostname - allocation table
+ * /deploy/hostname/stack/node/tag = <containerName> - deployment table
+ * /counter/hostname/stack/node/tag - failed run table
+ * /ports/stack/node/port/proto/ip/hostPort/jobId - network
+ * /images/stack/node/tag - images uploaded to the registry
 
 ## license
 
