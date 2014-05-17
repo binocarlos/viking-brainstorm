@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+
+var utils = require('component-consoler');
+var path = require('path');
+var fs = require('fs');
+var log = utils.log;
+var config = require('../lib/config')();
+var API = require('../lib/api')
+
+program
+  .option('-p, --pretty', 'pretty print JSON')
+  .usage('')
+
+var api = API(config)
+
+api.hosts({
+
+}, function(err, results){
+  if(err){
+    console.error(err)
+    process.exit(1)
+  }
+
+  var output = program.pretty ? JSON.stringify(results, null, 4) : JSON.stringify(results)
+  console.log(output)
+})
