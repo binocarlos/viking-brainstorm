@@ -26,7 +26,7 @@ async.series([
   function(next){
     var etcdclient = etcdjs(config.network.etcd)
 
-    async.forEachSeries(['/host', '/proc', '/run'], function(path, nextPath){
+    async.forEachSeries(['/host', '/proc', '/run', '/counter', '/deploy', '/fixed', '/ports'], function(path, nextPath){
       utils.log('remove etcd path', path);
       etcdclient.rmdir(path, {
         recursive:true
