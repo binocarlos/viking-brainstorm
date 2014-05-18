@@ -11,12 +11,12 @@ var state = {}
 function runCommands(commands, done){
 
 	async.forEachSeries(commands, function(command, nextCmd){
-		var process = spawn(command, [], {
+		var p = spawn(command, [], {
 			stdio:[null, process.stdout, process.stderr]
 		})
 
-		process.on('error', nextCmd)
-		process.on('close', nextcmd)
+		p.on('error', nextCmd)
+		p.on('close', nextcmd)
 	}, done)
 }
 
