@@ -49,7 +49,7 @@ async.series([
       etcd.reset(next);      
     });
 
-  },
+  }/*,
 
   function(next){
     var resetfirewall = spawn('viking', ['firewall', 'reset'], { stdio: 'inherit', customFds: [0, 1, 2] });
@@ -57,7 +57,7 @@ async.series([
     resetfirewall.on('close', function(code){
       next();
     });
-  }
+  }*/
 
 ], function(){
   utils.log('viking', 'reset');
