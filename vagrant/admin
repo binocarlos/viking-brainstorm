@@ -13,9 +13,9 @@ case "$1" in
 
   getdates)
     SAMEDATE=`date +%s`
-    ssh -oStrictHostKeyChecking=no viking-0 "date"
-    ssh -oStrictHostKeyChecking=no viking-1 "date"
     ssh -oStrictHostKeyChecking=no viking-2 "date"
+    ssh -oStrictHostKeyChecking=no viking-1 "date"
+    ssh -oStrictHostKeyChecking=no viking-0 "date"
     ;;
 
   ssh)
