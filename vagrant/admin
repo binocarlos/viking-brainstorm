@@ -3,6 +3,29 @@ set -eo pipefail
 export VIKING_ROOT=${VIKING_ROOT:="/var/lib/viking"}
 
 case "$1" in
+
+  setdates)
+    SAMEDATE=`date +%s`
+    ssh -oStrictHostKeyChecking=no viking-0 "sudo date +%s -s @$SAMEDATE"
+    ssh -oStrictHostKeyChecking=no viking-1 "sudo date +%s -s @$SAMEDATE"
+    ssh -oStrictHostKeyChecking=no viking-2 "sudo date +%s -s @$SAMEDATE"
+    ;;
+
+  getdates)
+    SAMEDATE=`date +%s`
+    ssh -oStrictHostKeyChecking=no viking-0 "date"
+    ssh -oStrictHostKeyChecking=no viking-1 "date"
+    ssh -oStrictHostKeyChecking=no viking-2 "date"
+    ;;
+
+  ssh)
+    shift
+    cmd=$*
+    ssh -oStrictHostKeyChecking=no viking-0 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-1 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-2 "$cmd"
+    ;;
+
   init)
     touch /etc/viking/vagranthost
     touch /etc/viking/vagrantip
