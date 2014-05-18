@@ -35,6 +35,27 @@ function tailLogs(next){
         console.log(data);
       });
   })
+
+
+  var docker = Docker()
+
+  docker.containerId('core-etcd', function(err, id){
+
+    if(err){
+      return utils.error(err)
+    }
+
+    id = id.replace(/\W/g, '')
+    var etcdAttach = spawn('docker', [
+      'attach',
+      id
+    ], {
+      stdio:[null, process.stdout, process.stderr]
+    })
+
+
+
+  })
   
 }
 
