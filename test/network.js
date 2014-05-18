@@ -75,28 +75,48 @@ tape('etcd should be running on all viking servers', function(t){
 	})
 })
 
-tape('the registry should be running on viking-0', function(t){
+function checkRegistry(t){
+	exec('ssh viking-0 docker ps', function(err, stdout, stderr){
+		if(err){
+			t.fail(err)
+			return t.end()
+		}
+		if(stderr){
+			t.fail(stderr.toString)
+			return t.end()
+		}
 
+		var match = stdout.toString().match(/registry/)
+
+		t.ok(match, 'registry was found in the docker ps output')
+		t.end()
+	})
+}
+
+tape('the registry should be running on viking-0', function(t){	
 	function runTest(){
-		exec('ssh viking-0 docker ps', function(err, stdout, stderr){
-			if(err){
-				t.fail(err)
-				return t.end()
-			}
-			if(stderr){
-				t.fail(stderr.toString)
-				return t.end()
-			}
-
-			var match = stdout.toString().match(/registry/)
-
-			t.ok(match, 'registry was found in the docker ps output')
-			t.end()
-		})
+		checkRegistry(t)
 	}
-
 	console.log('wait a few seconds to let everything get setup')
 	setTimeout(runTest, 5000)
+	
+})
+
+tape('killing viking-2 should not kill the registry on viking-0', function(t){
+
+	runCommands([
+		'ssh viking-2 viking stop'
+	], function(err){
+		if(err){
+			t.fail(err)
+			return t.end()
+		}
+
+		setTimeout(function(){
+			checkRegistry(t)
+		}, 2000)
+
+	})
 	
 })
 
