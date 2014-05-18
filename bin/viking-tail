@@ -47,6 +47,10 @@ function tailLogs(next){
     }
 
     id = id.replace(/\W/g, '')
+
+    console.log('-------------------------------------------');
+    console.log('-------------------------------------------');
+    console.log('attach ' + id)
     var etcdAttach = spawn('docker', [
       'attach',
       id
