@@ -6,17 +6,22 @@ var flatten = require('etcd-flatten')
 var tape     = require('tape')
 var config = require('../lib/config')()
 var concat = require('concat-stream')
+var spawnargs = require('spawn-args')
 var state = {}
 
 function runCommands(commands, done){
 
 	async.forEachSeries(commands, function(command, nextCmd){
-		var p = spawn(command, [], {
+
+		var args = spawnargs(command)
+
+		var cmd = args.shift()
+		var p = spawn(cmd, args, {
 			stdio:[null, process.stdout, process.stderr]
 		})
 
 		p.on('error', nextCmd)
-		p.on('close', nextcmd)
+		p.on('close', nextCmd)
 	}, done)
 }
 
@@ -35,10 +40,64 @@ tape('initialize', function(t){
 			return t.end()
 		}
 
+		t.pass('vikings started')
 		t.end()
 
 	})
 
+})
+
+tape('etcd should be running on all viking servers', function(t){
+	async.forEachSeries(['viking-0', 'viking-1', 'viking-2'], function(hostname, nextHost){
+		exec('ssh ' + hostname + ' docker ps', function(err, stdout, stderr){
+			if(err){
+				t.fail(err)
+				return nextHost()
+			}
+			if(stderr){
+				t.fail(stderr.toString)
+				return nextHost()
+			}
+
+			var match = stdout.toString().match(/core-etcd/)
+
+			t.ok(match, 'etcd was found in the docker ps output')
+			nextHost()
+		})
+	}, function(err){
+		if(err){
+			t.fail(err)
+			return t.end()
+		}
+
+		t.pass('etcd was found in all servers')
+		t.end()
+	})
+})
+
+tape('the registry should be running on viking-0', function(t){
+
+	function runTest(){
+		exec('ssh viking-0 docker ps', function(err, stdout, stderr){
+			if(err){
+				t.fail(err)
+				return t.end()
+			}
+			if(stderr){
+				t.fail(stderr.toString)
+				return t.end()
+			}
+
+			var match = stdout.toString().match(/registry/)
+
+			t.ok(match, 'registry was found in the docker ps output')
+			t.end()
+		})
+	}
+
+	console.log('wait a few seconds to let everything get setup')
+	setTimeout(runTest, 5000)
+	
 })
 
 tape('shutdown', function(t){
@@ -58,6 +117,7 @@ tape('shutdown', function(t){
 			return t.end()
 		}
 
+		t.pass('vikings ended')
 		t.end()
 
 	})
