@@ -11,6 +11,7 @@ var config = require('../lib/config')();
 var token = require('../lib/tools/etcdtoken')
 var Host = require('../lib/services/host')
 var Tail = require('tail').Tail;
+var Docker = require('../lib/docker')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
