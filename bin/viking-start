@@ -24,13 +24,15 @@ program.parse(process.argv);
 
 function getToken(done){
 
+
+  if(!program.seed){
+    return done()
+  }
+  
   if(!config.master){
     throw new Error('cannot seed a viking server unless it is a master')
   }
 
-	if(!program.seed){
-		return done()
-	}
 
 	token(function(err, token){
     console.log('-------------------------------------------');

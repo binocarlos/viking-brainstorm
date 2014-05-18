@@ -38,26 +38,21 @@ EOF
     hostname $host
     echo $host /etc/hostname
 
+    tags=""
     meta=""
-    master=""
 
     # we need this each time because an etcd discovery cluster freaks out if everyone leaves
     if [[ $host == "viking-0" ]]; then
       wget -qO- https://discovery.etcd.io/new > /vagrant/.vagrant/vikingtoken
-      master="master: true"
-      meta="fixed: true"
-    fi
-
-    # 
-    if [[ $host == "viking-1" ]]; then
-      master="master: true"
+      tags="db"
     fi
 
     cat<<EOF > /etc/viking/auto.conf
-$master
 $meta
+master: true
 slave: true
 env: development
+tags: $tags
 network:
     hostname: "$host"
     public: "$ip"
