@@ -21,8 +21,9 @@ if(!uid){
 }
 
 console.log('');
-async.series([
 
+async.series([
+/*
   function(next){
     var etcdclient = etcdjs(config.network.etcd)
 
@@ -35,7 +36,7 @@ async.series([
       })
     }, next)
     
-  },
+  },*/
 
 
   function(next){

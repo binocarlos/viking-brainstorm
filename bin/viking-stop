@@ -19,22 +19,11 @@ program
   //.usage('viking build [scripts] [styles] [files]')
   .usage('')
   .option('-f, --filter [filter]', 'only start the named service (etcd, host)')
-  .option('-s, --stack [stackname]', 'stop a single stack')
 
 program.parse(process.argv);
 
 if(program.stack){
   program.filter = 'stack'
-}
-
-function stopStack(etcd, deployment, name, done){
-  
-  utils.log('stack: ' + name, 'stopping')
-  deployment.removeStack(name, function(err){
-    utils.log('stack: ' + name, 'stopped')
-    done(err)
-  })
-
 }
 
 function stopStacks(done){
@@ -44,21 +33,11 @@ function stopStacks(done){
   var etcd = etcdjs(config.network.etcd)
   var deployment = Deployment(config, etcd)
 
-  deployment.getStackNames(function(err, stacks){
-    stacks = (stacks || []).filter(function(stack){
-
-      return program.stack && program.stack!=stack ? false : true
-      
-    })
-
-    async.forEachSeries(stacks, function(stack, nextStack){
-      stopStack(etcd, deployment, stack, nextStack)
-    }, function(err){
-      if(err) return done(err)
-      setTimeout(done, 2000)
-
-    })
+  deployment.removeServer(config.network.hostname, true, function(err){
+    utils.log('host removed', config.network.hostname)
+    setTimeout(done, 3000)
   })
+
 }
 
 function stopEtcd(done){
@@ -118,9 +97,9 @@ async.series([
 
   stopStacks,
 
-  stopEtcd,
-
   stopHost,
+
+  stopEtcd,
 
   cleanUp
   
