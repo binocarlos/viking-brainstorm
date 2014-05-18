@@ -29,7 +29,7 @@ This is an example stack that has 3 node.js workers - 1 one them with a volume a
 # our viking is born
 viking:
   name: ragnar
-  comment: Ragnar Hamster Lothbrok
+  comment: Ragnarr Hamster Loðbrók
 
 # must build boats before sail
 # can use local images in FROM statements using:
