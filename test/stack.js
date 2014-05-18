@@ -35,8 +35,8 @@ tape('initialize', function(t){
 
 				// we should have a registry and etcd running
 
-				t.ok(content.match(/etcd/, 'etcd running'))
-				t.ok(content.match(/core-system-registry/, 'registry running'))
+				t.ok(content.match(/etcd/), 'etcd running')
+				t.ok(content.match(/core-system-registry/), 'registry running')
 
 				t.end()
 
@@ -49,6 +49,7 @@ tape('initialize', function(t){
 // sanity check for the registry having booted
 // to boot - it will have gone throught he dispatch and written etcd keys
 tape('etcd keys', function(t){
+
 
 
 	var etcd = etcdjs('127.0.0.1:4001')
