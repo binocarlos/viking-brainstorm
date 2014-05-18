@@ -24,15 +24,15 @@ case "$1" in
     echo "--------------------------------------------------"
     echo "viking-2"
     echo "--------------------------------------------------"
-    ssh -oStrictHostKeyChecking=no viking-2 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-2 "$cmd" || true
     echo "--------------------------------------------------"
     echo "viking-1"
     echo "--------------------------------------------------"
-    ssh -oStrictHostKeyChecking=no viking-1 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-1 "$cmd" || true
     echo "--------------------------------------------------"
     echo "viking-0"
     echo "--------------------------------------------------"
-    ssh -oStrictHostKeyChecking=no viking-0 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-0 "$cmd" || true
     ;;
 
   token)
