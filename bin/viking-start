@@ -20,6 +20,7 @@ program
   .option('-e, --env [filepath]', 'a file containing the core env for booting (s3, do etc)')
   .option('-f, --filter [filter]', 'only start the named service (etcd, host)')
   .option('-t, --tail', 'tail the host logs')
+  .option('-te, --tailetcd', 'tail the etcd logs')
  
 program.parse(process.argv);
 
@@ -162,6 +163,9 @@ function tailLogs(next){
           console.log('[host] ' + data)
         });
     })
+  }
+
+  if(program.tailetcd){
 
     var docker = Docker()
 
@@ -184,11 +188,8 @@ function tailLogs(next){
       })
 
     })
+  }
 
-  }
-  else{
-    next()
-  }
 }
 
 async.series([
