@@ -83,7 +83,7 @@ token:
 	@echo
 
 clean:
-	./vagrant/admin ssh viking stop && ./vagrant/admin ssh sudo viking reset && ./vagrant/admin ssh sudo killall node
+	./vagrant/admin ssh viking stop && ./vagrant/admin ssh sudo killall node && ./vagrant/admin ssh sudo viking reset 
 
 #links:
 #	rm -f /usr/local/bin/viking
