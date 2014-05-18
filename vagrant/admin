@@ -21,8 +21,17 @@ case "$1" in
   ssh)
     shift
     cmd=$*
+    echo "--------------------------------------------------"
+    echo "viking-0"
+    echo "--------------------------------------------------"
     ssh -oStrictHostKeyChecking=no viking-0 "$cmd"
+    echo "--------------------------------------------------"
+    echo "viking-1"
+    echo "--------------------------------------------------"
     ssh -oStrictHostKeyChecking=no viking-1 "$cmd"
+    echo "--------------------------------------------------"
+    echo "viking-2"
+    echo "--------------------------------------------------"
     ssh -oStrictHostKeyChecking=no viking-2 "$cmd"
     ;;
 
