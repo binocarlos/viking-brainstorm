@@ -1,8 +1,8 @@
 # our viking is born
 viking:
   name: ragnar
-  comment: Ragnar Hamster Lothbrok
-
+  comment: Ragnarr Hamster Loðbrók
+ 
 # must build boats before sail
 # can use local boats in FROM statements using:
 # FROM viking:<stackname>/<boatname>
