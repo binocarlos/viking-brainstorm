@@ -13,26 +13,31 @@ case "$1" in
 
   getdates)
     SAMEDATE=`date +%s`
-    ssh -oStrictHostKeyChecking=no viking-2 "date"
-    ssh -oStrictHostKeyChecking=no viking-1 "date"
     ssh -oStrictHostKeyChecking=no viking-0 "date"
+    ssh -oStrictHostKeyChecking=no viking-1 "date"
+    ssh -oStrictHostKeyChecking=no viking-2 "date"
     ;;
 
   ssh)
     shift
     cmd=$*
     echo "--------------------------------------------------"
-    echo "viking-0"
+    echo "viking-2"
     echo "--------------------------------------------------"
-    ssh -oStrictHostKeyChecking=no viking-0 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-2 "$cmd"
     echo "--------------------------------------------------"
     echo "viking-1"
     echo "--------------------------------------------------"
     ssh -oStrictHostKeyChecking=no viking-1 "$cmd"
     echo "--------------------------------------------------"
-    echo "viking-2"
+    echo "viking-0"
     echo "--------------------------------------------------"
-    ssh -oStrictHostKeyChecking=no viking-2 "$cmd"
+    ssh -oStrictHostKeyChecking=no viking-0 "$cmd"
+    ;;
+
+  token)
+    wget -qO- https://discovery.etcd.io/new > /vagrant/.vagrant/vikingtoken
+    cat /vagrant/.vagrant/vikingtoken
     ;;
 
   init)
@@ -75,7 +80,6 @@ EOF
 
     # we need this each time because an etcd discovery cluster freaks out if everyone leaves
     if [[ $host == "viking-0" ]]; then
-      wget -qO- https://discovery.etcd.io/new > /vagrant/.vagrant/vikingtoken
       tags="db"
     fi
 
