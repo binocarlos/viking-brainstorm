@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-var Bootstrap = reqiire('../lib/bootstrap')
+var Bootstrap = require('../lib/bootstrap')
 
 Bootstrap.env(process.argv.slice(2))

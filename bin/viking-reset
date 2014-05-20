@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var Bootstrap = reqiire('../lib/bootstrap')
-
+var Bootstrap = require('../lib/bootstrap')
+var utils = require('component-consoler')
 var uid = parseInt(process.env.SUDO_UID);
 
 if(!uid){

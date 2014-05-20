@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var Bootstrap = reqiire('../lib/bootstrap')
+var Bootstrap = require('../lib/bootstrap')
+var async = require('async')
+var tools = require('../lib/tools')
+var utils = require('component-consoler')
 
 program
   //.usage('viking build [scripts] [styles] [files]')

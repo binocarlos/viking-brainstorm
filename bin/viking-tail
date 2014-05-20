@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var program = require('commander')
-var Bootstrap = reqiire('../lib/bootstrap')
+var Bootstrap = require('../lib/bootstrap')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
