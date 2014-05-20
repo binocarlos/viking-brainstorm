@@ -1,17 +1,6 @@
 #!/usr/bin/env node
 var program = require('commander')
-var spawn = require('child_process').spawn
-var path = require('path')
-var fs = require('fs')
-var async = require('async')
-var utils = require('component-consoler');
-var Etcd = require('../lib/services/etcd');
-var etcdjs = require('etcdjs')
-var config = require('../lib/config')();
-var token = require('../lib/tools/etcdtoken')
-var Host = require('../lib/services/host')
-var Tail = require('tail').Tail;
-var Docker = require('../lib/docker')
+var Bootstrap = reqiire('../lib/bootstrap')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
@@ -24,61 +13,22 @@ program
  
 program.parse(process.argv);
 
-function getToken(done){
-
+function writeToken(done){
 
   if(!program.seed){
     return done()
   }
   
-  if(!config.master){
-    throw new Error('cannot seed a viking server unless it is a master')
-  }
-
-
-	token(function(err, token){
-    console.log('-------------------------------------------');
-    console.log('writing token')
-    console.dir(config.network.tokenpath)
-    console.dir(token)
-    config.network.token = token
-	  fs.writeFileSync(config.network.tokenpath, token, 'utf8')
-	  done()
-	})
+  Bootstrap.writeToken(done)
 }
 
 function startEtcd(done){
 
-  // only run etcd on masters
-  if(!config.master){
-    return done()
-  }
-
   if(program.filter && program.filter!='etcd'){
     return done()
   }
-  config.tail = program.tail
-  Etcd(config, function(err, etcd){
 
-    if(err) return done(err)
-
-    etcd.on('running', function(){
-      utils.log('etcd', 'already running')
-    })
-
-    etcd.on('removed', function(){
-      utils.log('etcd', 'removed old container')
-    })
-
-    etcd.on('started', function(){
-      utils.log('etcd', 'running')
-    })
-
-    etcd.start(function(){
-      setTimeout(done, 1000)
-    })
-  })
-
+  Bootstrap.startetcd(program, done)
 }
 
 function injectEnv(done){
@@ -86,33 +36,9 @@ function injectEnv(done){
     return done()
   }
 
-  if(!fs.existsSync(program.env)){
-    return done()
-  }
-
-  var etcdParts = (config.network.etcd || '127.0.0.1:4001').split(':')
-
-  var spawnArgs = [
-    __dirname + '/../node_modules/denver/cli.js',
-    '--hostname',
-    etcdParts[0],
-    '--port',
-    etcdParts[1]
-  ].concat([
-    'inject',
-    'vikingcore'
-  ])
-
-  var envFile = fs.createReadStream(program.env, 'utf8')
-
-  var inject = spawn('node', spawnArgs, {
-    stdio:['pipe', process.stdout, process.stderr]
-  })
-
-  envFile.pipe(inject.stdin)
-
-  inject.on('error', done)
-  inject.on('close', done)
+  Bootstrap.injectEnv({
+    filepath:program.env
+  }, done)
 }
 
 function startHost(done){
@@ -120,80 +46,22 @@ function startHost(done){
   if(program.filter && program.filter!='host'){
     return done()
   }
-	Host(config, function(err, host){
-    if(err) return done(err)
-
-    host.on('running', function(){
-      utils.log('viking-host', 'already running')
-    })
-
-    host.on('removed', function(){
-      utils.log('viking-host', 'removed old container')
-    })
-
-    host.on('started', function(){
-      utils.log('viking-host', 'running')
-    })
-
-    host.start(done)
-  })
-
+	
+  Bootstrap.startHost(done)
 }
 
 function tailLogs(next){
-  if(program.filter && program.filter!='host'){
-    return next()
-  }
-  
-
-
   if(program.tail){
-    Host(config, function(err, host){
-      if(err) return done(err)
-
-        var files = host.files()
-
-        if(!fs.existsSync(files.log)){
-          utils.error('the viking host is not running - cannot tail')
-          return next()
-        }
-        var tail = new Tail(files.log);
-
-        tail.on("line", function(data) {
-          console.log('[host] ' + data)
-        });
-    })
+    Bootstrap.tailLogs(function(){})
   }
 
   if(program.tailetcd){
-
-    var docker = Docker()
-
-    docker.containerId('core-etcd', function(err, id){
-
-      if(err){
-        return utils.error(err)
-      }
-
-      id = id.replace(/\W/g, '')
-
-      console.log('-------------------------------------------');
-      console.log('-------------------------------------------');
-      console.log('attach ' + id)
-      var etcdAttach = spawn('docker', [
-        'attach',
-        id
-      ], {
-        stdio:[null, process.stdout, process.stderr]
-      })
-
-    })
+    Bootstrap.tailEtcd(function(){})
   }
-
 }
 
 async.series([
-	getToken,
+	writeToken,
 	startEtcd,
   injectEnv,
 	startHost,

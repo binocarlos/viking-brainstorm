@@ -1,17 +1,6 @@
 #!/usr/bin/env node
 
-var spawn = require('child_process').spawn;
-var async = require('async');
-var utils = require('component-consoler');
-var path = require('path');
-var wrench = require('wrench');
-var fs = require('fs');
-var log = utils.log;
-var etcdjs = require('etcdjs')
-
-var config = require('../lib/config')();
-var Etcd = require('../lib/services/etcd');
-
+var Bootstrap = reqiire('../lib/bootstrap')
 
 var uid = parseInt(process.env.SUDO_UID);
 
@@ -20,53 +9,6 @@ if(!uid){
   process.exit(1);
 }
 
-console.log('');
-
-async.series([
-/*
-  function(next){
-    var etcdclient = etcdjs(config.network.etcd)
-
-    async.forEachSeries(['/host', '/proc', '/run', '/counter', '/deploy', '/fixed', '/ports'], function(path, nextPath){
-      utils.log('remove etcd path', path);
-      etcdclient.rmdir(path, {
-        recursive:true
-      }, function(){
-        nextPath()
-      })
-    }, next)
-    
-  },*/
-
-
-  function(next){
-    utils.log('reset etcd', 'data');
-    Etcd(config, function(err, etcd){
-        
-      etcd.on('reset', function(path){
-        utils.log('remove', path);
-      })
-
-      etcd.reset(next);      
-    });
-
-  }/*,
-
-  function(next){
-    var resetfirewall = spawn('viking', ['firewall', 'reset'], { stdio: 'inherit', customFds: [0, 1, 2] });
-
-    resetfirewall.on('close', function(code){
-      next();
-    });
-  }*/
-
-], function(){
+Bootstrap.reset(function(){
   utils.log('viking', 'reset');
 })
-
-//etcdid=$(
-/*  
-  docker run 
-  --name etcd -d -p 4001:4001 -p 7001:7001 -v $QUARRY_ROOT/volumes/core/etcd:/data/db
-   coreos/etcd -name quarryhq -addr 0.0.0.0:4001 -peer-addr 0.0.0.0:7001 -data-dir /data/db -snapshotCount 100 -snapshot)
-*/

@@ -1,9 +1,4 @@
 #!/usr/bin/env node
-var program = require('commander')
-var spawn = require('child_process').spawn
+var Bootstrap = reqiire('../lib/bootstrap')
 
-var args = process.argv.slice(2)
-
-spawn('etcdctl', args, {
-  stdio:'inherit'
-})
+Bootstrap.etcd(process.argv.slice(2))

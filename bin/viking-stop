@@ -1,19 +1,7 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var async = require('async');
-var utils = require('component-consoler');
-var path = require('path');
-var fs = require('fs');
-var log = utils.log;
-var spawn = require('child_process').spawn
-var config = require('../lib/config')();
-var etcdjs = require('etcdjs')
-var Etcd = require('../lib/services/etcd');
-var Registry = require('../lib/services/registry');
-var Deployment = require('../lib/deployment')
-var Host = require('../lib/services/host');
-var tools = require('../lib/tools')
+var Bootstrap = reqiire('../lib/bootstrap')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
@@ -22,47 +10,18 @@ program
 
 program.parse(process.argv);
 
-if(program.stack){
-  program.filter = 'stack'
-}
-
 function stopStacks(done){
   if(program.filter && program.filter!='stack'){
     return done()
   }
-  var etcd = etcdjs(config.network.etcd)
-  var deployment = Deployment(config, etcd)
-
-  deployment.removeServer(config.network.hostname, true, function(err){
-    utils.log('host removed', config.network.hostname)
-    setTimeout(done, 3000)
-  })
-
+  Bootstrap.stopStacks(done)
 }
 
 function stopEtcd(done){
-  if(!config.master){
-    return done()
-  }
-  if(program.host){
-    return done()
-  }
   if(program.filter && program.filter!='etcd'){
     return done()
   }
-  Etcd(config, function(err, etcd){
-    if(err) return done(err)
-
-    etcd.on('stopped', function(){
-      utils.log('etcd', 'stopped')
-    })
-
-    etcd.on('alreadystopped', function(){
-      utils.log('etcd', 'already stopped')
-    })
-
-    etcd.stop(done)
-  });
+  Bootstrap.stopEtcd(done)
 
 }
 
@@ -71,21 +30,8 @@ function stopHost(done){
   if(program.filter && program.filter!='host'){
     return done()
   }
-  Host(config, function(err, host){
-    if(err) return done(err)
-        
-    host.on('stopped', function(){
-      utils.log('viking-host', 'stopped')
-    })
-
-    host.on('alreadystopped', function(){
-      utils.log('viking-host', 'already stopped')
-    })
-
-    host.stop(function(){
-      setTimeout(done,100)
-    })
-  })
+  Bootstrap.stopHost(done)
+  
 
 }
 
