@@ -1,0 +1,5 @@
+# the top level default config that is overriden by lib/config.js
+system:
+  # containers that are managed by the core viking code
+  containers:
+    - core-etcd
