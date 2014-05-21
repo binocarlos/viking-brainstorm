@@ -30,7 +30,7 @@ vagrantgroups:
 vagrantinit:
 	./vagrant/admin init
 
-dependencies: basics sshcommand docker vpc nodejs etcdctl mon
+dependencies: basics sshcommand supervisord docker vpc nodejs etcd
 
 basics:
 	apt-get update
@@ -41,11 +41,14 @@ sshcommand:
 	chmod +x /usr/local/bin/sshcommand
 	sshcommand create viking /usr/local/bin/viking
 
-mon:
-	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install)
-	(mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install)
-	rm -rf /tmp/mon
-	rm -rf /tmp/mongroup
+#mon:
+#	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install)
+#	(mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install)
+#	rm -rf /tmp/mon
+#	rm -rf /tmp/mongroup
+
+supervisord:
+	apt-get -y install supervisor
 
 docker: aufs
 	egrep -i "^docker" /etc/group || groupadd docker
@@ -72,10 +75,11 @@ nodejs:
 	chmod a+x /usr/local/bin/nave
 	nave usemain ${NODE_VERSION}
 
-etcdctl:
+etcd:
 	curl -L https://github.com/coreos/etcd/releases/download/v0.3.0/etcd-v0.3.0-linux-amd64.tar.gz -o /tmp/etcd-v0.3.0-linux-amd64.tar.gz
 	cd /tmp && gzip -dc etcd-v0.3.0-linux-amd64.tar.gz | tar -xof -
 	cp -f /tmp/etcd-v0.3.0-linux-amd64/etcdctl /usr/local/bin
+	cp -f /tmp/etcd-v0.3.0-linux-amd64/etcd /usr/local/bin
 	rm -rf /tmp/etcd-v0.3.0-linux-amd64.tar.gz
 
 token:
