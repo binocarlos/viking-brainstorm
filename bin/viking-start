@@ -53,8 +53,6 @@ function startHost(done){
 
 function tailLogs(next){
   if(program.tail){
-    console.log('-------------------------------------------');
-    console.log('normal tail')
     Bootstrap.tailEtcd(function(){})
     Bootstrap.tailLogs(function(){})
   }
