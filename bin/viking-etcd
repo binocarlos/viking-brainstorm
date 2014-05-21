@@ -1,4 +1,2 @@
 #!/usr/bin/env node
-var Bootstrap = require('../lib/bootstrap')
-
-Bootstrap.etcd(process.argv.slice(2))
+var spawn = require('child_process').spawn
