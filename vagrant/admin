@@ -73,7 +73,7 @@ ff02::2 ip6-allrouters
 EOF
 
     hostname $host
-    echo $host /etc/hostname
+    echo $host > /etc/hostname
 
     tags=""
     meta=""
