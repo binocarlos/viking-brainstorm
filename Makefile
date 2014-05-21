@@ -80,11 +80,11 @@ nodejs:
 	nave usemain ${NODE_VERSION}
 
 etcd:
-	curl -L https://github.com/coreos/etcd/releases/download/v0.3.0/etcd-v0.3.0-linux-amd64.tar.gz -o /tmp/etcd-v0.3.0-linux-amd64.tar.gz
-	cd /tmp && gzip -dc etcd-v0.3.0-linux-amd64.tar.gz | tar -xof -
-	cp -f /tmp/etcd-v0.3.0-linux-amd64/etcdctl /usr/local/bin
-	cp -f /tmp/etcd-v0.3.0-linux-amd64/etcd /usr/local/bin
-	rm -rf /tmp/etcd-v0.3.0-linux-amd64.tar.gz
+	curl -L https://github.com/coreos/etcd/releases/download/v0.4.1/etcd-v0.4.1-linux-amd64.tar.gz -o /tmp/etcd-v0.4.1-linux-amd64.tar.gz
+	cd /tmp && gzip -dc etcd-v0.4.1-linux-amd64.tar.gz | tar -xof -
+	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcdctl /usr/local/bin
+	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcd /usr/local/bin
+	rm -rf /tmp/etcd-v0.4.1-linux-amd64.tar.gz
 
 token:
 	@curl https://discovery.etcd.io/new
