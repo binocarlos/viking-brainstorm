@@ -23,15 +23,9 @@ setup:
 	chmod -R g+w /var/run/viking
 	chmod -R g+w /var/log/viking
 
-vagrant: install vagrantsetup
-
-vagrantsetup: vagrantgroups vagrantinit
-
-vagrantgroups:
+vagrant: install
 	usermod -aG docker vagrant
 	usermod -aG viking vagrant
-
-vagrantinit:
 	./vagrant/admin init
 
 dependencies: basics sshcommand supervisord docker vpc nodejs etcd
@@ -44,15 +38,6 @@ sshcommand:
 	wget -qO /usr/local/bin/sshcommand ${SSHCOMMAND_URL}
 	chmod +x /usr/local/bin/sshcommand
 	sshcommand create viking /usr/local/bin/viking
-
-#mon:
-#	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install)
-#	(mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install)
-#	rm -rf /tmp/mon
-#	rm -rf /tmp/mongroup
-
-supervisord:
-	apt-get -y install supervisor
 
 docker: aufs
 	egrep -i "^docker" /etc/group || groupadd docker
@@ -91,8 +76,6 @@ token:
 	@echo
 
 clean:
-	./vagrant/admin ssh viking stop
-	./vagrant/admin ssh sudo killall node
 	./vagrant/admin ssh sudo viking reset 
 
 #links:
