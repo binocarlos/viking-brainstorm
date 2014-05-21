@@ -12,12 +12,16 @@ setup:
 	usermod -aG docker viking
 	usermod -aG sudo viking
 	mkdir -p /etc/viking
+	mkdir -p /var/run/viking
+	mkdir -p /var/log/viking
 	mkdir -p /var/lib/viking
 	mkdir -p /var/lib/viking/volumes
-	mkdir -p /var/lib/viking/run
-	mkdir -p /var/lib/viking/log
 	chown -R viking:viking /var/lib/viking
+	chown -R viking:viking /var/run/viking
+	chown -R viking:viking /var/log/viking
 	chmod -R g+w /var/lib/viking
+	chmod -R g+w /var/run/viking
+	chmod -R g+w /var/log/viking
 
 vagrant: install vagrantsetup
 
