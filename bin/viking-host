@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 var program = require('commander')
-var Host = require('./host')
+var Host = require('../lib/host')
 
 program
   .usage('')
 
 program.parse(process.argv);
 
-Host(program || {})
+// we let etcd get setup before starting the host
+setTimeout(function(){
+	Host(program || {})	
+}, 2000)
