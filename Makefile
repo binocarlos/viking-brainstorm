@@ -4,7 +4,7 @@ VPC_URL ?= https://raw.github.com/binocarlos/vpc/master/bootstrap.sh
 NAVE_URL ?= https://raw.github.com/isaacs/nave/master/nave.sh
 NODE_VERSION ?= 0.10.26
 
-.PHONY: install dependencies basics sshcommand docker aufs nodejs network links developer recentgit vagrant
+.PHONY: install dependencies basics sshcommand docker aufs nodejs network links developer recentgit vagrant supervisor
 
 install: dependencies setup
 
@@ -28,7 +28,7 @@ vagrant: install
 	usermod -aG viking vagrant
 	./vagrant/admin init
 
-dependencies: basics sshcommand supervisord docker vpc nodejs etcd
+dependencies: basics sshcommand supervisor docker vpc nodejs etcd
 
 basics:
 	apt-get update
@@ -70,6 +70,9 @@ etcd:
 	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcdctl /usr/local/bin
 	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcd /usr/local/bin
 	rm -rf /tmp/etcd-v0.4.1-linux-amd64.tar.gz
+
+supervisor:
+	apt-get install -y supervisor
 
 token:
 	@curl https://discovery.etcd.io/new
