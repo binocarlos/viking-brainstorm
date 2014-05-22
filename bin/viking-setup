@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+var program = require('commander')
+var Bootstrap = require('../lib/bootstrap')
+
+program
+  .usage('')
+  .option('-s, --seed', 'generate a new etcd cluster token')
+
+program.parse(process.argv);
+
+Bootstrap.writeSupervisor(program)
