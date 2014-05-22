@@ -11,17 +11,17 @@ install: dependencies setup
 setup:
 	usermod -aG docker viking
 	usermod -aG sudo viking
-	mkdir -p /etc/viking
 	mkdir -p /var/run/viking
 	mkdir -p /var/log/viking
 	mkdir -p /var/lib/viking
-	mkdir -p /var/lib/viking/volumes
 	chown -R viking:viking /var/lib/viking
 	chown -R viking:viking /var/run/viking
 	chown -R viking:viking /var/log/viking
 	chmod -R g+w /var/lib/viking
 	chmod -R g+w /var/run/viking
 	chmod -R g+w /var/log/viking
+	mkdir -p /var/lib/viking/volumes
+	mkdir -p /etc/viking/supervisor
 
 vagrant: install
 	usermod -aG docker vagrant
@@ -72,7 +72,13 @@ etcd:
 	rm -rf /tmp/etcd-v0.4.1-linux-amd64.tar.gz
 
 supervisor:
-	apt-get install -y supervisor
+	apt-get install python-setuptools
+	easy_install supervisor
+	cp ./files/supervisor/supervisord.conf /etc/supervisord.conf
+	cp ./files/supervisor/init.sh /etc/init.d/supervisord
+	chmod a+x /etc/init.d/supervisord
+	#update-rc.d supervisord defaults
+	#service supervisord start
 
 token:
 	@curl https://discovery.etcd.io/new
