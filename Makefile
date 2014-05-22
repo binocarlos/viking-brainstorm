@@ -77,8 +77,8 @@ supervisor:
 	cp ./files/supervisor/supervisord.conf /etc/supervisord.conf
 	cp ./files/supervisor/init.sh /etc/init.d/supervisord
 	chmod a+x /etc/init.d/supervisord
-	#update-rc.d supervisord defaults
-	#service supervisord start
+	update-rc.d supervisord defaults
+	service supervisord start
 
 token:
 	@curl https://discovery.etcd.io/new
