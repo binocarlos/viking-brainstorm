@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+var program = require('commander')
 var Bootstrap = require('../lib/bootstrap')
 
-Bootstrap.etcd(process.argv.slice(2))
+program
+  .usage('')
+  .option('-sd, --seed', 'generate a new etcd cluster token')
+
+program.parse(process.argv);
+
+Bootstrap.etcd(program)

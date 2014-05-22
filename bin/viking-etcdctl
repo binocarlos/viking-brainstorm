@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+var Bootstrap = require('../lib/bootstrap')
+
+Bootstrap.etcdctl(process.argv.slice(2))
