@@ -11,7 +11,7 @@ tape('vikingfile', function(t){
   	t.ok(!err, 'no error returned')
 
   	t.equal(data.config.name, 'ragnar')
-  	t.equal(data.config.comment, 'Ragnar Hamster Lothbrok')
+  	t.equal(data.config.comment, 'Ragnarr Hamster Loðbrók')
 
   	t.deepEqual(data.buildOrder, ['src', 'inherit'])
   	t.deepEqual(data.bootOrder, ['db', 'mongo', 'redis', 'logic', 'website', 'help'])
