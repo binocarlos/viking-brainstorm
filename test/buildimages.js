@@ -130,6 +130,7 @@ tape('pull an image from the registry when docker run is used', function(t){
 	var run = spawn('docker', [
 		'run',
 		'-t',
+		'-rm',
 		state.testImage,
 		'echo',
 		'/etc/mysetting'

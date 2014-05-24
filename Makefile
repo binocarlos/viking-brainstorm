@@ -72,7 +72,7 @@ etcd:
 	rm -rf /tmp/etcd-v0.4.1-linux-amd64.tar.gz
 
 supervisor:
-	apt-get install python-setuptools
+	apt-get install -y python-setuptools
 	easy_install supervisor
 	cp ./files/supervisor/supervisord.conf /etc/supervisord.conf
 	cp ./files/supervisor/init.sh /etc/init.d/supervisord

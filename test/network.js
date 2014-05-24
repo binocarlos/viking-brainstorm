@@ -25,11 +25,54 @@ function runCommands(commands, done){
 	}, done)
 }
 
-// start viking - this will boot etcd and get the registry running
-tape('initialize', function(t){
+
+tape('reset viking servers', function(t){
 
 	var commands = [
-		'ssh viking-0 viking start --seed',
+		'ssh viking-0 sudo viking reset',
+		'ssh viking-1 sudo viking reset',
+		'ssh viking-2 sudo viking reset'
+	]
+
+	runCommands(commands, function(err){
+		if(err){
+			t.fail(err)
+			return t.end()
+		}
+
+		t.pass('vikings reset')
+		t.end()
+
+	})
+
+})
+
+tape('configure viking servers', function(t){
+
+	var commands = [
+		'ssh viking-0 viking configure --seed',
+		'ssh viking-1 viking configure',
+		'ssh viking-2 viking configure'
+	]
+
+	runCommands(commands, function(err){
+		if(err){
+			t.fail(err)
+			return t.end()
+		}
+
+		t.pass('vikings configured')
+		t.end()
+
+	})
+
+})
+
+// start viking - this will boot etcd and get the registry running
+tape('start viking servers', function(t){
+
+	var commands = [
+		'ssh viking-0 viking start',
 		'ssh viking-1 viking start',
 		'ssh viking-2 viking start'
 	]
@@ -49,7 +92,7 @@ tape('initialize', function(t){
 
 tape('etcd should be running on all viking servers', function(t){
 	async.forEachSeries(['viking-0', 'viking-1', 'viking-2'], function(hostname, nextHost){
-		exec('ssh ' + hostname + ' docker ps', function(err, stdout, stderr){
+		exec('ssh ' + hostname + ' ps -A | grep etcd', function(err, stdout, stderr){
 			if(err){
 				t.fail(err)
 				return nextHost()
@@ -59,9 +102,9 @@ tape('etcd should be running on all viking servers', function(t){
 				return nextHost()
 			}
 
-			var match = stdout.toString().match(/core-etcd/)
+			var match = stdout.toString().match(/etcd/)
 
-			t.ok(match, 'etcd was found in the docker ps output')
+			t.ok(match, 'etcd was found in the ps output')
 			nextHost()
 		})
 	}, function(err){
@@ -101,7 +144,7 @@ tape('the registry should be running on viking-0', function(t){
 	setTimeout(runTest, 5000)
 	
 })
-
+/*
 tape('killing viking-2 should not kill the registry on viking-0', function(t){
 
 	runCommands([
@@ -119,16 +162,13 @@ tape('killing viking-2 should not kill the registry on viking-0', function(t){
 	})
 	
 })
-
+*/
 tape('shutdown', function(t){
 
 	var commands = [
 		'ssh viking-2 viking stop',
-		'ssh viking-2 sudo viking reset',
 		'ssh viking-1 viking stop',
-		'ssh viking-1 sudo viking reset',
-		'ssh viking-0 viking stop',
-		'ssh viking-0 sudo viking reset'
+		'ssh viking-0 viking stop'
 	]
 
 	runCommands(commands, function(err){
