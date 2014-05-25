@@ -7,8 +7,28 @@ var config = require('../lib/config')()
 var concat = require('concat-stream')
 var state = {}
 
+tape('reset and configure', function(t){
+	exec('sudo viking reset', function(err){
+		if(err){
+			t.fail(err, 'viking reset')
+			t.end()
+			return
+		}
+		exec('viking configure --seed', function(){
+			if(err){
+				t.fail(err, 'viking configure')
+				t.end()
+				return
+			}
+			t.pass('viking reset and configured')
+			t.end()
+		})
+	})
+})
+
 // start viking - this will boot etcd and get the registry running
 tape('initialize', function(t){
+
 	var start = spawn('viking', [
 		'start'
 	], {
@@ -22,9 +42,14 @@ tape('initialize', function(t){
 
 	start.on('close', function(){
 
-		console.log('wait a few seconds to let everything get setup')
+		console.log('wait 10 seconds to let everything get setup')
 		setTimeout(function(){
 			exec('docker ps', function(err, stdout, stderr){
+
+				console.log('-------------------------------------------');
+				console.log('-------------------------------------------');
+				console.log('-------------------------------------------');
+				console.dir(stdout)
 				if(err || stderr){
 					t.fail(stderr.toString())
 					return t.end()
@@ -38,7 +63,7 @@ tape('initialize', function(t){
 				t.end()
 
 			})
-		},5000)
+		},10000)
 		
 	})
 })
@@ -130,7 +155,7 @@ tape('pull an image from the registry when docker run is used', function(t){
 	var run = spawn('docker', [
 		'run',
 		'-t',
-		'-rm',
+		'--rm',
 		state.testImage,
 		'echo',
 		'/etc/mysetting'
