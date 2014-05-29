@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 var program = require('commander')
-var Stack = require('../lib/stack')
-var async = require('async');
-// options
+var build = require('../lib/bootstrap/build')
 
 program
   //.usage('viking build [scripts] [styles] [files]')
@@ -39,34 +37,4 @@ program.on('--help', function(){
 
 program.parse(process.argv);
 
-var utils = require('component-consoler');
-var path = require('path');
-var fs = require('fs');
-
-var Config = require('../lib/config')
-
-var exists = fs.existsSync || path.existsSync;
-var args = program.args;
-var log = utils.log;
-
-var config = Config();
-
-var folder = program.dir || process.cwd()
-
-var stack = Stack(config, folder, {
-  config:program.config,
-  index:program.index,
-  dev:program.dev,
-  tag:program.tag,
-  push:program.push,
-  registry:program.registry
-})
-
-stack.build(function(err){
-  if(err){
-    return utils.error(err)
-  }
-  else{
-    utils.log('stack built', 'done')
-  }
-})
+build(program)

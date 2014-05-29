@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+var program = require('commander')
+var etcd = require('../lib/bootstrap/etcd')
+
+program
+  .usage('')
+
+program
+  .command('start')
+  .description('start the etcd service')
+  .action(function(){
+    etcd.start(function(err){
+    	if(err){
+    		console.error(err)
+    		process.exit(1)
+    	}
+		})
+  })
+
+program
+  .command('stop')
+  .description('stop the etcd service')
+  .action(function(){
+    etcd.stop(function(err){
+    	if(err){
+    		console.error(err)
+    		process.exit(1)
+    	}
+		})
+  })  
+
+program
+  .command('seed')
+  .description('seed the etcd service')
+  .action(function(){
+    Bootstrap.writeToken(function(err, token){
+    	if(err){
+    		console.error(err)
+    		process.exit(1)
+    	}
+    	console.log(token)
+    })
+  })
+
+program.parse(process.argv);

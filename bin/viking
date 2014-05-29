@@ -6,12 +6,8 @@ var program = require('commander');
 
 program
   .version(require('../package').version)
-  .usage('<command> [options]');
-
-// sub-command help
-
-
-// parse argv
+  .usage('<command> [options]')
+  .option('-t, --tail', 'tail the output')
 
 program.parse(process.argv);
 
@@ -22,10 +18,6 @@ var join = path.join;
 var stat = fs.statSync;
 var exists = fs.existsSync;
 var resolve = path.resolve;
-
-var submodules = {
-  master:true
-}
 
 var args = process.argv.slice(3);
 var cmd = program.args[0];

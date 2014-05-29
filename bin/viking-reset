@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var Bootstrap = require('../lib/bootstrap')
+var Etcd = require('../lib/bootstrap/etcd')
 var utils = require('component-consoler')
 var uid = parseInt(process.env.SUDO_UID);
 
@@ -9,6 +9,6 @@ if(!uid){
   process.exit(1);
 }
 
-Bootstrap.reset(function(){
+Etcd.reset(function(){
   utils.log('viking', 'reset');
 })

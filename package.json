@@ -8,10 +8,8 @@
     "viking-help": "bin/viking-help",
     "viking-build": "bin/viking-build",
     "viking-push": "bin/viking-push",
-    "viking-start": "bin/viking-start",
     "viking-status": "bin/viking-status",
     "viking-reset": "bin/viking-reset",
-    "viking-stop": "bin/viking-stop",
     "viking-firewall": "bin/viking-firewall"
   },
   "directories": {

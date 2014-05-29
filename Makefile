@@ -64,21 +64,12 @@ nodejs:
 	chmod a+x /usr/local/bin/nave
 	nave usemain ${NODE_VERSION}
 
-etcd:
+etcdctl:
 	curl -L https://github.com/coreos/etcd/releases/download/v0.4.1/etcd-v0.4.1-linux-amd64.tar.gz -o /tmp/etcd-v0.4.1-linux-amd64.tar.gz
 	cd /tmp && gzip -dc etcd-v0.4.1-linux-amd64.tar.gz | tar -xof -
 	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcdctl /usr/local/bin
-	cp -f /tmp/etcd-v0.4.1-linux-amd64/etcd /usr/local/bin
+	#cp -f /tmp/etcd-v0.4.1-linux-amd64/etcd /usr/local/bin
 	rm -rf /tmp/etcd-v0.4.1-linux-amd64.tar.gz
-
-supervisor:
-	apt-get install -y python-setuptools
-	easy_install supervisor
-	cp ./files/supervisor/supervisord.conf /etc/supervisord.conf
-	cp ./files/supervisor/init.sh /etc/init.d/supervisord
-	chmod a+x /etc/init.d/supervisord
-	update-rc.d supervisord defaults
-	service supervisord start
 
 token:
 	@curl https://discovery.etcd.io/new
