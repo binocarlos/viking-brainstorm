@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+var Host = require('../lib/host')
+
+program
+  .usage('')
+
+program.on('--help', function(){
+  console.log('  Examples:')
+  console.log()
+  console.log()
+  process.exit()
+})
+
+program.parse(process.argv)
+
+Host(program)

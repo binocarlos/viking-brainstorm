@@ -24,8 +24,8 @@ var cmd = program.args[0];
 if (!cmd) program.help();
 
 if(cmd=='host'){
-  var Host = require('../lib/host')
-  Host()
+  require('./viking-host')
+  
 }
 else{
   var bin = 'viking-' + cmd;
