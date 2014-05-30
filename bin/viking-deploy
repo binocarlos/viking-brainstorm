@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+var deploy = require('../lib/bootstrap/deploy')
+
+program
+  //.usage('viking build [scripts] [styles] [files]')
+  .usage('')
+  .option('-a, --app <folder>', 'the folder to deploy the app from')
+  .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
+  .option('-r, --registry <url>', 'url of the registry to pull images from')
+ 
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log();
+  console.log('    # deploy all services in the current folder');
+  console.log('    $ viking deploy');
+  console.log();
+  console.log();
+  process.exit();
+});
+
+// parse argv
+
+program.parse(process.argv);
+
+deploy(program)

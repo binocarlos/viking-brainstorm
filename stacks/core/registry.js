@@ -1,6 +1,5 @@
 var path = require('path');
 
-
 module.exports = function(viking, done){
 
   // mount the directory with the config for the registry
