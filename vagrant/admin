@@ -18,6 +18,11 @@ case "$1" in
     ssh -oStrictHostKeyChecking=no viking-2 "date"
     ;;
 
+  stop)
+    $0 ssh viking etcd stop
+    $0 ssh sudo viking etcd reset
+    ;;
+
   ssh)
     shift
     cmd=$*
@@ -80,7 +85,7 @@ EOF
 
     # we need this each time because an etcd discovery cluster freaks out if everyone leaves
     if [[ $host == "viking-0" ]]; then
-      tags="db"
+      tags="core db"
     fi
 
     cat<<EOF > /etc/viking/auto.conf

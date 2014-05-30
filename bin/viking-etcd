@@ -1,45 +1,69 @@
 #!/usr/bin/env node
-var program = require('commander')
+var args = require('minimist')(process.argv, {
+  boolean:['seed', 'tail'],
+  alias:{
+    s:'seed',
+    t:'tail'
+  }
+})
+
 var etcd = require('../lib/bootstrap/etcd')
 
-program
-  .usage('')
-
-program
-  .command('start')
-  .description('start the etcd service')
-  .action(function(){
-    etcd.start(function(err){
-    	if(err){
-    		console.error(err)
-    		process.exit(1)
-    	}
-		})
-  })
-
-program
-  .command('stop')
-  .description('stop the etcd service')
-  .action(function(){
-    etcd.stop(function(err){
-    	if(err){
-    		console.error(err)
-    		process.exit(1)
-    	}
-		})
+function start(){
+  etcd.start(function(err){
+    if(err){
+      console.error(err)
+      process.exit(1)
+    }
+    if(args.tail){
+      etcd.tail()
+    }
   })  
+}
 
-program
-  .command('seed')
-  .description('seed the etcd service')
-  .action(function(){
-    Bootstrap.writeToken(function(err, token){
-    	if(err){
-    		console.error(err)
-    		process.exit(1)
-    	}
-    	console.log(token)
-    })
+function writeToken(done){
+  etcd.writeToken(function(err, token){
+    if(err){
+      console.error(err)
+      process.exit(1)
+    }
+    console.log(token)
+    done()
   })
+}
 
-program.parse(process.argv);
+function seed(done){
+  if(args.seed){
+    writeToken(done)
+  }
+  else{
+    done()
+  }
+}
+
+
+var cmd = args._[2]
+
+if(cmd=='start'){
+  seed(function(){
+    start()
+  })
+}
+else if(cmd=='stop'){
+  etcd.stop(function(err){
+    if(err){
+      console.error(err)
+      process.exit(1)
+    }
+  })
+}
+else if(cmd=='reset'){
+  etcd.reset(function(){
+
+  })
+}
+else if(cmd=='tail'){
+  etcd.tail(function(){
+
+  })
+}

@@ -25,7 +25,6 @@ if (!cmd) program.help();
 
 if(cmd=='host'){
   require('./viking-host')
-  
 }
 else{
   var bin = 'viking-' + cmd;

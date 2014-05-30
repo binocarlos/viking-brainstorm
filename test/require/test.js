@@ -1,13 +1,10 @@
 var path = require('path');
-var Denver = require('denver')
-var Container = require('../container');
-var Volume = require('../volume');
 
-module.exports = function(config, etcd, done){
+module.exports = function(viking, done){
 
   var denver = Denver({}, etcd)
 
-  denver.env('vikingcore', function(err, env){
+  denver.env('core', function(err, env){
 
     // the volume so we are sharing the config
     var volumes = [
