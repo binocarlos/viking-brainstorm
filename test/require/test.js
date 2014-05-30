@@ -6,38 +6,38 @@ module.exports = function(viking, done){
 
   denver.env('core', function(err, env){
 
-    // the volume so we are sharing the config
+    // mount a local volume
     var volumes = [
-      path.normalize(__dirname + '/../../files/registry') + ':/registryconf'
+      path.normalize(__dirname) + ':/testyaml'
     ]
 
-    // the development volume for images
+    // mount a persistent volume
     if(config.env=='development'){
-      volumes.push(Volume(config, 'core', '/data/registry'))
+      volumes.push('/data/registry')
     }
     
     // the env has been augmented from denver -> vikingcore
-    var env = {
-      DOCKER_REGISTRY_CONFIG:'/registryconf/config.yml',
-      SETTINGS_FLAVOR:config.env,
-      SECRET_KEY:env.REGISTRY_SECRET_KEY,
-      AWS_KEY:env.AWS_KEY,
-      AWS_SECRET:env.AWS_SECRET,
-      AWS_BUCKET:env.REGISTRY_AWS_BUCKET
-    }
+    var env = 
 
-    var options = {
-      stack:'core',
-      name:'registry',
+    var container = {
+      //stack:'core',
+      //name:'registry',
       image:'registry',
       system:true,
       filter:{
-        leader:true
+        core:true
       },
       ports:[
         '5000:5000'
       ],
-      env:env,
+      env:{
+        DOCKER_REGISTRY_CONFIG:'/registryconf/config.yml',
+        SETTINGS_FLAVOR:config.env,
+        SECRET_KEY:env.REGISTRY_SECRET_KEY,
+        AWS_KEY:env.AWS_KEY,
+        AWS_SECRET:env.AWS_SECRET,
+        AWS_BUCKET:env.REGISTRY_AWS_BUCKET
+      },
       volumes:volumes
     }
 

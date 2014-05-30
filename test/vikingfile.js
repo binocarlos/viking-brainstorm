@@ -66,19 +66,13 @@ tape('vikingfile development volumes', function(t){
 
 tape('required modules', function(t){
 
-  var file = VikingFile(__dirname + '/example/viking.yml', {
+  var file = VikingFile(__dirname + '/require/viking.yml', {
     index:'127.0.0.1:5000'
   })
 
   file.load(function(err, data){
     t.ok(!err, 'no error returned')
-
-    file.developmentVolumes(__dirname + '/example')
-
-    t.deepEqual(file.data.images.src._devvolumes, [__dirname + '/example:/srv/app'])
-    t.deepEqual(file.data.containers.db.volume, ['/data/db', __dirname + '/example:/srv/app'])
-
-
+    t.equal(data.containers.test.require, './test.js')
     t.end()
   })
 

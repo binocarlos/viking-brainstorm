@@ -1,7 +1,6 @@
-# our viking is born
 viking:
-  name: ragnar
-  comment: Ragnarr Hamster Loðbrók
+  name: requiretest
+  comment: Test a require module that returns a job config
 
 deploy:
   test:

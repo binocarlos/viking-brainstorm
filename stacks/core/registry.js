@@ -1,22 +1,23 @@
 var path = require('path');
-var Volume = require('../volume');
+
 
 module.exports = function(viking, done){
 
   // mount the directory with the config for the registry
+  // we can do this because the codebase is on all viking hosts
   var volumes = [
     path.normalize(__dirname + '/registry') + ':/registryconf'
   ]
 
   // the development volume for images
-  if(process.env.NODE_ENV=='development'){
-    volumes.push(Volume(config, 'core', '/data/registry'))
+  if(viking.config.env=='development'){
+    volumes.push(viking.volume('/data/registry'))
   }
   
   // the env has been augmented from denver -> vikingcore
   var env = {
     DOCKER_REGISTRY_CONFIG:'/registryconf/config.yml',
-    SETTINGS_FLAVOR:process.env.NODE_ENV,
+    SETTINGS_FLAVOR:viking.config.env,
     SECRET_KEY:viking.env.REGISTRY_SECRET_KEY,
     AWS_KEY:viking.env.AWS_KEY,
     AWS_SECRET:viking.env.AWS_SECRET,
