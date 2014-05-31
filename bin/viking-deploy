@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var deploy = require('../lib/bootstrap/deploy')
+var Deploy = require('../lib/bootstrap/deploy')
 var args = require('minimist')(process.argv, {
   alias:{
     a:'app',
@@ -10,4 +10,5 @@ var args = require('minimist')(process.argv, {
     config:'viking.yml'
   }
 })
-deploy(args)
+var deploy = Deploy(args)
+deploy.boot()

@@ -1,6 +1,0 @@
-usage: viking plan [options]
-
-options:
-
-
-examples:

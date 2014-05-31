@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-var plan = require('../lib/bootstrap/plan')
+var dispatch = require('../lib/bootstrap/dispatch')
 var args = require('minimist')(process.argv, {
   boolean:[],
   alias:{
     
   }
 })
-plan(args)
+dispatch(args)
