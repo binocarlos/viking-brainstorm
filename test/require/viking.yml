@@ -1,7 +1,0 @@
-viking:
-  name: requiretest
-  comment: Test a require module that returns a job config
-
-deploy:
-  test:
-    require: ./test.js

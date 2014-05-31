@@ -2,6 +2,30 @@
 var program = require('commander')
 var etcd = require('../lib/bootstrap/etcd')
 
+
+/*
+
+	things to configure
+
+
+	hostname
+	tags
+	public ip
+	private ip
+	etcd token
+	aws_key
+	aws_secret
+	registry_aws_bucket
+	registry_secret_key
+	mailgun_key
+	mailgun_domain
+	
+	
+
+
+
+ */
+
 program
   .usage('')
   .option('-s, --seed', 'generate a new etcd cluster token')

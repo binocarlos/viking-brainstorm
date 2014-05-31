@@ -24,8 +24,8 @@ module.exports = function(viking, done){
   }
 
   var options = {
-    //stack:'core',
-    //name:'registry',
+    stack:'core',
+    name:'registry',
     image:'registry',
     system:true,
     filter:{

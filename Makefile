@@ -47,6 +47,12 @@ docker: aufs
 	apt-get install -y lxc-docker
 	sleep 2 # give docker a moment i guess
 
+#ansible:
+#	apt-add-repository ppa:rquillo/ansible -y
+#	apt-get update
+#	apt-get install -y ansible
+#	cp -f ./files/ansible/hosts /etc/ansible/hosts
+
 aufs:
 	lsmod | grep aufs || modprobe aufs || apt-get install -y linux-image-extra-`uname -r`
 
