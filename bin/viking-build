@@ -1,40 +1,16 @@
 #!/usr/bin/env node
-
-var program = require('commander')
 var build = require('../lib/bootstrap/build')
-
-program
-  //.usage('viking build [scripts] [styles] [files]')
-  .usage('')
-  .option('-t, --tag <tag>', 'the tag for images')
-  .option('-a, --app <folder>', 'the folder to build the app from')
-  .option('-c, --config <file>', 'the name of the config file', 'viking.yml')
-  .option('-r, --registry <url>', 'url of the registry to push to')
-  .option('-d, --dev', 'dev mode')
- 
-program.on('--help', function(){
-  console.log('  Examples:');
-  console.log();
-  console.log('    # build current app into local docker images');
-  console.log('    $ viking build');
-  console.log();
-  console.log('    # build a specific app');
-  console.log('    $ viking build --app /home/myapp');
-  console.log();
-  console.log('    # build a specific app and tag the images');
-  console.log('    $ viking build --app /home/myapp --tag stage3');
-  console.log();
-  console.log('    # push the images to the registry after building');
-  console.log('    $ viking build --push');
-  console.log();
-  console.log('    # push the images to a specific registry after building');
-  console.log('    $ viking build --push --registry http://1.2.3.4:5000');
-  console.log();
-  process.exit();
-});
-
-// parse argv
-
-program.parse(process.argv);
-
-build(program)
+var args = require('minimist')(process.argv, {
+  boolean:['dev'],
+  alias:{
+    t:'tag',
+    a:'app',
+    c:'config',
+    r:'registry',
+    d:'dev'
+  },
+  default:{
+    config:'viking.yml'
+  }
+})
+build(args)

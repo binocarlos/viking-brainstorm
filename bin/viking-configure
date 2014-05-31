@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-var program = require('commander')
-var etcd = require('../lib/bootstrap/etcd')
-
 
 /*
 
@@ -26,13 +23,15 @@ var etcd = require('../lib/bootstrap/etcd')
 
  */
 
-program
-  .usage('')
-  .option('-s, --seed', 'generate a new etcd cluster token')
+var etcd = require('../lib/bootstrap/etcd')
+var args = require('minimist')(process.argv, {
+  boolean:['seed'],
+  alias:{
+    s:'seed'
+  }
+})
 
-program.parse(process.argv);
-
-if(program.seed){
+if(args.seed){
 	etcd.writeToken(function(err, token){
 		if(err){
 			console.error(err)

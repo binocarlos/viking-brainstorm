@@ -1,13 +1,6 @@
 #!/usr/bin/env node
-
-var program = require('commander');
-var status = require('../lib/bootstrap/status')
-
-program
-  //.usage('viking build [scripts] [styles] [files]')
-  .usage('')
-  .option('-t, --tail', 'tail the host logs')
- 
-program.parse(process.argv);
-
-status(program)
+var Status = require('../lib/bootstrap/status')
+var args = require('minimist')(process.argv, {
+	alias:{}
+})
+Status(args)

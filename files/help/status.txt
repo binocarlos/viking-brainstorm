@@ -1,0 +1,6 @@
+usage: viking status [options]
+
+options:
+
+
+examples:

@@ -1,0 +1,10 @@
+usage: viking configure [options]
+
+options:
+  -s, --seed generate and print a new etcd token
+
+examples:
+  
+  # run this on the first viking master
+  # copy the token onto other servers (automatic on vagrant)
+  $ viking configure --seed

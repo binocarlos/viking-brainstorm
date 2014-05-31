@@ -1,0 +1,25 @@
+usage: viking build [options]
+
+options:
+  -t, --tag <tag> the tag for images
+  -a, --app <folder> the folder to build the app from
+  -c, --config <file> the name of the config file
+  -r, --registry <url> url of the registry to push to
+  -d, --dev dev mode
+
+examples:
+  
+  # build current app into local docker images
+  $ viking build
+  
+  # build a specific app
+  $ viking build --app /home/myapp
+  
+  # build a specific app and tag the images
+  $ viking build --app /home/myapp --tag stage3
+  
+  # push the images to the registry after building
+  $ viking build --push
+  
+  # push the images to a specific registry after building
+  $ viking build --push --registry http://1.2.3.4:5000

@@ -1,4 +1,3 @@
 #!/usr/bin/env node
 var env = require('../lib/bootstrap/env')
-
 env.env(process.argv.slice(2))

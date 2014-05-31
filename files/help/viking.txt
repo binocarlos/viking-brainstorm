@@ -1,0 +1,22 @@
+usage: viking <command> [options]
+
+commands:
+
+  configure     setup viking on this host
+  build         build and push images from an application source
+  deploy        run containers from an application source
+  run           run containers from the command line
+  env           setup environment variables for a stack
+  etcd          control the etcd server for a master
+  firewall      configure the vpc firewall
+  help          get help for each command
+  hook          run viking event hook scripts
+  plan          trigger the dispatch module to allocate procs
+  reset         remove the etcd data for this machine
+  status        print the status of this viking host
+
+Type: 
+
+  viking help <command>
+
+for more help on each command
