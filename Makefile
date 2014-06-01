@@ -28,7 +28,7 @@ vagrant: install
 	usermod -aG viking vagrant
 	./vagrant/admin init
 
-dependencies: basics sshcommand supervisor docker vpc nodejs etcd
+dependencies: basics sshcommand mon docker vpc nodejs etcd
 
 basics:
 	apt-get update
@@ -47,11 +47,9 @@ docker: aufs
 	apt-get install -y lxc-docker
 	sleep 2 # give docker a moment i guess
 
-#ansible:
-#	apt-add-repository ppa:rquillo/ansible -y
-#	apt-get update
-#	apt-get install -y ansible
-#	cp -f ./files/ansible/hosts /etc/ansible/hosts
+mon: nodejs
+	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mon)
+	npm install -g mongroup
 
 aufs:
 	lsmod | grep aufs || modprobe aufs || apt-get install -y linux-image-extra-`uname -r`

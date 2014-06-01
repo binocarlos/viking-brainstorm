@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-var reader = require('../lib/bootstrap/reader')
+var Local = require('../lib/bootstrap/local')
 var args = require('minimist')(process.argv, {
   boolean:[],
   alias:{
     
   }
 })
-reader(args)
+var local = Local(args)
+local.boot()

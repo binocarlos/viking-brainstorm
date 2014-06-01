@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 var Host = require('../lib/host')
 var args = require('minimist')(process.argv, {
-	alias:{}
+	alias:{
+		d:'deamon',
+		c:'clean'
+	}
 })
-Host(args)
+var host = Host(args)
+host.boot()
