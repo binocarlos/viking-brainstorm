@@ -10,7 +10,7 @@ if(!uid){
   process.exit(1);
 }
 
-var paths = ['/host', '/proc', '/fixed', '/run', '/deploy', '/ports']
+var paths = ['/host', '/proc', '/fixed', '/run', '/deploy', '/ports', '/counter', '/failed']
 
 async.forEachSeries(paths, function(path, nextPath){
 	utils.log('etcd remove', path)
