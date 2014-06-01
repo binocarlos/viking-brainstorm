@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var Host = require('../lib/host')
+var Host = require('../lib/bootstrap/host')
 var args = require('minimist')(process.argv, {
 	alias:{
 		d:'deamon',
