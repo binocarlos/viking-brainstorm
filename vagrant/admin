@@ -85,7 +85,7 @@ EOF
 
     # we need this each time because an etcd discovery cluster freaks out if everyone leaves
     if [[ $host == "viking-0" ]]; then
-      tags="core db"
+      tags="system"
     fi
 
     cat<<EOF > /etc/viking/auto.conf
