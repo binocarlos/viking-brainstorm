@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-var Status = require('../lib/bootstrap/status')
+var Info = require('../lib/bootstrap/info')
 var args = require('minimist')(process.argv, {
 	alias:{}
 })
-Status(args)
+var info = Info(args)
+info.boot()
