@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var Remove = require('../lib/bootstrap/remove')
+var Destroy = require('../lib/bootstrap/destroy')
 var args = require('minimist')(process.argv, {
   alias:{
     s:'stack',
@@ -10,5 +10,5 @@ var args = require('minimist')(process.argv, {
     
   }
 })
-var remove = Remove(args)
-remove.boot()
+var destroy = Destroy(args)
+destroy.boot()
