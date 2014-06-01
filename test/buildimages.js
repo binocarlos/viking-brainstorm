@@ -7,69 +7,104 @@ var config = require('../lib/config')()
 var concat = require('concat-stream')
 var state = {}
 
-tape('reset and configure', function(t){
-	exec('sudo viking reset', function(err){
+tape('initialize', function(t){
+	console.log('resetting etcd')
+	exec('sudo viking etcd reset', function(err, stdout){
 		if(err){
 			t.fail(err, 'viking reset')
 			t.end()
 			return
 		}
-		exec('viking configure --seed', function(){
+		console.log(stdout.toString())
+		console.log('starting etcd')
+		exec('viking etcd start --seed', function(err, stdout){
 			if(err){
-				t.fail(err, 'viking configure')
+				t.fail(err, 'viking etcd')
 				t.end()
 				return
 			}
-			t.pass('viking reset and configured')
-			t.end()
+			console.log(stdout.toString())
+			exec('viking host start -d', function(err, stdout){
+				if(err){
+					t.fail(err, 'viking etcd')
+					t.end()
+					return
+				}
+				console.log(stdout.toString())
+				t.pass('viking reset and configured')
+				t.end()
+			})
 		})
 	})
 })
 
 // start viking - this will boot etcd and get the registry running
-tape('initialize', function(t){
-
-	var start = spawn('viking', [
-		'start'
-	], {
-		stdio:'inherit'
-	})
-
-	start.on('error', function(e){
-		t.fail(e.toString())
+tape('check etcd running', function(t){
+	exec('docker ps', function(err, stdout, stderr){
+		if(err || stderr){
+			t.fail(stderr.toString())
+			return t.end()
+		}
+		var content = stdout.toString()
+		t.ok(content.match(/core-etcd/), 'etcd running')
 		t.end()
 	})
+})
 
-	start.on('close', function(){
 
-		console.log('wait 10 seconds to let everything get setup')
-		setTimeout(function(){
-			exec('docker ps', function(err, stdout, stderr){
+// start viking - this will boot etcd and get the registry running
+tape('check host running', function(t){
+	setTimeout(function(){
+		exec('viking info host', function(err, stdout, stderr){
+			if(err || stderr){
+				t.fail(stderr.toString())
+				return t.end()
+			}
+			var content = stdout.toString()
+			var data = JSON.parse(content)
+			t.equal(data.host.state, 'alive', 'the host is alive')
+			t.end()
+		})
+	}, 2000)
+	
+})
 
-				console.log('-------------------------------------------');
-				console.log('-------------------------------------------');
-				console.log('-------------------------------------------');
-				console.dir(stdout)
-				if(err || stderr){
-					t.fail(stderr.toString())
-					return t.end()
-				}
-
-				var content = stdout.toString()
-
-				// we should have a registry and etcd running
-				t.ok(content.match(/core-system-registry/), 'registry running')
-
-				t.end()
-
-			})
-		},10000)
-		
+tape('deploy the core stack', function(t){
+	exec('viking deploy core', function(err, stdout, stderr){
+		if(err || stderr){
+			t.fail(stderr.toString())
+			return t.end()
+		}
+		t.pass('viking core deployed')
+		t.end()
 	})
+})
+
+// start viking - this will boot etcd and get the registry running
+tape('check registry running', function(t){
+
+	console.log('wait 10 seconds to let everything get setup')
+	setTimeout(function(){
+		exec('docker ps', function(err, stdout, stderr){
+			if(err || stderr){
+				t.fail(stderr.toString())
+				return t.end()
+			}
+
+			var content = stdout.toString()
+			// we should have a registry and etcd running
+			t.ok(content.match(/core-default-registry/), 'registry running')
+
+			t.end()
+
+		})
+	},10000)
+		
 })
 
 // sanity check for the registry having booted
 // to boot - it will have gone throught he dispatch and written etcd keys
+
 tape('etcd keys', function(t){
 
 	var etcd = etcdjs('127.0.0.1:4001')
@@ -212,22 +247,23 @@ tape('check the right image was pulled correctly', function(t){
 
 })
 
-
 tape('shutdown', function(t){
-
-	var stop = spawn('viking', [
-		'stop'
-	], {
-		stdio:'inherit'
-	})
-
-	stop.on('error', function(e){
-		t.fail(e.toString())
-		t.end()
-	})
-
-	stop.on('close', function(){
-		t.end()
+	exec('viking host stop --clean', function(err){
+		if(err){
+			t.fail(err, 'viking host stop')
+			t.end()
+			return
+		}
+		exec('viking etcd stop', function(){
+			if(err){
+				t.fail(err, 'viking etcd stop')
+				t.end()
+				return
+			}
+			
+			t.pass('viking stopped')
+			t.end()
+		})
 	})
   
 
