@@ -62,18 +62,3 @@ tape('vikingfile development volumes', function(t){
   })
 
 })
-
-
-tape('required modules', function(t){
-
-  var file = VikingFile(__dirname + '/require/viking.yml', {
-    index:'127.0.0.1:5000'
-  })
-
-  file.load(function(err, data){
-    t.ok(!err, 'no error returned')
-    t.equal(data.containers.test.require, './test.js')
-    t.end()
-  })
-
-})
