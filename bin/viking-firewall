@@ -1,17 +1,7 @@
 #!/usr/bin/env node
-
-var program = require('commander');
 var spawn = require('child_process').spawn;
-var path = require('path');
-var fs = require('fs');
-var utils = require('component-consoler');
-var log = utils.log;
 
-var config = require('../lib/config')();
-
-program.parse(process.argv);
-
-var args = ['vpc'].concat(program.args || []);
+var args = ['vpc'].concat(process.argv.slice(3) || []);
 var vpc = spawn('sudo', args, { stdio: 'inherit', customFds: [0, 1, 2] });
 
 vpc.on('close', function(code){
