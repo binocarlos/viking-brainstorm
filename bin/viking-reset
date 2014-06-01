@@ -3,12 +3,20 @@
 var Etcd = require('../lib/bootstrap/etcd')
 var utils = require('component-consoler')
 var uid = parseInt(process.env.SUDO_UID);
-
+var async = require('async');
+var exec = require('child_process').exec
 if(!uid){
   console.error('you must use sudo for viking master reset')
   process.exit(1);
 }
 
-Etcd.reset(function(){
-  utils.log('viking', 'reset');
+var paths = ['/host', '/proc', '/fixed', '/run', '/deploy', '/ports']
+
+async.forEachSeries(paths, function(path, nextPath){
+	utils.log('etcd remove', path)
+	exec('etcdctl rm ' + path + ' --recursive', function(){
+		nextPath()
+	})
+}, function(){
+
 })
