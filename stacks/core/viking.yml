@@ -1,7 +1,0 @@
-viking:
-  name: core
-  comment: Core viking services
-
-deploy:
-  registry:
-    require: ./registry.js
