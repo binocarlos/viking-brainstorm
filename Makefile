@@ -82,6 +82,7 @@ token:
 clean:
 	viking host stop --clean
 	viking etcd stop
+	sudo viking etcd reset
 
 #links:
 #	rm -f /usr/local/bin/viking
