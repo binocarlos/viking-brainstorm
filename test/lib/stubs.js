@@ -20,9 +20,6 @@ var procs = {
     stack:'test',
     name:'test2',
     image:'test2',
-    filter:[{
-      tag:'system'
-    }],
     ports:[
       '80'
     ],
