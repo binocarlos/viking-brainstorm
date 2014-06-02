@@ -293,16 +293,14 @@ function etcd(){
 function builder(){
 	var state = {}
 	return {
-		build:function(etcd, tape, etcdaddress, registryaddress){
+		build:function(etcd, tape){
 
 			tape('build a simple stack and commit to the registry', function(t){
 
 				console.log('build stack...')
 
 				var build = spawn('viking', [
-					'build',
-					'--etcd',
-					etcdaddress
+					'build'
 				], {
 					stdio:'inherit',
 					cwd:path.normalize(__dirname + '/../example')
@@ -328,22 +326,8 @@ function builder(){
 							}
 
 							result = flatten(result.node)
-
-
-							console.log('-------------------------------------------');
-							console.log('-------------------------------------------');
-							console.dir(result)
-							
-
 							state.testImage = result['/images/ragnar/default/inherit']
-
-							console.log('-------------------------------------------');
-							console.log('-------------------------------------------');
-							console.dir(state.testImage)
-							console.log('-------------------------------------------');
-							console.dir(registryaddress)
-
-							t.ok(state.testImage.indexOf(registryaddress || config.network.private)>=0, 'image name containes private hostname')
+							t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')
 
 							t.end()
 						})
