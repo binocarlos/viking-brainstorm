@@ -41,6 +41,28 @@ var procs = {
       TEST:12
     }
   },
+  "test4":{
+    stack:'test',
+    name:'test4',
+    image:'test4',
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:13
+    }
+  },
+  "test5":{
+    stack:'test',
+    name:'test5',
+    image:'test5',
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:14
+    }
+  },
   "registry":{
     stack:'core',
     name:'registry',
@@ -144,10 +166,10 @@ module.exports = {
 			etcd.set('/host/' + server.name + '/config', JSON.stringify(server), nextKey)
 		}, done)
 	},
-  proc:function(etcd, done){
+  proc:function(deployment, done){
     async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
       var proc = procs[key]
-      etcd.set('/proc/' + proc.stack + '/default/' + proc.image, JSON.stringify(proc), nextKey)
+      deployment.writeJob(proc, nextKey)
     }, done)
   }
 }

@@ -5,7 +5,10 @@ var etcdjs = require('etcdjs')
 var stubs = require('./lib/stubs')
 var flatten = require('etcd-flatten')
 var etcdserver = tools.etcd()
+var Deployment = require('../lib/deployment')
 var etcd = etcdjs('127.0.0.1:4001')
+
+var deployment = Deployment(config, etcd)
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
@@ -60,7 +63,7 @@ tape('check network stubs', function(t){
 })
 
 tape('write proc stubs', function(t){
-	stubs.proc(etcd, function(err){
+	stubs.proc(deployment, function(err){
 		if(err){
 			t.fail(err, 'write stubs')
 		}
@@ -89,13 +92,47 @@ tape('check proc stubs', function(t){
 		})
 
 		t.ok(procs['/test/default/test1'], 'has test1')
+		t.equal(procs['/test/default/test1'].id, 'test/default/test1', 'test1 id is correct')
 		t.ok(procs['/test/default/test2'], 'has test2')
 		t.ok(procs['/test/default/test3'], 'has test3')
+		t.ok(procs['/test/default/test4'], 'has test4')
+		t.ok(procs['/test/default/test5'], 'has test5')
 		t.ok(procs['/core/default/registry'], 'has registry')
 		t.equal(procs['/core/default/registry'].filter[0].tag, 'system', 'system tag')
+		t.equal(procs['/core/default/registry'].id, 'core/default/registry', 'registry id is correct')
 
 		t.end()
 
+	})
+})
+
+tape('test the proposed allocations', function(t){
+	deployment.getAllocations(function(err, allocations){
+
+		if(err){
+			t.fail(err, 'load allocations')
+			t.end()
+			return
+		}
+
+		t.equal(allocations.length, 6, 'there are 6 allocations')
+		
+		var jobs = {}
+		var jobServers = {}
+		var serverCount = {}
+
+		allocations.forEach(function(allocation){
+			var job = allocation.job
+			var server = allocation.server
+			jobs[job.id] = job
+			jobServers[job.id] = server.name
+			serverCount[server.name] = serverCount[server.name] || 0
+			serverCount[server.name]++
+		})
+		
+		console.dir(jobServers)
+		console.dir(serverCount)
+		t.end()
 	})
 })
 
