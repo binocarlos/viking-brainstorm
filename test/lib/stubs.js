@@ -1,15 +1,58 @@
 var async = require('async')
 
-var proc = {
-    "test1":{
-
-    },
-    "test2":{
-
-    },
-    "registry":{
-        
+var procs = {
+  "test1":{
+    stack:'test',
+    name:'test1',
+    image:'test1',
+    filter:[{
+      tag:'system',
+      flexible:true
+    }],
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
     }
+  },
+  "test2":{
+    stack:'test',
+    name:'test2',
+    image:'test2',
+    filter:[{
+      tag:'system'
+    }],
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:11
+    }
+  },
+  "test3":{
+    stack:'test',
+    name:'test3',
+    image:'test3',
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:12
+    }
+  },
+  "registry":{
+    stack:'core',
+    name:'registry',
+    image:'registry',
+    filter:[{
+      tag:'system',
+      flexible:true
+    }],
+    ports:[
+      '5000:5000'
+    ]
+  }
 }
 
 var hosts = {
@@ -100,5 +143,11 @@ module.exports = {
 			var server = hosts[key]
 			etcd.set('/host/' + server.name + '/config', JSON.stringify(server), nextKey)
 		}, done)
-	}
+	},
+  proc:function(etcd, done){
+    async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
+      var proc = procs[key]
+      etcd.set('/proc/' + proc.stack + '/default/' + proc.image, JSON.stringify(proc), nextKey)
+    }, done)
+  }
 }

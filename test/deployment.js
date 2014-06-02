@@ -34,7 +34,7 @@ tape('write network stubs', function(t){
 })
 
 tape('check network stubs', function(t){
-	etcd.get('/', {
+	etcd.get('/host', {
 		recursive:true
 	}, function(err, data){
 
@@ -60,8 +60,43 @@ tape('check network stubs', function(t){
 })
 
 tape('write proc stubs', function(t){
+	stubs.proc(etcd, function(err){
+		if(err){
+			t.fail(err, 'write stubs')
+		}
+		else{
+			t.pass('write stubs')
+		}
+		t.end()
+	})
+})
 
 
+tape('check proc stubs', function(t){
+	etcd.get('/proc', {
+		recursive:true
+	}, function(err, data){
+
+		if(err){
+			t.fail(err, 'check stubs')
+			t.end()
+			return
+		}
+
+		var procs = flatten(data.node)
+		procs = processObject(procs, function(key){
+			return key.replace(/^\/proc/, '')
+		})
+
+		t.ok(procs['/test/default/test1'], 'has test1')
+		t.ok(procs['/test/default/test2'], 'has test2')
+		t.ok(procs['/test/default/test3'], 'has test3')
+		t.ok(procs['/core/default/registry'], 'has registry')
+		t.equal(procs['/core/default/registry'].filter[0].tag, 'system', 'system tag')
+
+		t.end()
+
+	})
 })
 
 etcdserver.stop(tape)
