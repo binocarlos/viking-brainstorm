@@ -65,7 +65,11 @@ function stack(){
 					}
 
 					t.pass('vikings started')
-					t.end()
+
+					console.log('wait 10 seconds for everything to get setup')
+					setTimeout(function(){
+						t.end()
+					}, 10000)
 
 				})
 

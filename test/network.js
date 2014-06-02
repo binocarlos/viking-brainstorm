@@ -43,7 +43,6 @@ tape('etcd should be running on all viking servers', function(t){
 	})
 })
 
-/*
 function checkRegistry(t){
 	exec('ssh viking-0 docker ps', function(err, stdout, stderr){
 		if(err){
@@ -70,7 +69,5 @@ tape('the registry should be running on viking-0', function(t){
 	setTimeout(runTest, 5000)
 	
 })
-
-*/
 
 stack.stop(tape)
