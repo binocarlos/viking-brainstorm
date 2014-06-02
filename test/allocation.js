@@ -97,6 +97,8 @@ tape('check proc stubs', function(t){
 		t.ok(procs['/test/default/test3'], 'has test3')
 		t.ok(procs['/test/default/test4'], 'has test4')
 		t.ok(procs['/test/default/test5'], 'has test5')
+		t.ok(procs['/test/default/test6'], 'has test6')
+		t.ok(procs['/test/default/test7'], 'has test7')
 		t.ok(procs['/core/default/registry'], 'has registry')
 		t.equal(procs['/core/default/registry'].filter[0].tag, 'system', 'system tag')
 		t.equal(procs['/core/default/registry'].id, 'core/default/registry', 'registry id is correct')
@@ -106,34 +108,46 @@ tape('check proc stubs', function(t){
 	})
 })
 
-tape('test the proposed allocations', function(t){
-	deployment.getAllocations(function(err, allocations){
+var loops = []
+for(var index=0; index<5; index++){
+	loops.push('' + index)
+}
 
-		if(err){
-			t.fail(err, 'load allocations')
+loops.forEach(function(i){
+	tape('test the proposed allocations number ' + i, function(t){
+
+		deployment.getAllocations(function(err, allocations){
+
+			if(err){
+				t.fail(err, 'load allocations')
+				t.end()
+				return
+			}
+
+			t.equal(allocations.length, 8, 'there are 8 allocations')
+			
+			var jobs = {}
+			var jobServers = {}
+			var serverCount = {}
+
+			allocations.forEach(function(allocation){
+				var job = allocation.job
+				var server = allocation.server
+				jobs[job.id] = job
+				jobServers[job.id] = server.name
+				serverCount[server.name] = serverCount[server.name] || 0
+				serverCount[server.name]++
+			})
+
+			console.log(JSON.stringify(serverCount, null, 4))
+			t.ok(serverCount['viking-0']>=2 && serverCount['viking-0']<=4, 'fair allocation - viking-0 - pass: ' + i)
+			t.ok(serverCount['viking-1']>=2 && serverCount['viking-1']<=3, 'fair allocation - viking-1 - pass: ' + i)
+			t.ok(serverCount['viking-2']>=2 && serverCount['viking-2']<=3, 'fair allocation - viking-2 - pass: ' + i)
+
 			t.end()
-			return
-		}
-
-		t.equal(allocations.length, 6, 'there are 6 allocations')
-		
-		var jobs = {}
-		var jobServers = {}
-		var serverCount = {}
-
-		allocations.forEach(function(allocation){
-			var job = allocation.job
-			var server = allocation.server
-			jobs[job.id] = job
-			jobServers[job.id] = server.name
-			serverCount[server.name] = serverCount[server.name] || 0
-			serverCount[server.name]++
 		})
-		
-		console.dir(jobServers)
-		console.dir(serverCount)
-		t.end()
 	})
+
 })
 
 etcdserver.stop(tape)

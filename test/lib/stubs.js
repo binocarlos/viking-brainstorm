@@ -60,6 +60,28 @@ var procs = {
       TEST:14
     }
   },
+  "test6":{
+    stack:'test',
+    name:'test6',
+    image:'test6',
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:15
+    }
+  },
+  "test7":{
+    stack:'test',
+    name:'test7',
+    image:'test7',
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:16
+    }
+  },
   "registry":{
     stack:'core',
     name:'registry',
