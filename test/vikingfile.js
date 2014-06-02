@@ -33,8 +33,8 @@ tape('vikingfile', function(t){
       image:'viking:ragnar/src',
       expose:[80],
       volume:['/data/db'],
-      run:'mon node index.js --volume=/data/db',
-      cwd:'/srv/app/db'
+      run:'mon node db/index.js --volume=/data/db',
+      cwd:'/srv/app'
     })
 
   	t.end()

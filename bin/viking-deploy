@@ -4,7 +4,8 @@ var args = require('minimist')(process.argv, {
   alias:{
     a:'app',
     c:'config',
-    r:'registry'
+    r:'registry',
+    e:'etcd'
   },
   default:{
     config:'viking.yml'

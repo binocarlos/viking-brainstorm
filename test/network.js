@@ -9,14 +9,16 @@ var concat = require('concat-stream')
 var spawnargs = require('spawn-args')
 var tools = require('./lib/tools')
 var Deployment = require('../lib/deployment')
-var etcd = etcdjs('192.168.8.121:4001')
+var endpoints = require('../lib/tools/endpoints')
+var etcdaddress = '192.168.8.121:4001'
+var etcd = etcdjs(etcdaddress)
 
 var deployment = Deployment(config, etcd)
 var state = {}
 
 var stack = tools.stack()
 var core = tools.core()
-
+var builder = tools.builder()
 
 tape('pull registry images', function(t){	
 
@@ -123,5 +125,24 @@ tape('check the registry is running elsewhere', function(t){
 		})
 	})
 })
+
+var registryaddress = null
+
+tape('check the registry has its new endpoint and the registry returns a 200', function(t){	
+
+	endpoints.registry(etcd, function(err, registry){
+
+		registryaddress = registry
+		t.ok(registry=='192.168.8.121:5000' || registry=='192.168.8.122:5000', 'the registry endpoint is ok')
+
+		t.end()
+	})
+
+})
+
+
+builder.build(etcd, tape, etcdaddress, registryaddress)
+builder.pull(tape)
+builder.checkpull(tape)
 
 stack.stop(tape)

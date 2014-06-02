@@ -31,9 +31,9 @@ deploy:
     volume:
       - /data/db
     # the command we run for this node
-    run: mon node index.js --volume=/data/db
+    run: mon node db/index.js --volume=/data/db
     # where the command is run
-    cwd: /srv/app/db
+    cwd: /srv/app
   # a stateless service - this can be scaled and will run anywhere
   logic:
     # we use the same base codebase
@@ -43,23 +43,21 @@ deploy:
     expose:
       - 80
     # and they have specific instructions
-    run: mon node index.js
-    cwd: /srv/app/logic
+    run: mon node logic/index.js
+    cwd: /srv/app
   # a HTTP serving process - this is stateless and will expose domains to the front router
   website:
     image: viking:ragnar/src
     scale: 3
     expose:
       - 80
-    run: mon node index.js
-    cwd: /srv/app/website
+    run: mon node website/index.js
+    cwd: /srv/app
     # each domain is automapped to the front end HTTP router
     # this applies to each of the exposed ports in the image
     domains:
-      - "thetracktube.com"
-      - "www.thetracktube.com"
-      - "tracktube.local.digger.io"
-      - "tracktube.lan.digger.io"
+      - "testviking.digger.io"
+      - "testviking.local.digger.io"
   # a static website - this required no memory it will be virtuall hosted by the generic web server
   help:
     type: website
@@ -67,8 +65,8 @@ deploy:
     document_root: ./help/www
     # static websites get hooked up to the front router too
     domains:
-      - "help.thetracktube.com"
-      - "*.help.thetracktube.com"
+      - "help.testviking.digger.io"
+      - "help.testviking.local.digger.io"
   # a service - these are fixed containers (with volumes) that are not restarted
   mongo:
     image: quarry/mongo

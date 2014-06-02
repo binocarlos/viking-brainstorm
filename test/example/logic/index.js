@@ -10,6 +10,6 @@ app.use(function(req, res){
 	res.end(val)
 })
 
-server.listen(5401, function(){
+server.listen(80, function(){
 	console.log('login listening');
 })

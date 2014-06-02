@@ -8,6 +8,6 @@ app.use(function(req, res){
 	res.end('12')
 })
 
-server.listen(5400, function(){
+server.listen(80, function(){
 	console.log('db listening');
 })

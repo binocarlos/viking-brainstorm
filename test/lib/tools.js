@@ -1,4 +1,5 @@
 var spawn = require('child_process').spawn
+var path = require('path')
 var exec = require('child_process').exec
 var async = require('async');
 var etcdjs = require('etcdjs')
@@ -289,6 +290,149 @@ function etcd(){
 	}
 }
 
+function builder(){
+	var state = {}
+	return {
+		build:function(etcd, tape, etcdaddress, registryaddress){
+
+			tape('build a simple stack and commit to the registry', function(t){
+
+				console.log('build stack...')
+
+				var build = spawn('viking', [
+					'build',
+					'--etcd',
+					etcdaddress
+				], {
+					stdio:'inherit',
+					cwd:path.normalize(__dirname + '/../example')
+				})
+
+				build.on('error', function(e){
+					t.fail(e.toString())
+					return t.end()
+				})
+
+				build.on('close', function(){
+
+					console.log('stack has been built and uploaded to the registry')
+
+					setTimeout(function(){
+
+						etcd.get('/images', {
+							recursive:true
+						}, function(err, result){
+							if(err){
+								t.fail(err.toString())
+								return t.end()	
+							}
+
+							result = flatten(result.node)
+
+
+							console.log('-------------------------------------------');
+							console.log('-------------------------------------------');
+							console.dir(result)
+							
+
+							state.testImage = result['/images/ragnar/default/inherit']
+
+							console.log('-------------------------------------------');
+							console.log('-------------------------------------------');
+							console.dir(state.testImage)
+							console.log('-------------------------------------------');
+							console.dir(registryaddress)
+
+							t.ok(state.testImage.indexOf(registryaddress || config.network.private)>=0, 'image name containes private hostname')
+
+							t.end()
+						})
+					}, 2000)
+				})
+
+			})
+		},
+
+		pull:function(tape){
+
+			tape('pull an image from the registry when docker run is used', function(t){
+
+				console.log('run image' + state.testImage)
+
+				if(!state.testImage){
+					t.fail('has no test image name')
+					return t.end()
+				}
+
+				var run = spawn('docker', [
+					'run',
+					'-t',
+					'--rm',
+					state.testImage,
+					'echo',
+					'/etc/mysetting'
+				], {
+					stdio:'inherit'
+				})
+
+				run.on('error', function(err){
+					t.fail(e.toString())
+					t.end()
+				})
+				run.on('close', function(){
+					t.end()
+				})
+
+
+			})
+
+		},
+
+		checkpull:function(tape){
+
+
+			tape('check the right image was pulled correctly', function(t){
+
+				console.log('check image...')
+
+				if(!state.testImage){
+					t.fail('has no test image name')
+					return t.end()
+				}
+
+				var run = spawn('docker', [
+					'run',
+					'-t',
+					'--rm',
+					state.testImage,
+					'echo',
+					'/etc/mysetting'
+				])
+
+				var pass = false
+
+				run.stdout.on('data', function (data) {
+					if(data.toString().match(/\/etc\/mysetting/)){
+						pass = true
+					}
+				  console.log('stdout: ' + data);
+				});
+
+				run.stderr.on('data', function (data) {
+				  console.log('stderr: ' + data);
+				  t.fail(data.toString())
+				});
+
+				run.on('close', function (code) {
+				  t.ok(pass, 'the output contained the value buried in the uploaded image')
+				  t.end()
+				});
+
+			})
+		}
+	}
+}
+
 function pause(tape, len, message){
 	tape(message || 'pausing for ' + len + ' seconds', function(t){
 		setTimeout(function(){
@@ -300,6 +444,7 @@ function pause(tape, len, message){
 module.exports = {
 	stack:stack,
 	pause:pause,
+	builder:builder,
 	etcd:etcd,
 	core:core,
 	host:host,
