@@ -181,7 +181,6 @@ tape('build a simple stack and commit to the registry', function(t){
 
 })
 
-/*
 tape('pull an image from the registry when docker run is used', function(t){
 
 	console.log('run image' + state.testImage)
@@ -251,7 +250,7 @@ tape('check the right image was pulled correctly', function(t){
 	});
 
 })
-*/
+
 tape('shutdown', function(t){
 	console.log('shutting down...')
 	exec('viking host stop --clean', function(err){
