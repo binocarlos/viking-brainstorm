@@ -95,14 +95,8 @@ function startStack(tape){
 				t.fail(err)
 				return t.end()
 			}
-
 			t.pass('the viking servers have started')
-
-			console.log('wait 10 seconds for everything to get setup')
-			setTimeout(function(){
-				t.end()
-			}, 10000)
-
+			t.end()
 		})
 
 	})
