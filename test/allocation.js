@@ -144,6 +144,9 @@ loops.forEach(function(i){
 			t.ok(serverCount['viking-1']>=2 && serverCount['viking-1']<=3, 'fair allocation - viking-1 - pass: ' + i)
 			t.ok(serverCount['viking-2']>=2 && serverCount['viking-2']<=3, 'fair allocation - viking-2 - pass: ' + i)
 
+			t.equal(jobServers['core/default/registry'], 'viking-0')
+			t.equal(jobServers['test/default/test1'], 'viking-0')
+			
 			t.end()
 		})
 	})
