@@ -148,6 +148,7 @@ tape('check the right image was pulled correctly', function(t){
 	var run = spawn('docker', [
 		'run',
 		'-t',
+		'--rm',
 		state.testImage,
 		'echo',
 		'/etc/mysetting'
