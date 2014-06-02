@@ -120,12 +120,12 @@ tape('etcd keys', function(t){
 
 		result = flatten(result.node)
 
-		t.ok(result['/host/viking-0'], 'the host has registered')
-		t.ok(result['/proc/core/system/registry'], 'registry /proc is written')
-		t.equal(result['/run/core/system/registry'], 'viking-0', 'registry is allocated to viking-0')
-		t.equal(result['/fixed/core/system/registry'], 'viking-0', 'registry is fixed to viking-0')
-		t.equal(result['/deploy/viking-0/core/system/registry'], 'core-system-registry', 'registry /deploy is written')
-		t.equal(result['/ports/core/system/registry/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
+		t.ok(result['/host/viking-0/config'], 'the host has registered')
+		t.ok(result['/proc/core/default/registry'], 'registry /proc is written')
+		t.equal(result['/run/core/default/registry'], 'viking-0', 'registry is allocated to viking-0')
+		t.equal(result['/fixed/core/default/registry'], 'viking-0', 'registry is fixed to viking-0')
+		t.equal(result['/deploy/viking-0/core/default/registry'], 'core-default-registry', 'registry /deploy is written')
+		t.equal(result['/ports/core/default/registry/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
 
 		t.end()
 	})
@@ -134,7 +134,10 @@ tape('etcd keys', function(t){
 
 })
 
+/*
 tape('build a simple stack and commit to the registry', function(t){
+
+	console.log('build stack...')
 
 	var build = spawn('viking', [
 		'build'
@@ -180,7 +183,7 @@ tape('build a simple stack and commit to the registry', function(t){
 
 tape('pull an image from the registry when docker run is used', function(t){
 
-	console.log('RUNNING: ' + state.testImage)
+	console.log('run image' + state.testImage)
 
 	if(!state.testImage){
 		t.fail('has no test image name')
@@ -212,6 +215,7 @@ tape('pull an image from the registry when docker run is used', function(t){
 
 tape('check the right image was pulled correctly', function(t){
 
+	console.log('check image...')
 
 	if(!state.testImage){
 		t.fail('has no test image name')
@@ -247,7 +251,10 @@ tape('check the right image was pulled correctly', function(t){
 
 })
 
+*/
+
 tape('shutdown', function(t){
+	console.log('shutting down...')
 	exec('viking host stop --clean', function(err){
 		if(err){
 			t.fail(err, 'viking host stop')
