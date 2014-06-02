@@ -89,19 +89,13 @@ tape('close viking-0', function(t){
 	
 })
 
-tools.pause(tape, 5, 'wait 5 seconds to let everything get setup')
+tools.pause(tape, 15, 'wait 15 seconds for the leader to switch')
 
 var newLeader = null
 tape('the leader should NOT be viking-0', function(t){	
-	exec('viking info leader', function(err, stdout){
-		if(err){
-			t.fail(err, 'ensure the leader is viking-0')
-			t.end()
-			return
-		}
-		newLeader = stdout.toString().replace(/\n/g, '')
-		t.ok(newLeader!='viking-0', 'leader is not viking-0')
-		console.log(newLeader)
+
+	deployment.getState(function(err, state){
+		t.ok(state.leader!='viking-0', 'leader should not be viking-0')
 		t.end()
 	})
 })
@@ -110,12 +104,24 @@ tape('the leader should NOT be viking-0', function(t){
 tape('check the registry is running elsewhere', function(t){	
 
 	deployment.getState(function(err, state){
-		console.log('-------------------------------------------');
-		console.dir(state)
-		t.end()
+
+		var choosenServer = state.run['/core/default/registry']
+
+		t.ok(choosenServer=='viking-1'||choosenServer=='viking-2', 'the registry is on a new server in the db')
+
+		exec('ssh ' + choosenServer + ' docker ps', function(err, stdout){
+			if(err){
+				t.fail(err, 'check registry in docker output')
+				t.end()
+				return
+			}
+
+			var output = stdout.toString()
+
+			t.ok(output.match(/registry/), 'the registry is in the output')
+			t.end()
+		})
 	})
-	
-	
 })
 
 stack.stop(tape)
