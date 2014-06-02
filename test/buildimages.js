@@ -5,102 +5,25 @@ var flatten = require('etcd-flatten')
 var tape     = require('tape')
 var config = require('../lib/config')()
 var concat = require('concat-stream')
+var tools = require('./lib/tools')
 var state = {}
 
-tape('initialize', function(t){
-	console.log('resetting etcd')
-	exec('sudo viking etcd reset', function(err, stdout){
-		if(err){
-			t.fail(err, 'viking reset')
-			t.end()
-			return
-		}
-		console.log(stdout.toString())
-		console.log('starting etcd')
-		exec('viking etcd start --seed', function(err, stdout){
-			if(err){
-				t.fail(err, 'viking etcd')
-				t.end()
-				return
-			}
-			console.log(stdout.toString())
-			exec('viking host start -d', function(err, stdout){
-				if(err){
-					t.fail(err, 'viking etcd')
-					t.end()
-					return
-				}
-				console.log(stdout.toString())
-				t.pass('viking reset and configured')
-				t.end()
-			})
-		})
-	})
-})
+var etcd = tools.etcd()
+var host = tools.host()
+var core = tools.core()
 
-// start viking - this will boot etcd and get the registry running
-tape('check etcd running', function(t){
-	exec('docker ps', function(err, stdout, stderr){
-		if(err || stderr){
-			t.fail(stderr.toString())
-			return t.end()
-		}
-		var content = stdout.toString()
-		t.ok(content.match(/core-etcd/), 'etcd running')
-		t.end()
-	})
-})
+etcd.reset(tape)
+etcd.start(tape)
+tools.pause(tape, 2)
+etcd.check(tape)
 
+host.start(tape)
+tools.pause(tape, 2)
+host.check(tape)
 
-// start viking - this will boot etcd and get the registry running
-tape('check host running', function(t){
-	setTimeout(function(){
-		exec('viking info host', function(err, stdout, stderr){
-			if(err || stderr){
-				t.fail(stderr.toString())
-				return t.end()
-			}
-			var content = stdout.toString()
-			var data = JSON.parse(content)
-			t.equal(data.host.state, 'alive', 'the host is alive')
-			t.end()
-		})
-	}, 2000)
-	
-})
-
-tape('deploy the core stack', function(t){
-	exec('viking deploy core', function(err, stdout, stderr){
-		if(err || stderr){
-			t.fail(stderr.toString())
-			return t.end()
-		}
-		t.pass('viking core deployed')
-		t.end()
-	})
-})
-
-// start viking - this will boot etcd and get the registry running
-tape('check registry running', function(t){
-
-	console.log('wait 10 seconds to let everything get setup')
-	setTimeout(function(){
-		exec('docker ps', function(err, stdout, stderr){
-			if(err || stderr){
-				t.fail(stderr.toString())
-				return t.end()
-			}
-
-			var content = stdout.toString()
-			// we should have a registry and etcd running
-			t.ok(content.match(/core-default-registry/), 'registry running')
-
-			t.end()
-		})
-	},10000)
-		
-})
-
+core.deploy(tape)
+tools.pause(tape, 10, 'wait 10 seconds to let everything get setup')
+core.check(tape)
 
 tape('etcd keys', function(t){
 
@@ -251,25 +174,6 @@ tape('check the right image was pulled correctly', function(t){
 
 })
 
-tape('shutdown', function(t){
-	console.log('shutting down...')
-	exec('viking host stop --clean', function(err){
-		if(err){
-			t.fail(err, 'viking host stop')
-			t.end()
-			return
-		}
-		exec('viking etcd stop', function(){
-			if(err){
-				t.fail(err, 'viking etcd stop')
-				t.end()
-				return
-			}
-			
-			t.pass('viking stopped')
-			t.end()
-		})
-	})
-  
-
-})
+host.stop(tape)
+tools.pause(tape, 2)
+etcd.stop(tape)

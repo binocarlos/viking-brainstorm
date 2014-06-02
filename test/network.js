@@ -14,60 +14,38 @@ var stack = tools.stack()
 
 stack.start(tape)
 
-tape('etcd should be running on all viking servers', function(t){
-	async.forEachSeries(['viking-0', 'viking-1', 'viking-2'], function(hostname, nextHost){
+stack.checkEtcds(tape)
+/*
+tape('the registry should be running on viking-0', function(t){	
+	
+	exec('viking info keys', function(err, stdout, stderr){
 
-		exec('ssh ' + hostname + ' docker ps | grep etcd', function(err, stdout, stderr){
+		console.log('-------------------------------------------');
+			console.log('-------------------------------------------');
+			console.dir(err)
+			console.log(stdout.toString())
+		exec('ssh viking-0 docker ps', function(err, stdout, stderr){
+			console.log('-------------------------------------------');
+			console.log('-------------------------------------------');
+			console.dir(err)
+			console.dir(stdout.toString())
+
 			if(err){
 				t.fail(err)
-				return nextHost()
+				return t.end()
 			}
 			if(stderr){
 				t.fail(stderr.toString)
-				return nextHost()
+				return t.end()
 			}
 
-			var match = stdout.toString().match(/etcd/)
+			var match = stdout.toString().match(/registry/)
 
-			t.ok(match, 'etcd was found in the docker ps output')
-			nextHost()
+			t.ok(match, 'registry was found in the docker ps output')
+			t.end()
 		})
-	}, function(err){
-		if(err){
-			t.fail(err)
-			return t.end()
-		}
-
-		t.pass('etcd was found in all servers')
-		t.end()
 	})
-})
-
-function checkRegistry(t){
-	exec('ssh viking-0 docker ps', function(err, stdout, stderr){
-		if(err){
-			t.fail(err)
-			return t.end()
-		}
-		if(stderr){
-			t.fail(stderr.toString)
-			return t.end()
-		}
-
-		var match = stdout.toString().match(/registry/)
-
-		t.ok(match, 'registry was found in the docker ps output')
-		t.end()
-	})
-}
-
-tape('the registry should be running on viking-0', function(t){	
-	function runTest(){
-		checkRegistry(t)
-	}
-	console.log('wait a few seconds to let everything get setup')
-	setTimeout(runTest, 5000)
 	
 })
-
+*/
 stack.stop(tape)
