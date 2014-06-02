@@ -80,7 +80,8 @@ token:
 	@echo
 
 clean:
-	./vagrant/admin ssh sudo viking reset 
+	viking host stop --clean
+	viking etcd stop
 
 #links:
 #	rm -f /usr/local/bin/viking

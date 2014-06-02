@@ -96,14 +96,11 @@ tape('check registry running', function(t){
 			t.ok(content.match(/core-default-registry/), 'registry running')
 
 			t.end()
-
 		})
 	},10000)
 		
 })
 
-// sanity check for the registry having booted
-// to boot - it will have gone throught he dispatch and written etcd keys
 
 tape('etcd keys', function(t){
 
@@ -134,7 +131,7 @@ tape('etcd keys', function(t){
 
 })
 
-/*
+
 tape('build a simple stack and commit to the registry', function(t){
 
 	console.log('build stack...')
@@ -166,8 +163,11 @@ tape('build a simple stack and commit to the registry', function(t){
 					t.fail(err.toString())
 					return t.end()	
 				}
-				
 
+				console.log('-------------------------------------------');
+				console.log('-------------------------------------------');
+				console.dir(result)
+				
 				result = flatten(result.node)
 
 				state.testImage = result['/images/ragnar/default/inherit']
@@ -181,6 +181,7 @@ tape('build a simple stack and commit to the registry', function(t){
 
 })
 
+/*
 tape('pull an image from the registry when docker run is used', function(t){
 
 	console.log('run image' + state.testImage)
@@ -250,9 +251,7 @@ tape('check the right image was pulled correctly', function(t){
 	});
 
 })
-
 */
-
 tape('shutdown', function(t){
 	console.log('shutting down...')
 	exec('viking host stop --clean', function(err){
