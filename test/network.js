@@ -29,9 +29,9 @@ function runCommands(commands, done){
 tape('reset viking servers', function(t){
 
 	var commands = [
-		'ssh viking-0 sudo viking reset',
-		'ssh viking-1 sudo viking reset',
-		'ssh viking-2 sudo viking reset'
+		'ssh viking-0 /bin/bash -c "cd /srv/projects/viking && make clean"',
+		'ssh viking-0 /bin/bash -c "cd /srv/projects/viking && make clean"',
+		'ssh viking-0 /bin/bash -c "cd /srv/projects/viking && make clean"'
 	]
 
 	runCommands(commands, function(err){
@@ -47,6 +47,7 @@ tape('reset viking servers', function(t){
 
 })
 
+/*
 tape('configure viking servers', function(t){
 
 	var commands = [
@@ -144,25 +145,7 @@ tape('the registry should be running on viking-0', function(t){
 	setTimeout(runTest, 5000)
 	
 })
-/*
-tape('killing viking-2 should not kill the registry on viking-0', function(t){
 
-	runCommands([
-		'ssh viking-2 viking stop'
-	], function(err){
-		if(err){
-			t.fail(err)
-			return t.end()
-		}
-
-		setTimeout(function(){
-			checkRegistry(t)
-		}, 2000)
-
-	})
-	
-})
-*/
 tape('shutdown', function(t){
 
 	var commands = [
@@ -183,4 +166,4 @@ tape('shutdown', function(t){
 	})
   
 
-})
+})*/

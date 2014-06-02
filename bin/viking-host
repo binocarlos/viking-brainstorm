@@ -3,8 +3,7 @@ var Host = require('../lib/bootstrap/host')
 var args = require('minimist')(process.argv, {
 	alias:{
 		d:'deamon',
-		t:'tail',
-		c:'clean'
+		t:'tail'
 	}
 })
 var host = Host(args)

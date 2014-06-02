@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+var Controller = require('../lib/bootstrap/controller')
+var args = require('minimist')(process.argv, {
+	alias:{
+		s:'seed'
+	}
+})
+var controller = Controller(args)
+controller.start(function(){
+	
+})
