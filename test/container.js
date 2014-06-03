@@ -136,7 +136,7 @@ tape('dockerrun arguments with extra args', function(t){
 	  '--entrypoint',
 	  '/bin/bash',
 	  '--workdir',
-	  '/',
+	  '/home',
 	  '-m',
 	  '100m',
 	  'quarry/monnode',
