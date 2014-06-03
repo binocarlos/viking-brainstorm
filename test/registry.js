@@ -132,10 +132,12 @@ builder.checkpull(tape)
 tape('clean the local', function(t){
 
 	exec('viking local clean', function(err, stdout){
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.log(err)
-		console.log(stdout.toString())
+		if(err){
+			t.fail(err, 'viking local clean')
+			t.end()
+			return
+		}
+		t.pass('viking local clean')
 		t.end()
 	})
 	
