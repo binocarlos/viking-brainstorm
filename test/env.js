@@ -75,7 +75,6 @@ tape('check the process function', function(t){
 			t.equal(data.COLOR, 'red', 'color = red')
 			t.equal(data.MAPCOLOR, 'red', 'mapcolor = red')
 			t.equal(data.FRUIT, 'ORANGE', 'fruit = orange')
-			console.dir(data)
 			t.notok(data.hasOwnProperty('BLANK'), 'no blank value')
 
 			t.end()
