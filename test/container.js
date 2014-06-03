@@ -10,13 +10,14 @@ var Registry = require('../lib/services/registry')
 var endpoints = require('../lib/tools/endpoints')
 var Job = require('../lib/tools/job')
 var Volume = require('../lib/tools/volume')
+var DockerRun = require('../lib/tools/dockerrun')
 var tools = require('./lib/tools')
 var state = {}
 
-function getContainerDesc(){
+function getJob(){
 	var vol = Volume(config, 'test', '/test1/store')
 
-	return  {
+	var conf =  {
 	  stack:'test',
 	  name:'test1',
 	  image:'quarry/monnode',
@@ -26,18 +27,29 @@ function getContainerDesc(){
 	  volumes:[
 	    vol
 	  ],
-	  remove:true,
 	  entrypoint:'/bin/bash',
 	  command:'echo $TEST > /test1/store/env',
 	  cwd:'/'
 	}
-}
-
-tape('get the docker arguments', function(t){
 
 	var job = getContainerDesc()
 	var jobObject = Job(job)
 	jobObject.ensureValues()
+
+	return job._data
+}
+
+tape('dockerrun arguments', function(t){
+	var args = DockerRun(getContainerDesc())
+
+	console.log('-------------------------------------------');
+	console.dir(args)
+	t.end()
+})
+
+tape('get the docker arguments', function(t){
+
+	
 
 	var container = Container(job)
 	
@@ -48,15 +60,8 @@ tape('get the docker arguments', function(t){
 	t.equal(options.image, 'quarry/monnode', 'image')
 	t.equal(options.volumes[0], '/var/lib/viking/volumes/test/test1/store:/test1/store', 'volume')
 
-	console.dir(options)
-	container.start(function(err, data){
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.dir(err)
-		console.dir(data)
-		t.end()
-	})
-  
+
+
+	t.end()
 
 })
