@@ -325,6 +325,10 @@ function builder(){
 								return t.end()	
 							}
 
+							if(!result){
+								t.fail('no results')
+								return t.end()		
+							}
 							result = flatten(result.node)
 							state.testImage = result['/images/ragnar/default/inherit']
 							t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')

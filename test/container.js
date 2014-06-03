@@ -171,8 +171,6 @@ tape('run a container that writes to a volume and returns the env and args', fun
 	
 })
 
-/*
-
 tape('run a deamon container - load a page and then close it', function(t){
 
 	var container = Container(getServer())
@@ -238,4 +236,3 @@ tape('run a deamon container - load a page and then close it', function(t){
 	
 
 })
-*/
