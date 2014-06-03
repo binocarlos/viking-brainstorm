@@ -15,10 +15,16 @@ var state = {}
 
 tape('get the docker arguments', function(t){
 
-	var container = Container({
-		
-	}, config)
+	var job = Registry(config)
+	var jobObject = Job(job)
+	jobObject.ensureValues()
+
+	var container = Container(job)
 	
+	var options = container.options()
+
+	console.dir(options)
+	t.end()
   
 
 })
