@@ -9,13 +9,32 @@ var concat = require('concat-stream')
 var Registry = require('../lib/services/registry')
 var endpoints = require('../lib/tools/endpoints')
 var Job = require('../lib/tools/job')
+var Volume = require('../lib/tools/volume')
 var tools = require('./lib/tools')
 var state = {}
 
+function getContainerDesc(){
+	var vol = Volume(config, 'test', '/test1/store')
+
+	return  {
+	  stack:'test',
+	  name:'test1',
+	  image:'quarry/monnode',
+	  env:{
+	    TEST:10
+	  },
+	  volumes:[
+	    vol
+	  ],
+	  entrypoint:'/bin/bash',
+	  command:'echo $TEST > /test1/store/env',
+	  cwd:'/'
+	}
+}
 
 tape('get the docker arguments', function(t){
 
-	var job = Registry(config)
+	var job = getContainerDesc()
 	var jobObject = Job(job)
 	jobObject.ensureValues()
 
