@@ -61,7 +61,7 @@ tape('run the registry', function(t){
 	registryJob = job
 
 	var container = Container(job, config)
-	container.prepare(function(){
+	container.prepare(function(err){
 
 		console.log('-------------------------------------------');
 		console.dir(container._job)
