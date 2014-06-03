@@ -63,9 +63,9 @@ function startStack(tape){
 	tape('reset viking servers', function(t){
 
 		var commands = [
-			'ssh viking-0 /bin/bash -c "cd /srv/projects/viking && make clean"',
-			'ssh viking-1 /bin/bash -c "cd /srv/projects/viking && make clean"',
-			'ssh viking-2 /bin/bash -c "cd /srv/projects/viking && make clean"'
+			'ssh viking-0 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
+			'ssh viking-1 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
+			'ssh viking-2 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"'
 		]
 
 		runCommands(commands, function(err){
@@ -84,11 +84,11 @@ function startStack(tape){
 	tape('start viking servers', function(t){
 
 		var commands = [
-			'ssh viking-0 viking start --seed',
+			'ssh viking-0 viking start --seed --folder /tmp/vikingetcdtest',
 			'sleep 2',
-			'ssh viking-1 viking start',
+			'ssh viking-1 viking start --folder /tmp/vikingetcdtest',
 			'sleep 2',
-			'ssh viking-2 viking start'
+			'ssh viking-2 viking start --folder /tmp/vikingetcdtest'
 		]
 
 		runCommands(commands, function(err){
@@ -234,7 +234,7 @@ function etcd(){
 	return {
 		reset:function(tape){
 			tape('reset etcd', function(t){
-				exec('sudo viking etcd reset', function(err, stdout){
+				exec('sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest', function(err, stdout){
 					if(err){
 						t.fail(err, 'reset etcd')
 						t.end()
@@ -247,7 +247,7 @@ function etcd(){
 		},
 		start:function(tape){
 			tape('start etcd', function(t){
-				exec('viking etcd start --seed', function(err, stdout){
+				exec('viking etcd start --seed --folder /tmp/vikingetcdtest', function(err, stdout){
 					if(err){
 						t.fail(err, 'start etcd')
 						t.end()
