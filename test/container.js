@@ -197,9 +197,6 @@ tape('run a deamon container - load a page and then close it', function(t){
 
 			console.log('get ports')
 			container.ports(function(err, ports){
-				console.log('-------------------------------------------');
-				console.log('-------------------------------------------');
-				console.dir(ports)
 
 				if(err){
 					t.fail(err, 'get the ports')
@@ -207,31 +204,31 @@ tape('run a deamon container - load a page and then close it', function(t){
 					return
 				}
 
+				var port = ports['80/tcp']
 
-				clean(function(){
-					t.end()	
-				})
+				console.dir('http://127.0.0.1:' + port)
+
+				setTimeout(function(){
+					exec('curl -L ' + 'http://127.0.0.1:' + port, function(err, stdout, stderr){
+
+						if(err){
+							t.fail(err, 'load the test page')
+							t.end()
+							return
+						}
+
+						stdout = stdout.toString()
+						t.ok(stdout.match(/hello world/), 'the result has hello world')
+						
+						clean(function(){
+							t.end()	
+						})
+					})
+				}, 2000)
+
+
 				
 			})
-			
-
-			/*
-			console.log('check container (why does this take a while?)')
-
-			setTimeout(function(){
-				exec('curl -L http://127.0.0.1:8080', function(err, stdout){
-					
-					stdout = stdout.toString()
-					t.ok(stdout.match(/hello world/), 'the result has hello world')
-					
-					console.log('clean container')
-					clean(function(){
-						t.end()	
-					})
-				})
-			}, 1000)*/
-			
-
 			
 		})
 	})
