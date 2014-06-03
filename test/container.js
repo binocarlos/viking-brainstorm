@@ -26,6 +26,7 @@ function getContainerDesc(){
 	  volumes:[
 	    vol
 	  ],
+	  remove:true,
 	  entrypoint:'/bin/bash',
 	  command:'echo $TEST > /test1/store/env',
 	  cwd:'/'
@@ -42,8 +43,20 @@ tape('get the docker arguments', function(t){
 	
 	var options = container.options()
 
+	t.equal(options.stack, 'test', 'stack')
+	t.equal(options.name, 'test1', 'name')
+	t.equal(options.image, 'quarry/monnode', 'image')
+	t.equal(options.volumes[0], '/var/lib/viking/volumes/test/test1/store:/test1/store', 'volume')
+
 	console.dir(options)
-	t.end()
+	container.start(function(err, data){
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.dir(err)
+		console.dir(data)
+		t.end()
+	})
   
 
 })
