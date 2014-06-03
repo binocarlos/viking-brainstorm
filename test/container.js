@@ -16,13 +16,13 @@ var DockerRun = require('../lib/tools/dockerrun')
 var tools = require('./lib/tools')
 var state = {}
 
-
 function getArgsTest(){
 	var vol = Volume(config, 'test', '/test1/store')
 
 	var job =  {
 	  stack:'test',
 	  name:'test1',
+	  tag:new Date().getTime(),
 	  image:'quarry/monnode',
 	  env:{
 	    TEST:10
@@ -51,6 +51,7 @@ function getJob(){
 	var job =  {
 	  stack:'test',
 	  name:'test1',
+	  tag:new Date().getTime(),
 	  image:'quarry/monnode',
 	  env:{
 	    TEST:10
@@ -76,6 +77,7 @@ function getServer(){
 	  stack:'test',
 	  name:'test1',
 	  image:'quarry/monnode',
+	  tag:new Date().getTime(),
 	  env:{
 	    TEST:10
 	  },
@@ -96,14 +98,17 @@ function getServer(){
 	return jobObject.data()
 }
 
+
 tape('dockerrun arguments', function(t){
+
+	var tag = new Date().getTime()
 	var args = DockerRun(getJob())
 
 	t.equal(args.length, 16, 'there are 16 args')
 
 	t.deepEqual(args, [ '-t',
 	  '--name',
-	  'test-default-test1',
+	  'test-' + tag + '-test1',
 	  '-v',
 	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
 	  '-e',
@@ -125,11 +130,13 @@ tape('dockerrun arguments', function(t){
 tape('dockerrun arguments with extra args', function(t){
 	var args = DockerRun(getArgsTest())
 
+	var tag = new Date().getTime()
+
 	t.equal(args.length, 18, 'there are 18 args')
 
 	t.deepEqual(args, [ '-t',
 	  '--name',
-	  'test-default-test1',
+	  'test-' + tag + '-test1',
 	  '-v',
 	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
 	  '-e',
@@ -172,21 +179,16 @@ tape('run a deamon container - load a page and then close it', function(t){
 	function clean(done){
 
 		exec('docker stop test-default-test1 && docker rm test-default-test1', function(){
-
-			setTimeout(done, 1000)
+			done()
 			
 		})
 	}
-	function stop(){
 
-		clean(function(){
-			t.end()
-		})
-		
-	}
 
+	console.log('clean container')
 	clean(function(){
 
+		console.log('start container')
 		container.start(function(err, result){
 
 			if(err){
@@ -194,17 +196,33 @@ tape('run a deamon container - load a page and then close it', function(t){
 				t.end()
 				return
 			}
-			
-			exec('curl -L http://127.0.0.1:8080', function(err, stdout){
-				
-				stdout = stdout.toString()
-				t.ok(stdout.match(/hello world/), 'the result has hello world')
-				
 
-				clean(function(){
-					t.end()	
-				})
+			console.dir(result)
+
+			container.ports(function(err, ports){
+				console.log('-------------------------------------------');
+				console.log('-------------------------------------------');
+				console.dir(ports)
+				t.end()
 			})
+			
+
+			/*
+			console.log('check container (why does this take a while?)')
+
+			setTimeout(function(){
+				exec('curl -L http://127.0.0.1:8080', function(err, stdout){
+					
+					stdout = stdout.toString()
+					t.ok(stdout.match(/hello world/), 'the result has hello world')
+					
+					console.log('clean container')
+					clean(function(){
+						t.end()	
+					})
+				})
+			}, 1000)*/
+			
 
 			
 		})
@@ -212,3 +230,32 @@ tape('run a deamon container - load a page and then close it', function(t){
 	
 
 })
+
+
+/*
+tape('run a container that writes to a volume', function(t){
+
+	var container = Container(getJob())
+
+	function clean(done){
+
+		exec('docker stop test-default-test1 && docker rm test-default-test1', function(){
+
+			setTimeout(done, 1000)
+			
+		})
+	}
+
+	clean(function(){
+
+		container.run(function(err, result){
+			console.log('-------------------------------------------');
+			console.dir(err)
+			console.dir(result)
+
+			
+		})
+	})
+	
+
+})*/
