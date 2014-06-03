@@ -9,6 +9,7 @@ var concat = require('concat-stream')
 var Registry = require('../lib/services/registry')
 var endpoints = require('../lib/tools/endpoints')
 var Job = require('../lib/tools/job')
+var hyperquest = require('hyperquest');
 var Volume = require('../lib/tools/volume')
 var DockerRun = require('../lib/tools/dockerrun')
 
@@ -167,19 +168,47 @@ tape('get the docker arguments from the container', function(t){
 tape('run a deamon container - load a page and then close it', function(t){
 
 	var container = Container(getServer())
-	
-	container.start(function(err, result){
 
-		if(err){
-			t.fail(err, 'run the server')
+	function clean(done){
+
+		exec('docker stop test-default-test1 && docker rm test-default-test1', function(){
+
+			setTimeout(done, 1000)
+			
+		})
+	}
+	function stop(){
+
+		clean(function(){
 			t.end()
-			return
-		}
-
-		console.log(err)
-		console.log(result)
+		})
 		
-		t.end()
+	}
+
+	clean(function(){
+
+		container.start(function(err, result){
+
+			if(err){
+				t.fail(err, 'run the server')
+				t.end()
+				return
+			}
+			
+			exec('curl -L http://127.0.0.1:8080', function(err, stdout){
+				
+				stdout = stdout.toString()
+				t.ok(stdout.match(/hello world/), 'the result has hello world')
+				
+
+				clean(function(){
+					t.end()	
+				})
+			})
+
+			
+		})
 	})
+	
 
 })
