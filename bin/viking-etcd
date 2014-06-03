@@ -3,7 +3,8 @@ var args = require('minimist')(process.argv, {
   boolean:['seed', 'tail'],
   alias:{
     s:'seed',
-    t:'tail'
+    t:'tail',
+    f:'folder'
   }
 })
 
