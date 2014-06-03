@@ -120,6 +120,34 @@ tape('dockerrun arguments', function(t){
 	t.end()
 })
 
+
+tape('dockerrun arguments with extra args', function(t){
+	var args = DockerRun(getArgsTest())
+
+	t.equal(args.length, 18, 'there are 18 args')
+
+	t.deepEqual(args, [ '-t',
+	  '--name',
+	  'test/default/test1',
+	  '-v',
+	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
+	  '-e',
+	  'TEST=10',
+	  '--entrypoint',
+	  '/bin/bash',
+	  '--workdir',
+	  '/',
+	  '-m',
+	  '100m',
+	  'quarry/monnode',
+	  'echo',
+	  '$TEST',
+	  '>',
+	  '/test1/store/env' ], 'the args are correct')
+
+	t.end()
+})
+
 tape('get the docker arguments from the container', function(t){
 
 	var container = Container(getJob())
