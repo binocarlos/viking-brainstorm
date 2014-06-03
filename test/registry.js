@@ -63,14 +63,17 @@ tape('run the registry', function(t){
 	var container = Container(job, config)
 	container.prepare(function(err){
 
-		console.log('-------------------------------------------');
-		console.dir(container._job)
-
 		if(err){
 			t.fail(err, 'preparing container')
 			t.fail()
 			return
 		}
+
+		console.log('-------------------------------------------');
+		console.dir(container._job)
+
+		t.end()
+		return
 
 		container.start(function(err, data){
 
@@ -93,7 +96,7 @@ tape('run the registry', function(t){
 	
 })
 
-
+/*
 tape('write the endpoints for the registry', function(t){
 
 	endpoints.writeDockerEndpoint(etcd, {
@@ -116,14 +119,12 @@ tape('write the endpoints for the registry', function(t){
 	})	
 })
 
-/*
-
-builder.build(etcd, tape)
-builder.pull(tape)
-builder.checkpull(tape)
-
-
 */
+
+//builder.build(etcd, tape)
+//builder.pull(tape)
+//builder.checkpull(tape)
+
 tape('clean the local', function(t){
 
 	exec('viking local clean', function(err, stdout){
