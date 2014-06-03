@@ -102,7 +102,7 @@ tape('dockerrun arguments', function(t){
 
 	t.deepEqual(args, [ '-t',
 	  '--name',
-	  'test/default/test1',
+	  'test-default-test1',
 	  '-v',
 	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
 	  '-e',
@@ -128,7 +128,7 @@ tape('dockerrun arguments with extra args', function(t){
 
 	t.deepEqual(args, [ '-t',
 	  '--name',
-	  'test/default/test1',
+	  'test-default-test1',
 	  '-v',
 	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
 	  '-e',
@@ -166,15 +166,20 @@ tape('get the docker arguments from the container', function(t){
 
 tape('run a deamon container - load a page and then close it', function(t){
 
-	var container = Container(getJob())
+	var container = Container(getServer())
 	
-	var options = container.options()
+	container.start(function(err, result){
 
-	t.equal(options.stack, 'test', 'stack')
-	t.equal(options.name, 'test1', 'name')
-	t.equal(options.image, 'quarry/monnode', 'image')
-	t.equal(options.volumes[0], '/var/lib/viking/volumes/test/test1/store:/test1/store', 'volume')
+		if(err){
+			t.fail(err, 'run the server')
+			t.end()
+			return
+		}
 
-	t.end()
+		console.log(err)
+		console.log(result)
+		
+		t.end()
+	})
 
 })
