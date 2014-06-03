@@ -123,11 +123,11 @@ tape('write the endpoints for the registry', function(t){
 	})	
 })
 
-/*
+
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
-*/
+
 
 tape('clean the local', function(t){
 
