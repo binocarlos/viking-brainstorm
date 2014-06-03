@@ -16,13 +16,14 @@ var DockerRun = require('../lib/tools/dockerrun')
 var tools = require('./lib/tools')
 var state = {}
 
+var tag = new Date().getTime()
 function getArgsTest(){
 	var vol = Volume(config, 'test', '/test1/store')
 
 	var job =  {
 	  stack:'test',
 	  name:'test1',
-	  tag:new Date().getTime(),
+	  tag:tag,
 	  image:'quarry/monnode',
 	  env:{
 	    TEST:10
@@ -51,7 +52,7 @@ function getJob(){
 	var job =  {
 	  stack:'test',
 	  name:'test1',
-	  tag:new Date().getTime(),
+	  tag:tag,
 	  image:'quarry/monnode',
 	  env:{
 	    TEST:10
@@ -77,7 +78,7 @@ function getServer(){
 	  stack:'test',
 	  name:'test1',
 	  image:'quarry/monnode',
-	  tag:new Date().getTime(),
+	  tag:tag,
 	  env:{
 	    TEST:10
 	  },
@@ -85,7 +86,7 @@ function getServer(){
 	    __dirname + '/simplewebsite:/app'
 	  ],
 	  ports:[
-	    '8080:80'
+	    '80'
 	  ],
 	  entrypoint:'node',
 	  command:'index.js',
@@ -101,7 +102,6 @@ function getServer(){
 
 tape('dockerrun arguments', function(t){
 
-	var tag = new Date().getTime()
 	var args = DockerRun(getJob())
 
 	t.equal(args.length, 16, 'there are 16 args')
@@ -129,8 +129,6 @@ tape('dockerrun arguments', function(t){
 
 tape('dockerrun arguments with extra args', function(t){
 	var args = DockerRun(getArgsTest())
-
-	var tag = new Date().getTime()
 
 	t.equal(args.length, 18, 'there are 18 args')
 
@@ -178,10 +176,10 @@ tape('run a deamon container - load a page and then close it', function(t){
 
 	function clean(done){
 
-		exec('docker stop test-default-test1 && docker rm test-default-test1', function(){
-			done()
-			
+		container.stop(function(){
+			container.remove(done)
 		})
+		
 	}
 
 
@@ -197,13 +195,23 @@ tape('run a deamon container - load a page and then close it', function(t){
 				return
 			}
 
-			console.dir(result)
-
+			console.log('get ports')
 			container.ports(function(err, ports){
 				console.log('-------------------------------------------');
 				console.log('-------------------------------------------');
 				console.dir(ports)
-				t.end()
+
+				if(err){
+					t.fail(err, 'get the ports')
+					t.end()
+					return
+				}
+
+
+				clean(function(){
+					t.end()	
+				})
+				
 			})
 			
 
