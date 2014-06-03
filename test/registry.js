@@ -8,6 +8,7 @@ var Container = require('../lib/tools/container')
 var concat = require('concat-stream')
 var Registry = require('../lib/services/registry')
 var endpoints = require('../lib/tools/endpoints')
+var env = require('../lib/tools/env')
 var Job = require('../lib/tools/job')
 var tools = require('./lib/tools')
 var state = {}
@@ -26,40 +27,25 @@ etcdserver.check(tape)
 
 tape('registry config', function(t){
 
+	var settings = Registry(config)
+		
+	t.equal(settings.stack, 'core', 'stack=core')
+	t.equal(settings.name, 'registry', 'name=registry')
+	t.equal(settings.image, 'registry', 'image=registry')
+
+	var systemFilter = settings.filter.filter(function(f){
+		return f.tag=='system'
+	})[0]
+
+	t.ok(systemFilter, 'there is a system filter on the registry')
+	t.equal(settings.env.SETTINGS_FLAVOR, 'development', 'development mode')
+
+	t.equal(settings.ports.length, 1, '1 port')
+	t.equal(settings.ports[0], '5000:5000', 'expose 5000')
+
+	t.equal(settings.volumes[0], '/data/registry', 'conf volume')
+	t.end()
 	
-
-	Registry(config, etcd, function(err, settings){
-		if(err){
-			t.fail(err, 'get registry settings')
-			t.end()
-			return
-		}
-
-		t.equal(settings.stack, 'core', 'stack=core')
-		t.equal(settings.name, 'registry', 'name=registry')
-		t.equal(settings.image, 'registry', 'image=registry')
-
-		var systemFilter = settings.filter.filter(function(f){
-			return f.tag=='system'
-		})[0]
-
-		t.ok(systemFilter, 'there is a system filter on the registry')
-
-		t.equal(settings.env.DOCKER_REGISTRY_CONFIG, '/registryconfig/config.yml', 'the config path is set')
-		t.equal(settings.env.SETTINGS_FLAVOR, 'development', 'development mode')
-
-		t.equal(settings.ports.length, 1, '1 port')
-		t.equal(settings.ports[0], '5000:5000', 'expose 5000')
-
-		t.equal(settings.volumes.length, 2, '2 volumes')
-
-		t.equal(settings.volumes[0], '/srv/projects/viking/files/registry:/registryconfig', 'conf volume')
-		t.equal(settings.volumes[1], '/var/lib/viking/volumes/core/data/registry:/data/registry', 'data volume')
-		t.end()
-	})
-	
-  
-
 })
 
 var registryJob = null
@@ -67,19 +53,24 @@ var registryData = null
 
 tape('run the registry', function(t){
 
-	Registry(config, etcd, function(err, job){
+	var job = Registry(config)
+	
+	var jobObject = Job(job)
+	jobObject.ensureValues()
+
+	registryJob = job
+
+	var container = Container(job, config)
+	container.prepare(function(){
+
+		console.log('-------------------------------------------');
+		console.dir(container._job)
+
 		if(err){
-			t.fail(err, 'get registry settings')
-			t.end()
+			t.fail(err, 'preparing container')
+			t.fail()
 			return
 		}
-
-		var jobObject = Job(job)
-		jobObject.ensureValues()
-
-		registryJob = job
-		var container = Container(job, config)
-
 
 		container.start(function(err, data){
 
@@ -92,11 +83,13 @@ tape('run the registry', function(t){
 			registryData = data
 
 			t.ok(data.State.Running, 'the container is running')
-			t.equal(data.Name, '/core-registry', 'container name')
+			t.equal(data.Name, '/core-default-registry', 'container name')
 			t.end()
 
 		})
 	})
+	
+	
 	
 })
 
@@ -123,12 +116,14 @@ tape('write the endpoints for the registry', function(t){
 	})	
 })
 
+/*
 
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
 
 
+*/
 tape('clean the local', function(t){
 
 	exec('viking local clean', function(err, stdout){
