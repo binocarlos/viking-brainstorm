@@ -4,6 +4,7 @@ var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var tape     = require('tape')
 var config = require('../lib/config')()
+var Container = require('../lib/tools/container')
 var concat = require('concat-stream')
 var Registry = require('../lib/services/registry')
 var tools = require('./lib/tools')
@@ -57,6 +58,44 @@ tape('registry config', function(t){
 	
   
 
+})
+
+
+tape('run the registry', function(t){
+
+	Registry(config, etcd, function(err, job){
+		if(err){
+			t.fail(err, 'get registry settings')
+			t.end()
+			return
+		}
+
+		var container = Container(job, config)
+
+
+		container.start(function(err, data){
+			console.log('-------------------------------------------');
+			console.log('-------------------------------------------');
+			console.dir(data)
+
+			t.end()
+
+		})
+	})
+	
+})
+
+
+tape('clean the local', function(t){
+
+	exec('viking local clean', function(err, stdout){
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.log(err)
+		console.log(stdout.toString())
+		t.end()
+	})
+	
 })
 
 tools.pause(tape, 2)
