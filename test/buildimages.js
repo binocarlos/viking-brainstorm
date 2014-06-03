@@ -59,7 +59,7 @@ tape('etcd keys', function(t){
 
 
 
-builder.build(etcd, tape, '127.0.0.1:4001', config.network.private)
+builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
 

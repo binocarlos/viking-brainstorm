@@ -74,10 +74,15 @@ tape('run the registry', function(t){
 
 
 		container.start(function(err, data){
-			console.log('-------------------------------------------');
-			console.log('-------------------------------------------');
-			console.dir(data)
 
+			if(err){
+				t.fail(err, 'starting container')
+				t.fail()
+				return
+			}
+
+			t.ok(data.State.Running, 'the container is running')
+			t.equal(data.Name, '/core-registry', 'container name')
 			t.end()
 
 		})
@@ -85,6 +90,10 @@ tape('run the registry', function(t){
 	
 })
 
+
+builder.build(etcd, tape)
+builder.pull(tape)
+builder.checkpull(tape)
 
 tape('clean the local', function(t){
 
