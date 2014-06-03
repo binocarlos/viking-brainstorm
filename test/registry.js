@@ -7,6 +7,8 @@ var config = require('../lib/config')()
 var Container = require('../lib/tools/container')
 var concat = require('concat-stream')
 var Registry = require('../lib/services/registry')
+var endpoints = require('../lib/tools/endpoints')
+var Job = require('../lib/tools/job')
 var tools = require('./lib/tools')
 var state = {}
 
@@ -60,6 +62,8 @@ tape('registry config', function(t){
 
 })
 
+var registryJob = null
+var registryData = null
 
 tape('run the registry', function(t){
 
@@ -70,6 +74,10 @@ tape('run the registry', function(t){
 			return
 		}
 
+		var jobObject = Job(job)
+		jobObject.ensureValues()
+
+		registryJob = job
 		var container = Container(job, config)
 
 
@@ -81,6 +89,8 @@ tape('run the registry', function(t){
 				return
 			}
 
+			registryData = data
+
 			t.ok(data.State.Running, 'the container is running')
 			t.equal(data.Name, '/core-registry', 'container name')
 			t.end()
@@ -91,9 +101,33 @@ tape('run the registry', function(t){
 })
 
 
+tape('write the endpoints for the registry', function(t){
+
+	endpoints.writeDockerEndpoint(etcd, {
+		ip:'192.168.8.120',
+		container:registryData,
+		job:registryJob
+	}, function(err){
+		if(err){
+			t.fail(err, 'writing endpoint')
+			t.end()
+			return
+		}
+
+		endpoints.registry(etcd, function(err, endpoint){
+			t.equal(endpoint, '192.168.8.120:5000', 'the registry endpoint is written')
+			t.end()
+		})
+
+
+	})	
+})
+
+/*
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
+*/
 
 tape('clean the local', function(t){
 
