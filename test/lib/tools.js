@@ -234,7 +234,7 @@ function etcd(){
 	return {
 		reset:function(tape){
 			tape('reset etcd', function(t){
-				exec('sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest', function(err, stdout){
+				exec('sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir -p /tmp/vikingetcdtest', function(err, stdout){
 					if(err){
 						t.fail(err, 'reset etcd')
 						t.end()
