@@ -69,12 +69,6 @@ tape('run the registry', function(t){
 			return
 		}
 
-		console.log('-------------------------------------------');
-		console.dir(container._job)
-
-		t.end()
-		return
-
 		container.start(function(err, data){
 
 			if(err){
@@ -96,7 +90,7 @@ tape('run the registry', function(t){
 	
 })
 
-/*
+
 tape('write the endpoints for the registry', function(t){
 
 	endpoints.writeDockerEndpoint(etcd, {
@@ -119,11 +113,9 @@ tape('write the endpoints for the registry', function(t){
 	})	
 })
 
-*/
-
-//builder.build(etcd, tape)
-//builder.pull(tape)
-//builder.checkpull(tape)
+builder.build(etcd, tape)
+builder.pull(tape)
+builder.checkpull(tape)
 
 tape('clean the local', function(t){
 
