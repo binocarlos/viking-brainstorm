@@ -135,6 +135,10 @@ function stopStack(tape){
 
 				t.pass('viking etcds stopped')
 				t.end()
+
+				setTimeout(function(){
+					process.exit(0)
+				}
 			})
 		})
 	})
