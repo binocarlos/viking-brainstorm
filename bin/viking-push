@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var build = require('../lib/bootstrap/build')
+var push = require('../lib/bootstrap/push')
 var args = require('minimist')(process.argv, {
   boolean:['dev'],
   alias:{
@@ -13,4 +13,4 @@ var args = require('minimist')(process.argv, {
     config:'viking.yml'
   }
 })
-build(args)
+push(args)
