@@ -47,6 +47,13 @@ docker: aufs
 	apt-get install -y lxc-docker
 	sleep 2 # give docker a moment i guess
 
+latestdocker: docker
+	cd ~/ && git clone https://git@github.com/dotcloud/docker
+	cd ~/docker && sudo make build
+	cd ~/docker && sudo make binary
+	sudo service docker stop ; sudo cp $(which docker) $(which docker)_ ; sudo cp ~/docker/bundles/0.11.1-dev/binary/docker-0.11.1-dev $(which docker);sudo service docker start
+
+
 mon: nodejs
 	(mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/visionmedia/mon/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mon)
 	npm install -g mongroup

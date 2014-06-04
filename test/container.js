@@ -206,28 +206,51 @@ tape('run a deamon container - load a page and then close it', function(t){
 				}
 
 				var port = ports['80/tcp']
-
 				console.dir('http://127.0.0.1:' + port)
 
-				setTimeout(function(){
-					exec('curl -L ' + 'http://127.0.0.1:' + port, function(err, stdout, stderr){
+				var errorCount = 0
 
-						if(err){
-							t.fail(err, 'load the test page')
+				function tryPage(done){
+					console.log('try load: ' + errorCount)
+					setTimeout(function(){
+						var res = hyperquest('http://192.168.8.120:' + port).pipe(concat(function(body){
+							console.log('body')
+							console.log(body.toString())
+							done(null, body.toString())
+						}))
+
+						res.on('error', function(err){
+							console.log('-------------------------------------------');
+							console.log('load error')
+							console.log(err)
+							done(err)
+						})
+					}, 1000)
+				}
+
+				function checkResult(err, result){
+					if(err){
+						if(errorCount<5){
+							errorCount++
+							tryPage(checkResult)
+							return
+						}
+						else{
+							t.fail('error loading 5 times')
 							t.end()
 							return
 						}
-
-						stdout = stdout.toString()
-						t.ok(stdout.match(/hello world/), 'the result has hello world')
+					}
+					else{
+						t.ok(result.match(/hello world/), 'the result has hello world')
 						
 						clean(function(){
 							t.end()	
 						})
-					})
-				}, 2000)
+					}
+				}
 
-
+				tryPage(checkResult)
 				
 			})
 			
