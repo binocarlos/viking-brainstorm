@@ -38,12 +38,12 @@ tape('registry config', function(t){
 	})[0]
 
 	t.ok(systemFilter, 'there is a system filter on the registry')
-	t.equal(settings.env.SETTINGS_FLAVOR, 'development', 'development mode')
+	t.equal(settings.env.SETTINGS_FLAVOR, 'dev', 'development mode')
 
 	t.equal(settings.ports.length, 1, '1 port')
 	t.equal(settings.ports[0], '5000:5000', 'expose 5000')
 
-	t.equal(settings.volumes[0], '/data/registry', 'conf volume')
+	t.equal(settings.volumes[0], '/tmp/registry', 'conf volume')
 	t.end()
 	
 })
@@ -61,7 +61,7 @@ tape('run the registry', function(t){
 	registryJob = job
 
 	var container = Container(job, config)
-	container.prepare(function(err){
+	container.prepare(config, function(err){
 
 		if(err){
 			t.fail(err, 'preparing container')
@@ -86,12 +86,8 @@ tape('run the registry', function(t){
 			t.end()
 
 		})
-	})
-	
-	
-	
+	})	
 })
-/*
 
 tape('write the endpoints for the registry', function(t){
 
@@ -115,6 +111,7 @@ tape('write the endpoints for the registry', function(t){
 	})	
 })
 
+
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
@@ -135,4 +132,3 @@ tape('clean the local', function(t){
 
 tools.pause(tape, 2)
 etcdserver.stop(tape)
-*/
