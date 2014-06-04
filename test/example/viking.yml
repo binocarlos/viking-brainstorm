@@ -2,7 +2,7 @@
 viking:
   name: ragnar
   comment: Ragnarr Hamster Loðbrók
- 
+
 # must build boats before sail
 # can use local boats in FROM statements using:
 # FROM viking:<stackname>/<boatname>
@@ -29,7 +29,7 @@ deploy:
       - 80
     # allow persistent data - if a container has a volume it means it will be run on the same server each time
     volume:
-      - /data:custom:/data/db
+      - /data/custom:/data/db
     # the command we run for this node
     run: mon node db/index.js --volume /data/db
     # where the command is run

@@ -96,6 +96,62 @@ var procs = {
   }
 }
 
+
+var sametagprocs = {
+  "batcha":{
+    stack:'test',
+    tag:'a',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  },
+  "batchb":{
+    stack:'test',
+    tag:'b',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  },
+  "batchc":{
+    stack:'test',
+    tag:'c',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  },
+  "batchd":{
+    stack:'test',
+    tag:'d',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  }
+}
+
 var hosts = {
     "viking-0": {
         "name": "viking-0",
@@ -188,6 +244,12 @@ module.exports = {
   proc:function(deployment, done){
     async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
       var proc = procs[key]
+      deployment.writeJob(proc, nextKey)
+    }, done)
+  },
+  sametagproc:function(deployment, done){
+    async.forEachSeries(Object.keys(sametagprocs || {}), function(key, nextKey){
+      var proc = sametagprocs[key]
       deployment.writeJob(proc, nextKey)
     }, done)
   }
