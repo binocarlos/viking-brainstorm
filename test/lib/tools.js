@@ -284,6 +284,10 @@ function etcd(){
 					
 					t.pass('viking stopped')
 					t.end()
+
+					setTimeout(function(){
+						process.exit(0)
+					},2000)
 				})
 			})
 		}

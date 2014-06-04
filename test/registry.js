@@ -90,7 +90,6 @@ tape('run the registry', function(t){
 })
 
 
-/*
 tape('write the endpoints for the registry', function(t){
 
 	endpoints.writeDockerEndpoint(etcd, {
@@ -136,4 +135,3 @@ tape('clean the local', function(t){
 
 tools.pause(tape, 2)
 etcdserver.stop(tape)
-*/
