@@ -58,10 +58,10 @@ tape('check the process function', function(t){
 
 		env.process({
 			'NORMAL':'chair',
-			'COLOR':'master.COLOR',
-			'MAPCOLOR':'master.COLOR',
-			'BLANK':'master.COLOR2',
-			'FRUIT':'tester.FRUIT'
+			'COLOR':'_master:COLOR',
+			'MAPCOLOR':'_master:COLOR',
+			'BLANK':'_master:COLOR2',
+			'FRUIT':'_tester:FRUIT'
 		}, function(err, data){
 
 
