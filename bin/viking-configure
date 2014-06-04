@@ -23,7 +23,7 @@
 
  */
 
-var etcd = require('../lib/bootstrap/etcd')
+var Configure = require('../lib/bootstrap/configure')
 var args = require('minimist')(process.argv, {
   boolean:['seed'],
   alias:{
@@ -31,14 +31,5 @@ var args = require('minimist')(process.argv, {
   }
 })
 
-if(args.seed){
-	etcd.writeToken(function(err, token){
-		if(err){
-			console.error(err)
-			process.exit(1)
-		}
-		else{
-			console.log('token: ' + token)
-		}
-	})
-}
+var configure = Configure(args)
+configure.boot()

@@ -72,6 +72,8 @@ deploy:
     image: quarry/mongo
     # dont restart this process when we push code - multiple versions of code can use the same service this way
     service: true
+    # inject the connection details for this service into other containers env
+    export: true
     expose:
       - 27017
     volume:
