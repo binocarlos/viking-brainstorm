@@ -55,7 +55,10 @@
     "denver": "^0.3.0",
     "ejs": "^1.0.0",
     "request": "^2.36.0",
-    "cli-table": "^0.3.0"
+    "cli-table": "^0.3.0",
+    "config-tree": "^0.1.1",
+    "read": "^1.0.5",
+    "ghauth": "^0.1.1"
   },
   "devDependencies": {
     "tape": "^2.12.3"
