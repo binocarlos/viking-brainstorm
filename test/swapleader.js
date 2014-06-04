@@ -62,10 +62,6 @@ tape('the registry should be running on viking-0', function(t){
 	})
 	
 })
-/*
-builder.build(etcd, tape, etcdaddress, registryaddress)
-builder.pull(tape)
-builder.checkpull(tape)
 
 tape('close viking-0', function(t){	
 	
@@ -135,6 +131,4 @@ tape('check the registry has its new endpoint and the registry returns a 200', f
 
 })
 
-
-*/
 stack.stop(tape)
