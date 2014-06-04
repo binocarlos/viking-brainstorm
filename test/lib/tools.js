@@ -63,9 +63,9 @@ function startStack(tape){
 	tape('reset viking servers', function(t){
 
 		var commands = [
-			'ssh viking-0 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
-			'ssh viking-1 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
-			'ssh viking-2 /bin/bash -c "sudo viking etcd reset --folder /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"'
+			'ssh viking-0 /bin/bash -c "sudo rm -rf /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
+			'ssh viking-1 /bin/bash -c "sudo rm -rf /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
+			'ssh viking-2 /bin/bash -c "sudo rm -rf /tmp/vikingetcdtest && mkdir /tmp/vikingetcdtest"',
 		]
 
 		runCommands(commands, function(err){

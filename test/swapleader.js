@@ -23,8 +23,10 @@ var builder = tools.builder()
 stack.start(tape)
 stack.checkEtcds(tape)
 tools.pause(tape, 3, 'wait 3 seconds to let everything get setup')
-core.deploy(tape)
-tools.pause(tape, 10, 'wait 10 seconds to let everything get setup')
+//core.deploy(tape)
+//tools.pause(tape, 10, 'wait 10 seconds to let everything get setup')
+
+var choosenLeader = null
 
 tape('the leader should be viking-0', function(t){	
 	exec('viking info leader', function(err, stdout){
@@ -34,11 +36,15 @@ tape('the leader should be viking-0', function(t){
 			return
 		}
 		var leader = stdout.toString().replace(/\n/g, '')
+
+		console.log('-------------------------------------------');
+		console.dir(leader)
 		t.equal(leader, 'viking-0')
 		t.end()
 	})
 })
 
+/*
 tape('the registry should be running on viking-0', function(t){	
 	
 	exec('ssh viking-0 docker ps', function(err, stdout, stderr){
@@ -133,5 +139,5 @@ tape('check the registry has its new endpoint and the registry returns a 200', f
 })
 
 
-
+*/
 stack.stop(tape)
