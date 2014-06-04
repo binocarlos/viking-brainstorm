@@ -69,6 +69,8 @@ tape('run the registry', function(t){
 			return
 		}
 
+		container._job.env.SECRET_KEY = 'apples'
+
 		container.start(function(err, data){
 
 			if(err){
@@ -89,7 +91,7 @@ tape('run the registry', function(t){
 	
 	
 })
-
+/*
 
 tape('write the endpoints for the registry', function(t){
 
@@ -133,3 +135,4 @@ tape('clean the local', function(t){
 
 tools.pause(tape, 2)
 etcdserver.stop(tape)
+*/
