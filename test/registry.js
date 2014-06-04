@@ -102,6 +102,11 @@ tape('write the endpoints for the registry', function(t){
 		}
 
 		endpoints.registry(etcd, function(err, endpoint){
+
+			if(err || !endpoint){
+				console.log('no endpoint')
+				process.exit(1)
+			}
 			t.equal(endpoint, '192.168.8.120:5000', 'the registry endpoint is written')
 			t.end()
 		})
