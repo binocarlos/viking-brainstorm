@@ -10,7 +10,7 @@ build:
   src: |
     FROM quarry/monnode
     ADD . /srv/app
-    RUN cd /srv/app && npm install
+    RUN cd /srv/app && npm --registry http://registry.npmjs.eu/ install
 # images can inherit from other images in viking
 # this image inherits from ragnar/src
   inherit: |

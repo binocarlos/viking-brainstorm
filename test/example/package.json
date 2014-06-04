@@ -7,8 +7,8 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "express": "^4.1.1",
-    "ecstatic": "^0.5.1",
+    "express": "^4.0.0-rc2",
+    "ecstatic": "^0.4.13",
     "async":"*"
   }
 }
