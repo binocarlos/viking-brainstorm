@@ -43,7 +43,7 @@ tape('registry config', function(t){
 	t.equal(settings.ports.length, 1, '1 port')
 	t.equal(settings.ports[0], '5000:5000', 'expose 5000')
 
-	t.equal(settings.volumes[0], '/home/docker/registry', 'conf volume')
+	t.equal(settings.volumes[0], '/tmp', 'conf volume')
 	t.end()
 	
 })
@@ -70,12 +70,6 @@ tape('run the registry', function(t){
 		}
 
 		container._job.env.SECRET_KEY = 'apples'
-
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.dir(container._job)
-		t.end()
-		return
 
 		container.start(function(err, data){
 
@@ -139,6 +133,7 @@ tape('clean the local', function(t){
 })
 
 
-*/
+
 tools.pause(tape, 2)
 etcdserver.stop(tape)
+*/
