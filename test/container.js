@@ -17,7 +17,7 @@ var fs = require('fs');
 var tools = require('./lib/tools')
 var state = {}
 
-var tag = new Date().getTime()
+var tag = 'containertest'
 function getArgsTest(){
 	var vol = Volume(config, 'test', '/test1/store')
 
@@ -208,49 +208,36 @@ tape('run a deamon container - load a page and then close it', function(t){
 				var port = ports['80/tcp']
 				console.dir('http://127.0.0.1:' + port)
 
-				var errorCount = 0
-
-				function tryPage(done){
-					console.log('try load: ' + errorCount)
-					setTimeout(function(){
-						var res = hyperquest('http://192.168.8.120:' + port).pipe(concat(function(body){
-							console.log('body')
-							console.log(body.toString())
-							done(null, body.toString())
-						}))
-
-						res.on('error', function(err){
-							console.log('-------------------------------------------');
-							console.log('load error')
-							console.log(err)
-							done(err)
-						})
-					}, 1000)
-				}
-
-				function checkResult(err, result){
-					if(err){
-						if(errorCount<5){
-							errorCount++
-							tryPage(checkResult)
-							return
-						}
-						else{
-							t.fail('error loading 5 times')
+				function cleanUp(){
+					container.stop(true, function(err){
+						if(err){
+							t.fail(err, 'stop container')
 							t.end()
 							return
 						}
-					}
-					else{
-						t.ok(result.match(/hello world/), 'the result has hello world')
-						
-						clean(function(){
-							t.end()	
-						})
-					}
+						t.pass('stop container')
+						t.end()
+					})
 				}
 
-				tryPage(checkResult)
+				setTimeout(function(){
+					var res = hyperquest('http://192.168.8.120:' + port).pipe(concat(function(body){
+
+						body = body.toString()
+
+						t.ok(body.match(/hello world/), 'the result has hello world')
+						cleanUp()
+						
+					}))
+
+					res.on('error', function(err){
+						t.fail(err, 'load HTTP from the server')
+						cleanUp()
+						
+					})
+				},1000)
+				
+
 				
 			})
 			
