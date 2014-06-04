@@ -29,9 +29,9 @@ deploy:
       - 80
     # allow persistent data - if a container has a volume it means it will be run on the same server each time
     volume:
-      - /data/db
+      - /data:custom:/data/db
     # the command we run for this node
-    run: mon node db/index.js --volume=/data/db
+    run: mon node db/index.js --volume /data/db
     # where the command is run
     cwd: /srv/app
   # a stateless service - this can be scaled and will run anywhere
@@ -75,13 +75,13 @@ deploy:
     expose:
       - 27017
     volume:
-      - /data/db
+      - /data/mongo:/data/db
   redis:
     image: quarry/redis
     service: true
     expose:
       - 6379
     volume:
-      - /data/db
+      - /data/redis:/data/db
 
   
