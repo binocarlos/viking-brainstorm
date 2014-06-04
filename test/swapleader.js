@@ -20,17 +20,6 @@ var stack = tools.stack()
 var core = tools.core()
 var builder = tools.builder()
 
-tape('pull registry images', function(t){	
-
-	tools.runCommands([
-		'ssh viking-0 docker pull registry',
-		'ssh viking-1 docker pull registry',
-		'ssh viking-2 docker pull registry'
-	], function(err){
-		t.end()
-	})
-})
-
 stack.start(tape)
 stack.checkEtcds(tape)
 tools.pause(tape, 3, 'wait 3 seconds to let everything get setup')
