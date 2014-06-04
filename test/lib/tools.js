@@ -321,29 +321,44 @@ function builder(){
 
 				build.on('close', function(){
 
-					console.log('stack has been built and uploaded to the registry')
+					var push = spawn('viking', [
+						'push'
+					], {
+						stdio:'inherit',
+						cwd:path.normalize(__dirname + '/../example')
+					})
 
-					setTimeout(function(){
+					push.on('error', function(e){
+						t.fail(e.toString())
+						return t.end()
+					})
 
-						etcd.get('/images', {
-							recursive:true
-						}, function(err, result){
-							if(err){
-								t.fail(err.toString())
-								return t.end()	
-							}
+					push.on('close', function(){
 
-							if(!result){
-								t.fail('no results')
-								return t.end()		
-							}
-							result = flatten(result.node)
-							state.testImage = result['/images/ragnar/default/inherit']
-							t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')
+						console.log('stack has been built and uploaded to the registry')
 
-							t.end()
-						})
-					}, 2000)
+						setTimeout(function(){
+
+							etcd.get('/images', {
+								recursive:true
+							}, function(err, result){
+								if(err){
+									t.fail(err.toString())
+									return t.end()	
+								}
+
+								if(!result){
+									t.fail('no results')
+									return t.end()		
+								}
+								result = flatten(result.node)
+								state.testImage = result['/images/ragnar/default/inherit']
+								t.ok(state.testImage.indexOf(config.network.private)>=0, 'image name containes private hostname')
+
+								t.end()
+							})
+						}, 2000)
+					})
 				})
 
 			})

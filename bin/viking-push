@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+var build = require('../lib/bootstrap/build')
+var args = require('minimist')(process.argv, {
+  boolean:['dev'],
+  alias:{
+    t:'tag',
+    a:'app',
+    c:'config',
+    r:'registry',
+    d:'dev',
+    e:'etcd'
+  },
+  default:{
+    config:'viking.yml'
+  }
+})
+build(args)
