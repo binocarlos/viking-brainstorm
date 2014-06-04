@@ -8,7 +8,8 @@ var args = require('minimist')(process.argv, {
     c:'configfile',
     d:'dev',
     e:'etcd',
-    p:'push'
+    p:'push',
+    k:'keep'
   },
   default:{
     config:'viking.yml'
