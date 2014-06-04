@@ -69,8 +69,6 @@ tape('run the registry', function(t){
 			return
 		}
 
-		container._job.env.SECRET_KEY = 'apples'
-
 		container.start(function(err, data){
 
 			if(err){
