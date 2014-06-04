@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+var Host = require('../lib/host')
+var args = require('minimist')(process.argv, {
+	alias:{
+
+	}
+})
+Host(args)
