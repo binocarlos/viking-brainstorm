@@ -58,7 +58,8 @@
     "cli-table": "^0.3.0",
     "config-tree": "^0.1.1",
     "read": "^1.0.5",
-    "ghauth": "^0.1.1"
+    "ghauth": "^0.1.1",
+    "littleid": "0.0.0"
   },
   "devDependencies": {
     "tape": "^2.12.3"
