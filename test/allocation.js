@@ -4,16 +4,19 @@ var tools = require('./lib/tools')
 var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var etcdserver = tools.etcd()
-var Deployment = require('../lib/deployment')
+var Dispatch = require('../lib/deployment/dispatch')
 var etcd = etcdjs('127.0.0.1:4001')
 
 var stubwriter = tools.stubwriter()
 var deployment = Deployment(config, etcd)
 
+var dispatch = Dispatch(config, etcd)
+
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 3)
 etcdserver.check(tape)
+
 
 
 stubwriter.network(etcd, tape)
@@ -27,7 +30,7 @@ for(var index=0; index<5; index++){
 loops.forEach(function(i){
 	tape('test the proposed allocations number ' + i, function(t){
 
-		deployment.getAllocations(function(err, allocations){
+		dispatch.getAllocations(function(err, allocations){
 
 			if(err){
 				t.fail(err, 'load allocations')
