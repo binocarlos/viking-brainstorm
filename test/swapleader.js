@@ -8,12 +8,12 @@ var config = require('../lib/config')()
 var concat = require('concat-stream')
 var spawnargs = require('spawn-args')
 var tools = require('./lib/tools')
-var Deployment = require('../lib/deployment')
+var State = require('../lib/deployment/state')
 var endpoints = require('../lib/tools/endpoints')
 var etcdaddress = '192.168.8.121:4001'
 var etcd = etcdjs(etcdaddress)
 
-var deployment = Deployment(config, etcd)
+var getState = State(config, etcd)
 var state = {}
 
 var stack = tools.stack()
@@ -87,7 +87,7 @@ tools.pause(tape, 15, 'wait 15 seconds for the leader to switch')
 var newLeader = null
 tape('the leader should NOT be viking-0', function(t){	
 
-	deployment.getState(function(err, state){
+	getState(function(err, state){
 		t.ok(state.leader!='viking-0', 'leader should not be viking-0')
 		t.end()
 	})
@@ -96,7 +96,7 @@ tape('the leader should NOT be viking-0', function(t){
 
 tape('check the registry is running elsewhere', function(t){	
 
-	deployment.getState(function(err, state){
+	getState(function(err, state){
 
 		var choosenServer = state.run['/core/default/registry']
 

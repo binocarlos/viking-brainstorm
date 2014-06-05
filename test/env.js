@@ -6,12 +6,9 @@ var stubs = require('./lib/stubs')
 var flatten = require('etcd-flatten')
 var etcdserver = tools.etcd()
 var exec = require('child_process').exec
-var Deployment = require('../lib/deployment')
 var etcd = etcdjs('127.0.0.1:4001')
 var path = require('path');
 var env = require('../lib/tools/env')
-
-var deployment = Deployment(config, etcd)
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
