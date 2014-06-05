@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 var exec = require('child_process').exec
 
-exec('sudo viking etcd reset', function(){
-	nextPath()
+exec('sudo viking etcd reset', function(err, stdout, stderr){
+	if(err || stderr){
+		console.error(err || stderr.toString())
+		process.exit(1)
+	}
+	console.log(stdout)
+	process.exit(0)
 })
