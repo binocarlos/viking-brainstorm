@@ -12,7 +12,7 @@ var deployment = Deployment(config, etcd)
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
-tools.pause(tape, 1)
+tools.pause(tape, 2)
 etcdserver.check(tape)
 
 tape('write network stubs', function(t){

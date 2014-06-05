@@ -15,7 +15,7 @@ var deployment = Deployment(config, etcd)
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
-tools.pause(tape, 1)
+tools.pause(tape, 2)
 etcdserver.check(tape)
 
 tape('inject and load some environment variables', function(t){

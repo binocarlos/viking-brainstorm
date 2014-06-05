@@ -5,6 +5,7 @@ var async = require('async');
 var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var tape     = require('tape')
+var stubs = require('./stubs')
 var config = require('../../lib/config')()
 var concat = require('concat-stream')
 var spawnargs = require('spawn-args')
@@ -444,9 +445,19 @@ function builder(){
 	}
 }
 
-function stubs(){
+
+function processObject(obj, map){
+	var ret = {}
+	Object.keys(obj || {}).forEach(function(key){				
+		var mapkey = map(key)
+		ret[mapkey] = JSON.parse(obj[key])
+	})
+	return ret
+}
+
+function stubwriter(){
 	return {
-		network:function(tape){
+		network:function(etcd, tape){
 
 			tape('write network stubs', function(t){
 				stubs.network(etcd, function(err){
@@ -486,7 +497,7 @@ function stubs(){
 				})
 			})
 		},
-		proc:function(tape){
+		proc:function(etcd, deployment, tape){
 
 			tape('write proc stubs', function(t){
 				stubs.proc(deployment, function(err){
@@ -512,6 +523,12 @@ function stubs(){
 						return
 					}
 
+					if(!data){
+						t.fail(err, 'write data')
+						t.end()
+						return	
+					}
+
 					var procs = flatten(data.node)
 					procs = processObject(procs, function(key){
 						return key.replace(/^\/proc/, '')
@@ -535,7 +552,7 @@ function stubs(){
 			})
 
 		},
-		samehostproc:function(tape){
+		samehostproc:function(etcd, tape){
 
 		}
 	}
@@ -554,7 +571,7 @@ module.exports = {
 	pause:pause,
 	builder:builder,
 	etcd:etcd,
-	stubs:stubs,
+	stubwriter:stubwriter,
 	core:core,
 	host:host,
 	checkEtcds:checkEtcds,
