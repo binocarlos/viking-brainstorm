@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-var Local = require('../lib/bootstrap/local')
+var Slave = require('../lib/bootstrap/slave')
 var args = require('minimist')(process.argv, {
   boolean:[],
   alias:{
     
   }
 })
-var local = Local(args)
-local.boot()
+var slave = Slave(args)
+slave.boot()
