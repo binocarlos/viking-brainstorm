@@ -497,10 +497,10 @@ function stubwriter(){
 				})
 			})
 		},
-		proc:function(etcd, deployment, tape){
+		proc:function(etcd, schedule, tape){
 
 			tape('write proc stubs', function(t){
-				stubs.proc(deployment, function(err){
+				stubs.proc(schedule, function(err){
 					if(err){
 						t.fail(err, 'write stubs')
 					}

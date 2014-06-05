@@ -5,10 +5,11 @@ var etcdjs = require('etcdjs')
 var flatten = require('etcd-flatten')
 var etcdserver = tools.etcd()
 var Dispatch = require('../lib/deployment/dispatch')
+var Schedule = require('../lib/deployment/schedule')
 var etcd = etcdjs('127.0.0.1:4001')
 
 var stubwriter = tools.stubwriter()
-var deployment = Deployment(config, etcd)
+var schedule = Schedule(config, etcd)
 
 var dispatch = Dispatch(config, etcd)
 
@@ -20,7 +21,7 @@ etcdserver.check(tape)
 
 
 stubwriter.network(etcd, tape)
-stubwriter.proc(etcd, deployment, tape)
+stubwriter.proc(etcd, schedule, tape)
 
 var loops = []
 for(var index=0; index<5; index++){

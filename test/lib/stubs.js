@@ -241,16 +241,16 @@ module.exports = {
 			etcd.set('/host/' + server.name + '/config', JSON.stringify(server), nextKey)
 		}, done)
 	},
-  proc:function(deployment, done){
+  proc:function(schedule, done){
     async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
       var proc = procs[key]
-      deployment.writeJob(proc, nextKey)
+      schedule.writeJob(proc, nextKey)
     }, done)
   },
-  sametagproc:function(deployment, done){
+  sametagproc:function(schedule, done){
     async.forEachSeries(Object.keys(sametagprocs || {}), function(key, nextKey){
       var proc = sametagprocs[key]
-      deployment.writeJob(proc, nextKey)
+      schedule.writeJob(proc, nextKey)
     }, done)
   }
 }
