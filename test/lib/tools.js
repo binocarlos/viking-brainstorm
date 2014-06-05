@@ -466,6 +466,20 @@ function processProcObject(procs, map){
 		return '/' + parts.join('/')
 	})
 }
+
+function processTopObject(procs, map){
+	return processObject(procs, function(key){
+		if(key.match(/^\/proc\//, '')){
+			var parts = key.split('/')
+			parts.pop()
+			return '/' + parts.join('/')
+		}
+		else{
+
+		}
+	})
+}
+
 function stubwriter(){
 	return {
 		network:function(etcd, tape){
