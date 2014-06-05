@@ -10,6 +10,7 @@ var etcd = etcdjs('127.0.0.1:4001')
 
 var stubwriter = tools.stubwriter()
 
+etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 2)
