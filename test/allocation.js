@@ -13,6 +13,7 @@ var schedule = Schedule(config, etcd)
 
 var dispatch = Dispatch(config, etcd)
 
+etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 3)
@@ -23,7 +24,6 @@ etcdserver.check(tape)
 stubwriter.network(etcd, tape)
 stubwriter.proc(etcd, schedule, tape)
 
-/*
 var loops = []
 for(var index=0; index<5; index++){
 	loops.push('' + index)
@@ -39,6 +39,9 @@ loops.forEach(function(i){
 				t.end()
 				return
 			}
+
+			console.log(JSON.stringify(allocations, null, 4))
+			process.exit()
 
 			t.equal(allocations.length, 8, 'there are 8 allocations')
 			
@@ -60,14 +63,14 @@ loops.forEach(function(i){
 			t.ok(serverCount['viking-1']>=2 && serverCount['viking-1']<=3, 'fair allocation - viking-1 - pass: ' + i)
 			t.ok(serverCount['viking-2']>=2 && serverCount['viking-2']<=3, 'fair allocation - viking-2 - pass: ' + i)
 
-			t.equal(jobServers['core/default/registry'], 'viking-0')
-			t.equal(jobServers['test/default/test1'], 'viking-0')
+			t.equal(jobServers['core/default/registry'], 'viking-0', 'the registry is allocated to viking 0')
+			t.equal(jobServers['test/default/test1'], 'viking-0', 'the test1 is allocated to viking-0')
 			
 			t.end()
 		})
 	})
 
 })
-*/
+
 
 etcdserver.stop(tape)

@@ -278,7 +278,7 @@ function etcd(){
 				})
 			})
 		},
-		stop:function(tape){
+		stop:function(tape, noquit){
 			tape('stop etcd', function(t){
 				exec('viking etcd stop', function(err){
 					if(err){
@@ -290,9 +290,12 @@ function etcd(){
 					t.pass('viking stopped')
 					t.end()
 
-					setTimeout(function(){
-						process.exit(0)
-					},2000)
+					if(!noquit){
+						setTimeout(function(){
+							process.exit(0)
+						},2000)	
+					}
+					
 				})
 			})
 		}
