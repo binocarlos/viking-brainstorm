@@ -513,7 +513,7 @@ function stubwriter(){
 
 
 			tape('check proc stubs', function(t){
-				etcd.get('/proc', {
+				etcd.get('/', {
 					recursive:true
 				}, function(err, data){
 
@@ -531,11 +531,14 @@ function stubwriter(){
 
 					var procs = flatten(data.node)
 					procs = processObject(procs, function(key){
-						return key.replace(/^\/proc/, '')
+						var parts = key.replace(/^\/proc\//, '').split('/')
+						parts.pop()
+
+						return '/' + parts.join('/')
 					})
 
 					t.ok(procs['/test/default/test1'], 'has test1')
-					t.equal(procs['/test/default/test1'].id, 'test/default/test1', 'test1 id is correct')
+					t.equal(procs['/test/default/test1'].id, 'test-default-test1-' + procs['/test/default/test1'].pid, 'test1 id is correct')
 					t.ok(procs['/test/default/test2'], 'has test2')
 					t.ok(procs['/test/default/test3'], 'has test3')
 					t.ok(procs['/test/default/test4'], 'has test4')
@@ -544,7 +547,7 @@ function stubwriter(){
 					t.ok(procs['/test/default/test7'], 'has test7')
 					t.ok(procs['/core/default/registry'], 'has registry')
 					t.equal(procs['/core/default/registry'].filter[0].tag, 'system', 'system tag')
-					t.equal(procs['/core/default/registry'].id, 'core/default/registry', 'registry id is correct')
+					t.equal(procs['/core/default/registry'].id, 'core-default-registry-' + procs['/core/default/registry'].pid, 'registry id is correct')
 
 					t.end()
 

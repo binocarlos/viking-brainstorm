@@ -23,6 +23,7 @@ etcdserver.check(tape)
 stubwriter.network(etcd, tape)
 stubwriter.proc(etcd, schedule, tape)
 
+/*
 var loops = []
 for(var index=0; index<5; index++){
 	loops.push('' + index)
@@ -67,5 +68,6 @@ loops.forEach(function(i){
 	})
 
 })
+*/
 
 etcdserver.stop(tape)
