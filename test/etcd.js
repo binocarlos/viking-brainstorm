@@ -17,7 +17,7 @@ var etcd = etcdjs('127.0.0.1:4001')
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
-tools.pause(tape, 2)
+tools.pause(tape, 1)
 etcdserver.check(tape)
 
 tape('test etcd server', function(t){

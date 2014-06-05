@@ -12,7 +12,7 @@ var deployment = Deployment(config, etcd)
 
 etcdserver.reset(tape)
 etcdserver.start(tape)
-tools.pause(tape, 3)
+tools.pause(tape, 1)
 etcdserver.check(tape)
 
 function processObject(obj, map){
