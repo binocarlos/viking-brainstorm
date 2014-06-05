@@ -444,6 +444,103 @@ function builder(){
 	}
 }
 
+function stubs(){
+	return {
+		network:function(tape){
+
+			tape('write network stubs', function(t){
+				stubs.network(etcd, function(err){
+					if(err){
+						t.fail(err, 'write stubs')
+					}
+					else{
+						t.pass('write stubs')
+					}
+					t.end()
+				})
+			})
+
+			tape('check network stubs', function(t){
+				etcd.get('/host', {
+					recursive:true
+				}, function(err, data){
+
+					if(err){
+						t.fail(err, 'check stubs')
+						t.end()
+						return
+					}
+
+					var servers = flatten(data.node)
+					servers = processObject(servers, function(key){
+						return key.replace(/^\/host\//, '').replace(/\/config$/, '')
+					})
+
+					t.ok(servers['viking-0'], 'viking 0 loaded')
+					t.ok(servers['viking-1'], 'viking 1 loaded')
+					t.ok(servers['viking-2'], 'viking 2 loaded')
+					t.equal(servers['viking-0'].config.tags, 'system')
+
+					t.end()
+
+				})
+			})
+		},
+		proc:function(tape){
+
+			tape('write proc stubs', function(t){
+				stubs.proc(deployment, function(err){
+					if(err){
+						t.fail(err, 'write stubs')
+					}
+					else{
+						t.pass('write stubs')
+					}
+					t.end()
+				})
+			})
+
+
+			tape('check proc stubs', function(t){
+				etcd.get('/proc', {
+					recursive:true
+				}, function(err, data){
+
+					if(err){
+						t.fail(err, 'check stubs')
+						t.end()
+						return
+					}
+
+					var procs = flatten(data.node)
+					procs = processObject(procs, function(key){
+						return key.replace(/^\/proc/, '')
+					})
+
+					t.ok(procs['/test/default/test1'], 'has test1')
+					t.equal(procs['/test/default/test1'].id, 'test/default/test1', 'test1 id is correct')
+					t.ok(procs['/test/default/test2'], 'has test2')
+					t.ok(procs['/test/default/test3'], 'has test3')
+					t.ok(procs['/test/default/test4'], 'has test4')
+					t.ok(procs['/test/default/test5'], 'has test5')
+					t.ok(procs['/test/default/test6'], 'has test6')
+					t.ok(procs['/test/default/test7'], 'has test7')
+					t.ok(procs['/core/default/registry'], 'has registry')
+					t.equal(procs['/core/default/registry'].filter[0].tag, 'system', 'system tag')
+					t.equal(procs['/core/default/registry'].id, 'core/default/registry', 'registry id is correct')
+
+					t.end()
+
+				})
+			})
+
+		},
+		samehostproc:function(tape){
+
+		}
+	}
+}
+
 function pause(tape, len, message){
 	tape(message || 'pausing for ' + len + ' seconds', function(t){
 		setTimeout(function(){
@@ -457,6 +554,7 @@ module.exports = {
 	pause:pause,
 	builder:builder,
 	etcd:etcd,
+	stubs:stubs,
 	core:core,
 	host:host,
 	checkEtcds:checkEtcds,
