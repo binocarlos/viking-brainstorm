@@ -31,8 +31,6 @@ core.check(tape)
 
 tape('etcd keys', function(t){
 
-	
-
 	etcd.get('/', {
 		recursive:true
 	}, function(err, result){
@@ -43,14 +41,20 @@ tape('etcd keys', function(t){
 		}
 
 		result = flatten(result.node)
+		result = tools.processProcObject(result)
 
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.dir(result)
+
+/*
 		t.ok(result['/host/viking-0/config'], 'the host has registered')
 		t.ok(result['/proc/core/default/registry'], 'registry /proc is written')
 		t.equal(result['/run/core/default/registry'], 'viking-0', 'registry is allocated to viking-0')
 		t.equal(result['/fixed/core/default/registry'], 'viking-0', 'registry is fixed to viking-0')
 		t.equal(result['/deploy/viking-0/core/default/registry'], 'core-default-registry', 'registry /deploy is written')
 		t.equal(result['/ports/core/default/registry/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
-
+*/
 		t.end()
 	})
 	
@@ -58,10 +62,11 @@ tape('etcd keys', function(t){
 
 })
 
+/*
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
-
+*/
 
 host.stop(tape)
 tools.pause(tape, 2)

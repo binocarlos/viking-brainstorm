@@ -458,6 +458,14 @@ function processObject(obj, map){
 	return ret
 }
 
+function processProcObject(procs, map){
+	return processObject(procs, function(key){
+		var parts = key.replace(/^\/proc\//, '').split('/')
+		parts.pop()
+
+		return '/' + parts.join('/')
+	})
+}
 function stubwriter(){
 	return {
 		network:function(etcd, tape){
@@ -533,12 +541,7 @@ function stubwriter(){
 					}
 
 					var procs = flatten(data.node)
-					procs = processObject(procs, function(key){
-						var parts = key.replace(/^\/proc\//, '').split('/')
-						parts.pop()
-
-						return '/' + parts.join('/')
-					})
+					procs = processProcObject(procs)
 
 					t.ok(procs['/test/default/test1'], 'has test1')
 					t.equal(procs['/test/default/test1'].id, 'test-default-test1-' + procs['/test/default/test1'].pid, 'test1 id is correct')
@@ -581,5 +584,7 @@ module.exports = {
 	core:core,
 	host:host,
 	checkEtcds:checkEtcds,
-	runCommands:runCommands
+	runCommands:runCommands,
+	processObject:processObject,
+	processProcObject:processProcObject
 }
