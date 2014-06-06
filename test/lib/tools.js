@@ -458,7 +458,7 @@ function processObject(obj, map){
 	return ret
 }
 
-function processProcObject(procs, map){
+function processProcObject(procs){
 	return processObject(procs, function(key){
 		var parts = key.replace(/^\/proc\//, '').split('/')
 		parts.pop()
