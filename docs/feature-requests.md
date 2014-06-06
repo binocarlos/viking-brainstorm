@@ -24,3 +24,7 @@ they can also be referenced to generate a job description
 a module could listen to the stdout of running jobs for specially formatted lines which would write to statsd or some such service
 
 this enables metrics in apps easily (by writing to stdout)
+
+## docker event listener
+
+each slave should be hooked up to docker events
