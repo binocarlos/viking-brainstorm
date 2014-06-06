@@ -9,7 +9,7 @@ var concat = require('concat-stream')
 var spawnargs = require('spawn-args')
 var tools = require('./lib/tools')
 var State = require('../lib/deployment/state')
-var endpoints = require('../lib/tools/endpoints')
+var endpoints = require('../lib/deployment/endpoints')
 var etcdaddress = '192.168.8.121:4001'
 var etcd = etcdjs(etcdaddress)
 
