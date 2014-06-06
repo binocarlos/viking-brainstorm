@@ -2,8 +2,6 @@
 var cmd = process.argv[2] || 'help'
 var fs = require('fs')
 if(!fs.existsSync(__dirname + '/viking-' + cmd)){
-	console.log('-------------------------------------------');
-	console.log('-------------------------------------------');
 	console.dir(process.argv)
   cmd = 'help'
 }
