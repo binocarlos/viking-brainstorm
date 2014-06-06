@@ -522,6 +522,45 @@ function stubwriter(){
 				})
 			})
 		},
+
+		singlenetwork:function(etcd, tape){
+
+			tape('write single network stubs', function(t){
+				stubs.singlenetwork(etcd, function(err){
+					if(err){
+						t.fail(err, 'write stubs')
+					}
+					else{
+						t.pass('write stubs')
+					}
+					t.end()
+				})
+			})
+
+			tape('check single network stubs', function(t){
+				etcd.get('/host', {
+					recursive:true
+				}, function(err, data){
+
+					if(err){
+						t.fail(err, 'check stubs')
+						t.end()
+						return
+					}
+
+					var servers = flatten(data.node)
+					servers = processObject(servers, function(key){
+						return key.replace(/^\/host\//, '').replace(/\/config$/, '')
+					})
+
+					t.ok(servers['viking-0'], 'viking 0 loaded')
+					t.equal(servers['viking-0'].config.tags, 'system')
+
+					t.end()
+
+				})
+			})
+		},
 		proc:function(etcd, schedule, tape){
 
 			tape('write proc stubs', function(t){

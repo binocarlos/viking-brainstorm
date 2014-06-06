@@ -16,6 +16,6 @@ etcdserver.start(tape)
 tools.pause(tape, 2)
 etcdserver.check(tape)
 
-stubwriter.network(etcd, tape)
+stubwriter.singlenetwork(etcd, tape)
 
 etcdserver.stop(tape)

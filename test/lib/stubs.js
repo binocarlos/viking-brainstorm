@@ -241,6 +241,10 @@ module.exports = {
 			etcd.set('/host/' + server.name + '/config', JSON.stringify(server), nextKey)
 		}, done)
 	},
+  singlenetwork:function(etcd, done){
+    var server = hosts['viking-0']
+    etcd.set('/host/' + server.name + '/config', JSON.stringify(server), done)
+  },
   proc:function(schedule, done){
     async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
       var proc = procs[key]
