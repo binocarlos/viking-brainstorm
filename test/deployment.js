@@ -86,10 +86,10 @@ tape('check the dispatch /run', function(t){
 		}
 		result = flatten(result.node)
 		
-		t.equal(result['/run/core/default/registry/' + pid], 'viking-0', 'the /run is set to the hostname'
+		t.equal(result['/run/core/default/registry/' + pid], 'viking-0', 'the /run is set to the hostname')
 		t.end()
 
 	})
 })
 
-//etcdserver.stop(tape)
+etcdserver.stop(tape)
