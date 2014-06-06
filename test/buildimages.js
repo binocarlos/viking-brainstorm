@@ -41,16 +41,11 @@ tape('etcd keys', function(t){
 		}
 
 		result = flatten(result.node)
-		//result = tools.processProcObject(result)
-
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.dir(Object.keys(result))
 
 		var job
 		Object.keys(result).forEach(function(key){
 			if(key.match(/\/proc/)){
-				job = result[key]
+				job = JSON.parse(result[key])
 			}
 		})
 
@@ -60,10 +55,10 @@ tape('etcd keys', function(t){
 
 		t.ok(result['/host/viking-0/config'], 'the host has registered')
 		t.ok(result['/proc/core/default/registry/' + pid], 'registry /proc is written')
-		t.equal(result['/run/core/default/registry' + pid], 'viking-0', 'registry is allocated to viking-0')
-		t.equal(result['/fixed/core/default/registry' + pid], 'viking-0', 'registry is fixed to viking-0')
-		t.equal(result['/deploy/viking-0/core/default/registry' + pid], 'core-default-registry', 'registry /deploy is written')
-		t.equal(result['/ports/core/default/registry/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
+		t.equal(result['/run/core/default/registry/' + pid], 'viking-0', 'registry is allocated to viking-0')
+		t.equal(result['/fixed/core/default/registry/' + pid], 'viking-0', 'registry is fixed to viking-0')
+		t.equal(result['/deploy/viking-0/core/default/registry/' + pid], 'core-default-registry-' + pid, 'registry /deploy is written')
+		t.equal(result['/ports/core/default/registry/' + pid + '/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
 
 		t.end()
 	})
