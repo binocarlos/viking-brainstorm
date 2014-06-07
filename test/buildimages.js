@@ -67,11 +67,11 @@ tape('etcd keys', function(t){
 
 })
 
-/*
+
 builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
-*/
+
 
 host.stop(tape)
 tools.pause(tape, 2)
