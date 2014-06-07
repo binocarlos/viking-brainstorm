@@ -24,6 +24,7 @@ stack.stop(tape, true)
 stack.start(tape)
 stack.checkEtcds(tape)
 tools.pause(tape, 3, 'wait 3 seconds to let everything get setup')
+
 core.deploy(tape)
 tools.pause(tape, 10, 'wait 10 seconds to let everything get setup')
 
