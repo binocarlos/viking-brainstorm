@@ -88,25 +88,22 @@ tape('check proc stubs', function(t){
 		}
 
 		var procs = flatten(data.node)
-		var counter = 0
+		var map = {}
 		procs = processObject(procs, function(key){
 			key = key.replace(/^\/proc/, '')
 			var parts = key.split('/')
 			parts.pop()
-			parts.push(counter)
-			counter++
-			return parts.join('/')
+			var key = parts.join('/')
+			if(!map[key]){
+				map[key] = []
+			}
+			map[key].push(procs[key])
+			return key
 		})
 
-		t.equal(procs['/test/a/test/0'].tag, 'a', 'job a')
-		t.equal(procs['/test/a/test/1'].tag, 'a', 'job a')
-		t.equal(procs['/test/a/test/2'].tag, 'a', 'job a')
-		t.equal(procs['/test/b/test/3'].tag, 'b', 'job b')
-		t.equal(procs['/test/b/test/4'].tag, 'b', 'job b')
-		t.equal(procs['/test/b/test/5'].tag, 'b', 'job b')
-		t.equal(procs['/test/c/test/6'].tag, 'c', 'job c')
-		t.equal(procs['/test/c/test/7'].tag, 'c', 'job c')
-		t.equal(procs['/test/c/test/8'].tag, 'c', 'job c')
+		t.equal(map['/test/a/test'].length, 3, '3 a procs')
+		t.equal(map['/test/b/test'].length, 3, '3 b procs')
+		t.equal(map['/test/c/test'].length, 3, '3 c procs')
 
 		t.end()
 
