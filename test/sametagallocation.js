@@ -24,13 +24,15 @@ var Schedule = require('../lib/deployment/schedule')
 	
 */
 
-var schedule = Schedule(config, etcd)
+
 
 etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 1)
 etcdserver.check(tape)
+
+var schedule = Schedule(config, etcd)
 
 function processObject(obj, map){
 	var ret = {}
@@ -53,7 +55,6 @@ tape('write proc stubs', function(t){
 	})
 })
 
-/*
 tape('check proc stubs', function(t){
 	etcd.get('/proc', {
 		recursive:true
@@ -77,6 +78,6 @@ tape('check proc stubs', function(t){
 
 	})
 })
-*/
+
 
 //etcdserver.stop(tape)
