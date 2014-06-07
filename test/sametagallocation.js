@@ -67,9 +67,20 @@ tape('check proc stubs', function(t){
 		}
 
 		var procs = flatten(data.node)
+		var counter = 0
 		procs = processObject(procs, function(key){
-			return key.replace(/^\/proc/, '')
+			key = key.replace(/^\/proc/, '')
+			var parts = key.split('/')
+			parts.pop()
+			parts.push(counter)
+			counter++
+			return parts.join('/')
 		})
+
+		t.equal(procs['/test/a/test/0'].tag, 'a', 'job a')
+		t.equal(procs['/test/a/test/1'].tag, 'a', 'job a')
+		t.equal(procs['/test/a/test/2'].tag, 'a', 'job a')
+		t.equal(procs['/test/a/test/3'].tag, 'b', 'job b')
 
 		console.log('-------------------------------------------');
 		console.dir(procs)
