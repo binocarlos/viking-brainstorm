@@ -55,7 +55,7 @@ tape('vikingfile development volumes', function(t){
     file.developmentVolumes(__dirname + '/example')
 
     t.deepEqual(file.data.images.src._devvolumes, [__dirname + '/example:/srv/app'])
-    t.deepEqual(file.data.containers.db.volume, ['/data/db', __dirname + '/example:/srv/app'])
+    t.deepEqual(file.data.containers.db.volume, ['/data/custom:/data/db', __dirname + '/example:/srv/app'])
 
 
     t.end()
