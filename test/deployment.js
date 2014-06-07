@@ -22,6 +22,7 @@ stubwriter.singlenetwork(etcd, tape)
 
 core.deploy(tape)
 
+
 var pid = null
 tape('check the proc deployment', function(t){
 
@@ -74,6 +75,25 @@ tape('run the dispatch', function(t){
 
 })
 
+
+tape('run the slave', function(t){
+
+	exec('viking slave', function(err, stdout){
+		if(err){
+			t.fail(err, 'slave')
+			t.end()
+			return
+		}
+		console.log(stdout.toString())
+		t.pass('slave')
+		t.end()
+	})
+
+})
+
+tools.pause(tape, 10)
+core.check(tape)
+
 tape('check the dispatch /run', function(t){
 
 	etcd.get('/run', {
@@ -92,5 +112,84 @@ tape('check the dispatch /run', function(t){
 	})
 })
 
+
+tape('check the dispatch /deploy', function(t){
+
+	etcd.get('/deploy', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load proc data')
+			t.end()
+			return
+		}
+		result = flatten(result.node)
+
+		t.equal(result['/deploy/viking-0/core/default/registry/' + pid], 'core-default-registry-' + pid, 'the /deploy is set correctly')
+		t.end()
+
+	})
+})
+
+
+tape('check the dispatch /container', function(t){
+
+	etcd.get('/container', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load proc data')
+			t.end()
+			return
+		}
+		result = flatten(result.node)
+
+		console.log('-------------------------------------------');
+		console.dir(result)
+		//t.equal(result['/deploy/viking-0/core/default/registry/' + pid], 'core-default-registry-' + pid, 'the /deploy is set correctly')
+		t.end()
+
+	})
+})
+
+
+tape('clean the slave', function(t){
+
+	exec('viking slave clean', function(err, stdout){
+		if(err){
+			t.fail(err, 'slave_clean')
+			t.end()
+			return
+		}
+		console.log(stdout.toString())
+		t.pass('slave_clean')
+		t.end()
+	})
+
+})
+
+
+
+tape('make sure the registry was removed', function(t){
+
+	exec('docker ps -a', function(err, stdout){
+		if(err){
+			t.fail(err, 'check registry removed')
+			t.end()
+			return
+		}
+		var output = stdout.toString()
+		
+		if(output.match(/registry/)){
+			t.fail('check registry removed')
+		}
+		else{
+			t.pass('check registry removed')	
+		}
+		
+		t.end()
+	})
+
+})
 
 etcdserver.stop(tape)

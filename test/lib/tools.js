@@ -224,6 +224,9 @@ function core(){
 					}
 
 					var content = stdout.toString()
+					console.log('-------------------------------------------');
+					console.log('-------------------------------------------');
+					console.log(content)
 					// we should have a registry and etcd running
 					t.ok(content.match(/core-default-registry/), 'registry running')
 
