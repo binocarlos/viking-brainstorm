@@ -24,18 +24,18 @@ tape('vikingfile', function(t){
   		expose:[],
   		volume:[],
   		run:[
-  			'cd /srv/app && npm install'
+  			'cd /srv/app && npm --registry http://registry.npmjs.eu/ install'
   		],
   		from:'quarry/monnode'
-  	})
+  	}, 'images src')
 
     t.deepEqual(data.containers.db, {
       image:'viking:ragnar/src',
       expose:[80],
-      volume:['/data/db'],
-      run:'mon node db/index.js --volume=/data/db',
+      volume:['/data/custom:/data/db'],
+      run:'mon node db/index.js --volume /data/db',
       cwd:'/srv/app'
-    })
+    }, 'containers db')
 
   	t.end()
   })
