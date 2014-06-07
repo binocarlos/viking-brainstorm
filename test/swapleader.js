@@ -20,6 +20,7 @@ var stack = tools.stack()
 var core = tools.core()
 var builder = tools.builder()
 
+stack.stop(tape, true)
 stack.start(tape)
 stack.checkEtcds(tape)
 tools.pause(tape, 3, 'wait 3 seconds to let everything get setup')
@@ -88,6 +89,14 @@ var newLeader = null
 tape('the leader should NOT be viking-0', function(t){	
 
 	getState(function(err, state){
+
+		if(err){
+			if(err){
+				t.fail(err, 'get state')
+				t.end()
+				return
+			}
+		}
 		t.ok(state.leader!='viking-0', 'leader should not be viking-0')
 		t.end()
 	})
@@ -98,7 +107,10 @@ tape('check the registry is running elsewhere', function(t){
 
 	getState(function(err, state){
 
-		var choosenServer = state.run['/core/default/registry']
+		var procPath = Object.keys(state.proc)[0]
+		var pid = procPath.split('/').pop()
+
+		var choosenServer = state.run['/core/default/registry/' + pid]
 
 		t.ok(choosenServer=='viking-1'||choosenServer=='viking-2', 'the registry is on a new server in the db')
 

@@ -104,7 +104,7 @@ function startStack(tape){
 	})
 }
 
-function stopStack(tape){
+function stopStack(tape, noExit){
 
 	tape('shutdown', function(t){
 
@@ -137,9 +137,12 @@ function stopStack(tape){
 				t.pass('viking etcds stopped')
 				t.end()
 
-				setTimeout(function(){
-					process.exit(0)
-				}, 1000)
+				if(!noExit){
+					setTimeout(function(){
+						process.exit(0)
+					}, 1000)	
+				}
+				
 			})
 		})
 	})
