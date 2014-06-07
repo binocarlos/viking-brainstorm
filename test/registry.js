@@ -81,7 +81,7 @@ tape('run the registry', function(t){
 			registryData = data
 
 			t.ok(data.State.Running, 'the container is running')
-			t.equal(data.Name, '/core-default-registry', 'container name')
+			t.equal(data.Name, '/core-default-registry-' + job.pid, 'container name')
 			t.end()
 
 		})
@@ -108,7 +108,7 @@ tape('write the endpoints for the registry', function(t){
 				console.log('no endpoint')
 				process.exit(1)
 			}
-			t.equal(endpoint, '192.168.8.120:5000', 'the registry endpoint is written')
+			t.equal(endpoint, config.network.private + ':5000', 'the registry endpoint is written')
 			t.end()
 		})
 
@@ -121,15 +121,15 @@ builder.build(etcd, tape)
 builder.pull(tape)
 builder.checkpull(tape)
 
-tape('clean the local', function(t){
+tape('clean the slave', function(t){
 
-	exec('viking local clean', function(err, stdout){
+	exec('viking slave clean', function(err, stdout){
 		if(err){
-			t.fail(err, 'viking local clean')
+			t.fail(err, 'viking slave clean')
 			t.end()
 			return
 		}
-		t.pass('viking local clean')
+		t.pass('viking slave clean')
 		t.end()
 	})
 	
