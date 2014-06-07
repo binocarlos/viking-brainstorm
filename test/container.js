@@ -101,13 +101,14 @@ function getServer(){
 }
 
 tape('dockerrun arguments with extra args', function(t){
-	var args = DockerRun(getArgsTest())
+	var job = getArgsTest()
+	var args = DockerRun(job)
 
 	t.equal(args.length, 18, 'there are 18 args')
 
 	t.deepEqual(args, [ '-t',
 	  '--name',
-	  'test-' + tag + '-test1',
+	  'test-' + tag + '-test1-' + job.pid,
 	  '-v',
 	  '/var/lib/viking/volumes/test/test1/store:/test1/store',
 	  '-e',
