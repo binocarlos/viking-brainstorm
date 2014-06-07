@@ -254,6 +254,8 @@ module.exports = {
   sametagproc:function(schedule, done){
     async.forEachSeries(Object.keys(sametagprocs || {}), function(key, nextKey){
       var proc = sametagprocs[key]
+      console.log('-------------------------------------------');
+      console.dir(proc)
       schedule.writeJob(proc, nextKey)
     }, done)
   }
