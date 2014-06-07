@@ -144,7 +144,11 @@ tape('check the dispatch /container', function(t){
 		}
 		result = flatten(result.node)
 
-		t.ok(result['/container/viking-0/core/default/registry/' + pid], 'the path is set')
+		if(!result['/container/viking-0/core/default/registry/' + pid]){
+			t.fail('the path is not set')
+			t.end()
+			return
+		}
 
 		var container = JSON.parse(result['/container/viking-0/core/default/registry/' + pid])
 		t.deepEqual(container.Args, ['-c', 'exec docker-registry'], 'container args')
@@ -154,6 +158,7 @@ tape('check the dispatch /container', function(t){
 })
 
 
+/*
 tape('check the dispatch /fixed', function(t){
 
 	etcd.get('/fixed', {
@@ -191,6 +196,7 @@ tape('check the dispatch /ports', function(t){
 
 	})
 })
+
 
 tape('clean the slave', function(t){
 
@@ -231,4 +237,4 @@ tape('make sure the registry was removed', function(t){
 
 })
 
-etcdserver.stop(tape)
+etcdserver.stop(tape)*/
