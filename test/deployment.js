@@ -100,7 +100,7 @@ tape('check the dispatch /run', function(t){
 		recursive:true
 	}, function(err, result){
 		if(err){
-			t.fail(err, 'load proc data')
+			t.fail(err, 'load run data')
 			t.end()
 			return
 		}
@@ -119,7 +119,7 @@ tape('check the dispatch /deploy', function(t){
 		recursive:true
 	}, function(err, result){
 		if(err){
-			t.fail(err, 'load proc data')
+			t.fail(err, 'load deploy data')
 			t.end()
 			return
 		}
@@ -138,20 +138,59 @@ tape('check the dispatch /container', function(t){
 		recursive:true
 	}, function(err, result){
 		if(err){
-			t.fail(err, 'load proc data')
+			t.fail(err, 'load container data')
 			t.end()
 			return
 		}
 		result = flatten(result.node)
 
-		console.log('-------------------------------------------');
-		console.dir(result)
-		//t.equal(result['/deploy/viking-0/core/default/registry/' + pid], 'core-default-registry-' + pid, 'the /deploy is set correctly')
+		t.ok(result['/container/viking-0/core/default/registry/' + pid], 'the path is set')
+
+		var container = JSON.parse(result['/container/viking-0/core/default/registry/' + pid])
+		t.deepEqual(container.Args, ['-c', 'exec docker-registry'], 'container args')
 		t.end()
 
 	})
 })
 
+
+tape('check the dispatch /fixed', function(t){
+
+	etcd.get('/fixed', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load fixed data')
+			t.end()
+			return
+		}
+		result = flatten(result.node)
+
+		t.equal(result['/fixed/core/default/registry/' + pid], 'viking-0', 'the fixed is correct')
+
+		t.end()
+
+	})
+})
+
+tape('check the dispatch /ports', function(t){
+
+	etcd.get('/ports', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load ports data')
+			t.end()
+			return
+		}
+		result = flatten(result.node)
+
+		t.equal(result['/ports/core/default/registry/' + pid + '/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'port is set')
+
+		t.end()
+
+	})
+})
 
 tape('clean the slave', function(t){
 
