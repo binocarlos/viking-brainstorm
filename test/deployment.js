@@ -158,7 +158,6 @@ tape('check the dispatch /container', function(t){
 })
 
 
-/*
 tape('check the dispatch /fixed', function(t){
 
 	etcd.get('/fixed', {
@@ -237,4 +236,4 @@ tape('make sure the registry was removed', function(t){
 
 })
 
-etcdserver.stop(tape)*/
+etcdserver.stop(tape)
