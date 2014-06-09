@@ -131,4 +131,4 @@ tape('test the proposed allocations dont have two of the same process on one ser
 })
 
 
-//etcdserver.stop(tape)
+etcdserver.stop(tape)
