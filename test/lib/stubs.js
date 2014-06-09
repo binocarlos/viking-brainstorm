@@ -129,20 +129,7 @@ var sametagprocs = {
     tag:'c',
     name:'test',
     image:'test',
-    scale:3,
-    ports:[
-      '80'
-    ],
-    env:{
-      TEST:10
-    }
-  },
-  "batchd":{
-    stack:'test',
-    tag:'d',
-    name:'test',
-    image:'test',
-    scale:3,
+    scale:4,
     ports:[
       '80'
     ],

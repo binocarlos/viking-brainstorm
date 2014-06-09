@@ -103,16 +103,16 @@ tape('check proc stubs', function(t){
 
 		t.equal(map['/test/a/test'].length, 3, '3 a procs')
 		t.equal(map['/test/b/test'].length, 3, '3 b procs')
-		t.equal(map['/test/c/test'].length, 3, '3 c procs')
+		t.equal(map['/test/c/test'].length, 4, '4 c procs')
 
 		t.end()
 
 	})
 })
 
-tape('test the proposed allocations number 0', function(t){
+tape('test the proposed allocations dont have two of the same process on one server', function(t){
 
-	dispatch.getAllocations(function(err, allocations){
+	dispatch.getAllocations(function(err, allocations, failed){
 
 		if(err){
 			t.fail(err, 'load allocations')
@@ -120,39 +120,13 @@ tape('test the proposed allocations number 0', function(t){
 			return
 		}
 
-		allocations.forEach(function(allocation){
-			var job = allocation.job
-			console.log('-------------------------------------------');
-			console.dir(job.stack + '-' + job.tag + '-' + job.name + '-' + job.pid + ' -> ' + allocation.server.name)
-		})
+		t.equal(allocations.length, 9, 'one allocation not in the list')
+		t.equal(failed.length, 1, 'one allocation failed')
 
-		
+		t.equal(failed[0].tag, 'c', 'the failed tag is c')
 
-/*
-		t.equal(allocations.length, 8, 'there are 8 allocations')
-		
-		var jobServers = {}
-		var serverCount = {}
-
-		allocations.forEach(function(allocation){
-			var job = allocation.job
-			var jobObject = Job(job)
-			var server = allocation.server
-			jobServers[jobObject.baseId()] = server.name
-			serverCount[server.name] = serverCount[server.name] || 0
-			serverCount[server.name]++
-		})
-
-		t.ok(serverCount['viking-0']>=2 && serverCount['viking-0']<=4, 'fair allocation - viking-0 - pass: ' + i)
-		t.ok(serverCount['viking-1']>=2 && serverCount['viking-1']<=3, 'fair allocation - viking-1 - pass: ' + i)
-		t.ok(serverCount['viking-2']>=2 && serverCount['viking-2']<=3, 'fair allocation - viking-2 - pass: ' + i)
-
-		t.equal(jobServers['core-default-registry'], 'viking-0', 'the registry is allocated to viking 0')
-		t.equal(jobServers['test-default-test1'], 'viking-0', 'the test1 is allocated to viking-0')
-		
 		t.end()
-		*/
-		t.end()
+
 	})
 })
 
