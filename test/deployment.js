@@ -94,6 +94,26 @@ tape('run the slave', function(t){
 tools.pause(tape, 10)
 core.check(tape)
 
+
+tape('check the dispatch /stack', function(t){
+
+	etcd.get('/run', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load run data')
+			t.end()
+			return
+		}
+		result = flatten(result.node)
+		
+		t.equal(result['/run/core/default/registry/' + pid], 'viking-0', 'the /run is set to the hostname')
+		t.end()
+
+	})
+})
+
+
 tape('check the dispatch /run', function(t){
 
 	etcd.get('/run', {

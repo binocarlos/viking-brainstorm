@@ -4,24 +4,20 @@ VPC_URL ?= https://raw.github.com/binocarlos/vpc/master/bootstrap.sh
 NAVE_URL ?= https://raw.github.com/isaacs/nave/master/nave.sh
 NODE_VERSION ?= 0.10.26
 
-.PHONY: install dependencies basics sshcommand docker aufs nodejs network links developer recentgit vagrant supervisor
+.PHONY: install dependencies basics sshcommand docker aufs nodejs network links developer recentgit vagrant
 
 install: dependencies setup
 
 setup:
 	usermod -aG docker viking
 	usermod -aG sudo viking
-	mkdir -p /var/run/viking
 	mkdir -p /var/log/viking
 	mkdir -p /var/lib/viking
-	chown -R viking:viking /var/lib/viking
-	chown -R viking:viking /var/run/viking
+	chown -R viking:viking /var/lib/viking	
 	chown -R viking:viking /var/log/viking
 	chmod -R g+w /var/lib/viking
-	chmod -R g+w /var/run/viking
 	chmod -R g+w /var/log/viking
 	mkdir -p /var/lib/viking/volumes
-	mkdir -p /etc/viking/supervisor
 
 vagrant: install
 	usermod -aG docker vagrant

@@ -30,6 +30,9 @@ deploy:
     # allow persistent data - if a container has a volume it means it will be run on the same server each time
     volume:
       - /data/custom:/data/db
+    # write the mongo connection details into the env
+    link:
+      - mongo
     # the command we run for this node
     run: mon node db/index.js --volume /data/db
     # where the command is run
@@ -51,6 +54,9 @@ deploy:
     scale: 3
     expose:
       - 80
+    # write the mongo connection details into the env
+    link:
+      - redis
     run: mon node website/index.js
     cwd: /srv/app
     # each domain is automapped to the front end HTTP router
@@ -71,7 +77,7 @@ deploy:
   mongo:
     image: quarry/mongo
     # dont restart this process when we push code - multiple versions of code can use the same service this way
-    service: true
+    restart: false
     # inject the connection details for this service into other containers env
     export: true
     expose:
@@ -80,7 +86,7 @@ deploy:
       - /data/mongo:/data/db
   redis:
     image: quarry/redis
-    service: true
+    restart: false
     expose:
       - 6379
     volume:
