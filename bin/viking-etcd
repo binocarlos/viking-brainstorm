@@ -5,7 +5,8 @@ var args = require('minimist')(process.argv, {
     s:'seed',
     t:'tail',
     f:'folder',
-    k:'kill'
+    k:'kill',
+    r:'reset'
   }
 })
 
