@@ -100,8 +100,8 @@ tape('check the dispatch /stack', function(t){
 	etcd.get('/run', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load run data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load run data')
 			t.end()
 			return
 		}
@@ -119,8 +119,8 @@ tape('check the dispatch /run', function(t){
 	etcd.get('/run', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load run data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load run data')
 			t.end()
 			return
 		}
@@ -138,8 +138,8 @@ tape('check the dispatch /deploy', function(t){
 	etcd.get('/deploy', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load deploy data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load deploy data')
 			t.end()
 			return
 		}
@@ -157,21 +157,26 @@ tape('check the dispatch /container', function(t){
 	etcd.get('/container', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load container data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load container data')
 			t.end()
 			return
 		}
 		result = flatten(result.node)
 
-		if(!result['/container/viking-0/core/default/registry/' + pid]){
+		if(!result['/container/core/default/registry/' + pid]){
 			t.fail('the path is not set')
 			t.end()
 			return
 		}
 
-		var container = JSON.parse(result['/container/viking-0/core/default/registry/' + pid])
-		t.deepEqual(container.Args, ['-c', 'exec docker-registry'], 'container args')
+		var containerData = JSON.parse(result['/container/core/default/registry/' + pid])
+		t.deepEqual(containerData.container.Args, ['-c', 'exec docker-registry'], 'container args')
+
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.dir(containerData.endpoints)
 		t.end()
 
 	})
@@ -183,8 +188,8 @@ tape('check the dispatch /fixed', function(t){
 	etcd.get('/fixed', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load fixed data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load fixed data')
 			t.end()
 			return
 		}
@@ -202,8 +207,8 @@ tape('check the dispatch /ports', function(t){
 	etcd.get('/ports', {
 		recursive:true
 	}, function(err, result){
-		if(err){
-			t.fail(err, 'load ports data')
+		if(err || !result || !result.node){
+			t.fail(err || 'no data', 'load ports data')
 			t.end()
 			return
 		}
