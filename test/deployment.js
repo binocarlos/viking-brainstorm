@@ -172,11 +172,13 @@ tape('check the dispatch /container', function(t){
 
 		var containerData = JSON.parse(result['/container/core/default/registry/' + pid])
 		t.deepEqual(containerData.container.Args, ['-c', 'exec docker-registry'], 'container args')
+		t.equal(containerData.ip, '192.168.8.120', 'the ip is set')
+		t.equal(containerData.endpoints.length, 1, 'one endpoint')
+		t.equal(containerData.endpoints[0].name, '5000/tcp', 'name')
+		t.equal(containerData.endpoints[0].ip, '192.168.8.120', 'ip')
+		t.equal(containerData.endpoints[0].ports[0].HostPort, '5000', 'HostPort')
+		t.ok(containerData.job, 'job is defined')
 
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.dir(containerData.endpoints)
 		t.end()
 
 	})
