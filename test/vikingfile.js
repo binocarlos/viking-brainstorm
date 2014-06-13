@@ -14,7 +14,8 @@ tape('vikingfile', function(t){
   	t.equal(data.config.comment, 'Ragnarr Hamster Loðbrók')
 
   	t.deepEqual(data.buildOrder, ['src', 'inherit'])
-  	t.deepEqual(data.bootOrder, ['db', 'mongo', 'redis', 'logic', 'website', 'help'])
+
+  	t.deepEqual(data.bootOrder, [['mongo', 'redis'], ['db', 'logic', 'website', 'help']])
 
   	t.deepEqual(data.images.src, {
   		add:[{
@@ -32,6 +33,7 @@ tape('vikingfile', function(t){
     t.deepEqual(data.containers.db, {
       image:'viking:ragnar/src',
       expose:[80],
+      link:['mongo'],
       volume:['/data/custom:/data/db'],
       run:'mon node db/index.js --volume /data/db',
       cwd:'/srv/app'
