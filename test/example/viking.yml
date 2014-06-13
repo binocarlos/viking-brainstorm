@@ -54,7 +54,7 @@ deploy:
     scale: 3
     expose:
       - 80
-    # write the mongo connection details into the env
+    # you can link to other stacks also
     link:
       - redis
     run: mon node website/index.js
