@@ -139,6 +139,49 @@ var sametagprocs = {
   }
 }
 
+
+var filterprocs = {
+  "website":{
+    stack:'test',
+    tag:'a',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  },
+  "batchb":{
+    stack:'test',
+    tag:'b',
+    name:'test',
+    image:'test',
+    scale:3,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  },
+  "batchc":{
+    stack:'test',
+    tag:'c',
+    name:'test',
+    image:'test',
+    scale:4,
+    ports:[
+      '80'
+    ],
+    env:{
+      TEST:10
+    }
+  }
+}
+
 var hosts = {
     "viking-0": {
         "name": "viking-0",
@@ -181,7 +224,7 @@ var hosts = {
             "master": true,
             "slave": true,
             "env": "development",
-            "tags": null,
+            "tags": "website router",
             "network": {
                 "hostname": "viking-1",
                 "public": "192.168.8.121",
@@ -259,7 +302,7 @@ module.exports = {
   proc:function(schedule, done){
     async.forEachSeries(Object.keys(procs || {}), function(key, nextKey){
       var proc = procs[key]
-      schedule.writeJob(proc, nextKey)
+      schedule.writeScaleJobs(proc, nextKey)
     }, done)
   },
   sametagproc:function(schedule, done){
@@ -268,7 +311,7 @@ module.exports = {
     async.forEachSeries(procs, function(key, nextKey){
       setTimeout(function(){
         var proc = sametagprocs[key]
-        schedule.writeJob(proc, nextKey)
+        schedule.writeScaleJobs(proc, nextKey)
       }, 1000)
     }, done)
   }

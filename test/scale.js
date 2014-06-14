@@ -5,6 +5,7 @@ var etcdjs = require('etcdjs')
 var stubs = require('./lib/stubs')
 var flatten = require('etcd-flatten')
 var etcdserver = tools.etcd()
+var exec = require('child_process').exec
 
 var Dispatch = require('../lib/deployment/dispatch')
 var Schedule = require('../lib/deployment/schedule')
@@ -86,6 +87,12 @@ tape('check proc stubs', function(t){
 			t.end()
 			return
 		}
+
+		if(!data.node){
+
+		}
+
+		console.log(JSON.stringify(data, null, 4))
 
 		var procs = flatten(data.node)
 		var map = {}
