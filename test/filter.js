@@ -121,13 +121,21 @@ tape('test servers have been picked based on the filter', function(t){
 			return
 		}
 
-		console.log('-------------------------------------------');
-		console.log(JSON.stringify(allocations, null, 4))
+		t.equal(allocations.length, 3, '3 allocations')
+		t.equal(failed.length, 1, '1 failed')
 
-		console.log('-------------------------------------------');
-		console.log('-------------------------------------------');
-		console.log(JSON.stringify(failed, null, 4))
-		
+		var map = {}
+
+		allocations.forEach(function(allocation){
+			map[allocation.job.name] = allocation
+		})
+
+		t.equal(map.website.server.name, 'viking-1', 'viking 1 is the website')
+		t.equal(map.router.server.name, 'viking-2', 'viking 2 is the router')
+		t.equal(map.doublerouter.server.name, 'viking-2', 'viking 2 is the doublerouter')
+
+		t.equal(failed[0].name, 'doublerouter', 'doublerouter is the failed allocation')
+
 		t.end()
 
 	})
