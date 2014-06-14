@@ -224,6 +224,56 @@ tape('check the dispatch /ports', function(t){
 })
 
 
+core.deploy(tape)
+
+// make sure the registry is not deloyed twice
+tape('check the proc deployment', function(t){
+
+	etcd.get('/proc', {
+		recursive:true
+	}, function(err, result){
+		if(err){
+			t.fail(err, 'load proc data')
+			t.end()
+			return
+		}
+
+
+		result = flatten(result.node)
+
+
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.log(JSON.stringify(result, null, 4))
+
+		t.equal(Object.keys(result).length, 1, 'there is only one registry deployment')
+		/*
+		
+		result = tools.processObject(result, function(key){
+			return key
+		})
+
+		var job
+		var key
+		Object.keys(result || {}).forEach(function(jkey){
+			job = result[jkey]
+			key = jkey
+
+		})
+
+		t.equal(job.stack, 'core', 'stack')
+		t.equal(job.name, 'registry', 'name')
+		t.equal(job.image, 'registry', 'image')
+		t.equal(job.tag, 'default', 'tag')
+		t.equal(job.id, 'core-default-registry-' + job.pid, 'id')
+		t.equal(key, '/proc/core/default/registry/' + job.pid, 'key')
+
+		pid = job.pid
+	*/
+		t.end()
+	})
+})
+
 tape('clean the slave', function(t){
 
 	exec('viking slave clean', function(err, stdout){
