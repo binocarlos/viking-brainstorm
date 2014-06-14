@@ -17,7 +17,7 @@ tape('boot order', function(t){
   stack.load(function(){
     console.dir(stack._bootOrder)
 
-    t.deepEqual(['db', 'mongo', 'redis', 'logic', 'website', 'help'], stack._bootOrder)
+    t.deepEqual([['mongo', 'redis'],['db', 'logic', 'website', 'help']], stack._bootOrder)
     t.end()  
   })
   
