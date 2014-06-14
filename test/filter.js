@@ -65,7 +65,7 @@ tape('write network', function(t){
 
 tape('write proc stubs', function(t){
 	setTimeout(function(){
-		stubs.sametagproc(schedule, function(err){
+		stubs.filterproc(schedule, function(err){
 			if(err){
 				t.fail(err, 'write stubs')
 			}
@@ -102,16 +102,16 @@ tape('check proc stubs', function(t){
 			return key
 		})
 
-		t.equal(map['/test/a/test'].length, 3, '3 a procs')
-		t.equal(map['/test/b/test'].length, 3, '3 b procs')
-		t.equal(map['/test/c/test'].length, 4, '4 c procs')
+		t.equal(map['/test/a/website'].length, 1, '1 website procs')
+		t.equal(map['/test/a/router'].length, 1, '1 router procs')
+		t.equal(map['/test/a/doublerouter'].length, 2, '2 doublerouter procs')
 
 		t.end()
 
 	})
 })
 
-tape('test the proposed allocations dont have two of the same process on one server', function(t){
+tape('test servers have been picked based on the filter', function(t){
 
 	dispatch.getAllocations(function(err, allocations, failed){
 
@@ -121,11 +121,13 @@ tape('test the proposed allocations dont have two of the same process on one ser
 			return
 		}
 
-		t.equal(allocations.length, 9, 'one allocation not in the list')
-		t.equal(failed.length, 1, 'one allocation failed')
+		console.log('-------------------------------------------');
+		console.log(JSON.stringify(allocations, null, 4))
 
-		t.equal(failed[0].tag, 'c', 'the failed tag is c')
-
+		console.log('-------------------------------------------');
+		console.log('-------------------------------------------');
+		console.log(JSON.stringify(failed, null, 4))
+		
 		t.end()
 
 	})

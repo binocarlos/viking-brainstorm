@@ -144,41 +144,26 @@ var filterprocs = {
   "website":{
     stack:'test',
     tag:'a',
-    name:'test',
+    name:'website',
     image:'test',
-    scale:3,
-    ports:[
-      '80'
-    ],
-    env:{
-      TEST:10
-    }
+    scale:1,
+    filter:['website']
   },
-  "batchb":{
+  "router":{
     stack:'test',
-    tag:'b',
-    name:'test',
+    tag:'a',
+    name:'router',
     image:'test',
-    scale:3,
-    ports:[
-      '80'
-    ],
-    env:{
-      TEST:10
-    }
+    scale:1,
+    filter:['router']
   },
-  "batchc":{
+  "doublerouter":{
     stack:'test',
-    tag:'c',
-    name:'test',
+    tag:'a',
+    name:'doublerouter',
     image:'test',
-    scale:4,
-    ports:[
-      '80'
-    ],
-    env:{
-      TEST:10
-    }
+    scale:2,
+    filter:['router']
   }
 }
 
@@ -224,7 +209,7 @@ var hosts = {
             "master": true,
             "slave": true,
             "env": "development",
-            "tags": "website router",
+            "tags": "website",
             "network": {
                 "hostname": "viking-1",
                 "public": "192.168.8.121",
@@ -250,7 +235,7 @@ var hosts = {
             "master": true,
             "slave": true,
             "env": "development",
-            "tags": null,
+            "tags": "router",
             "network": {
                 "hostname": "viking-2",
                 "public": "192.168.8.122",
@@ -311,6 +296,16 @@ module.exports = {
     async.forEachSeries(procs, function(key, nextKey){
       setTimeout(function(){
         var proc = sametagprocs[key]
+        schedule.writeScaleJobs(proc, nextKey)
+      }, 1000)
+    }, done)
+  },
+  filterproc:function(schedule, done){
+    var procs = Object.keys(filterprocs || {})
+    procs = shuffle(procs)
+    async.forEachSeries(procs, function(key, nextKey){
+      setTimeout(function(){
+        var proc = filterprocs[key]
         schedule.writeScaleJobs(proc, nextKey)
       }, 1000)
     }, done)
