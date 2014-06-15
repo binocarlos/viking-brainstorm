@@ -19,13 +19,13 @@ function getStack(){
 }
 
 
-/*
+
 etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 2)
 etcdserver.check(tape)
-*/
+
 
 tape('boot order', function(t){
   var stack = getStack()
@@ -52,7 +52,6 @@ tape('phase', function(t){
   
 })
 
-/*
 tape('deploy with default tag', function(t){
 
   var dir = __dirname + '/example'
@@ -81,9 +80,10 @@ tape('deploy with default tag', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/tags/default'], 'the stack has written itself')
+      t.ok(result['/stack/ragnar/tag/default'], 'the stack has written itself')
+      t.equal(result['/stack/ragnar/phase/default'], 'staging', 'the phase is set to staging')
 
-      var obj = JSON.parse(result['/stack/ragnar/tags/default'])
+      var obj = JSON.parse(result['/stack/ragnar/tag/default'])
 
       t.equal(obj.config.name, 'ragnar', 'the stack has been written in JSON')
       
@@ -95,11 +95,11 @@ tape('deploy with default tag', function(t){
 
 
 
-tape('deploy with specific tag', function(t){
+tape('deploy with specific tag and phase', function(t){
 
   var dir = __dirname + '/example'
 
-  exec('viking deploy -t apples --app ' + dir, function(err, stdout, stderr){
+  exec('viking deploy -t apples -p production --app ' + dir, function(err, stdout, stderr){
     if(err){
       t.fail(err, 'deploy default tag')
       return
@@ -123,9 +123,10 @@ tape('deploy with specific tag', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/tags/apples'], 'the stack has written itself with apples tag')
+      t.ok(result['/stack/ragnar/tag/apples'], 'the stack has written itself with apples tag')
+      t.equal(result['/stack/ragnar/phase/apples'], 'production', 'the phase is set to production')
 
-      var obj = JSON.parse(result['/stack/ragnar/tags/apples'])
+      var obj = JSON.parse(result['/stack/ragnar/tag/apples'])
 
       t.equal(obj.config.name, 'ragnar', 'the apples stack has been written in JSON')
       
@@ -136,4 +137,3 @@ tape('deploy with specific tag', function(t){
 })
 
 etcdserver.stop(tape)
-*/

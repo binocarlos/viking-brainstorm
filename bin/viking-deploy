@@ -6,7 +6,8 @@ var args = require('minimist')(process.argv, {
     c:'config',    
     t:'tag',
     r:'registry',
-    e:'etcd'
+    e:'etcd',
+    p:'phase'
   },
   default:{
     config:'viking.yml'
