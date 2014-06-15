@@ -19,12 +19,13 @@ function getStack(){
 }
 
 
-
+/*
 etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
 tools.pause(tape, 2)
 etcdserver.check(tape)
+*/
 
 tape('boot order', function(t){
   var stack = getStack()
@@ -38,6 +39,20 @@ tape('boot order', function(t){
 })
 
 
+tape('phase', function(t){
+  var stack = getStack()
+  stack.load(function(){
+
+    stack.setPhase('staging')
+
+    t.equal(stack._containers.website.scale, 1, 'there is single scale for non production')
+    
+    t.end()  
+  })
+  
+})
+
+/*
 tape('deploy with default tag', function(t){
 
   var dir = __dirname + '/example'
@@ -121,3 +136,4 @@ tape('deploy with specific tag', function(t){
 })
 
 etcdserver.stop(tape)
+*/
