@@ -3,7 +3,7 @@ var Deploy = require('../lib/bootstrap/deploy')
 var args = require('minimist')(process.argv, {
   alias:{
     a:'app',
-    c:'config',
+    c:'config',    
     t:'tag',
     r:'registry',
     e:'etcd'
