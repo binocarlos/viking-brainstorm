@@ -79,4 +79,45 @@ tape('deploy with default tag', function(t){
 })
 
 
+
+tape('deploy with specific tag', function(t){
+
+  var dir = __dirname + '/example'
+
+  exec('viking deploy -t apples --app ' + dir, function(err, stdout, stderr){
+    if(err){
+      t.fail(err, 'deploy default tag')
+      return
+    }
+
+    if(stderr){
+      t.fail(stderr.toString(), 'deploy default tag')
+      return
+    }
+
+    console.log(stdout.toString())
+
+    etcd.get('/stack', {
+      recursive:true
+    }, function(err, result){
+
+      if(err || !result){
+        t.fail(err, 'load /stack')
+        return
+      }
+
+      result = flatten(result.node)
+
+      t.ok(result['/stack/ragnar/tags/apples'], 'the stack has written itself with apples tag')
+
+      var obj = JSON.parse(result['/stack/ragnar/tags/apples'])
+
+      t.equal(obj.config.name, 'ragnar', 'the apples stack has been written in JSON')
+      
+      t.end()
+    })
+  })
+
+})
+
 etcdserver.stop(tape)
