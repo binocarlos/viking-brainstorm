@@ -80,12 +80,11 @@ tape('deploy with default tag', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/tag/default'], 'the stack has written itself')
-      t.equal(result['/stack/ragnar/phase/default'], 'staging', 'the phase is set to staging')
+      t.ok(result['/stack/ragnar/staging/default'], 'the stack has written itself')
 
-      var obj = JSON.parse(result['/stack/ragnar/tag/default'])
+      var obj = JSON.parse(result['/stack/ragnar/staging/default'])
 
-      t.equal(obj.config.name, 'ragnar', 'the stack has been written in JSON')
+      t.equal(obj.stack.config.name, 'ragnar', 'the stack has been written in JSON')
       
       t.end()
     })
@@ -123,12 +122,11 @@ tape('deploy with specific tag and phase', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/tag/apples'], 'the stack has written itself with apples tag')
-      t.equal(result['/stack/ragnar/phase/apples'], 'production', 'the phase is set to production')
+      t.ok(result['/stack/ragnar/production/apples'], 'the stack has written itself with apples tag')
 
-      var obj = JSON.parse(result['/stack/ragnar/tag/apples'])
+      var obj = JSON.parse(result['/stack/ragnar/production/apples'])
 
-      t.equal(obj.config.name, 'ragnar', 'the apples stack has been written in JSON')
+      t.equal(obj.stack.config.name, 'ragnar', 'the apples stack has been written in JSON')
       
       t.end()
     })
