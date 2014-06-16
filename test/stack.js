@@ -93,6 +93,21 @@ tape('deploy with default tag', function(t){
 })
 
 
+tape('check no double deploy', function(t){
+
+  var dir = __dirname + '/example'
+
+  exec('viking deploy --app ' + dir, function(err, stdout, stderr){
+
+    var err = stderr.toString()
+
+    t.ok(err.indexOf('ragnar/staging/default already exists')>=0, 'the error message is correct')
+    
+    t.end()
+    
+  })
+
+})
 
 tape('deploy with specific tag and phase', function(t){
 
