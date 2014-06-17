@@ -18,8 +18,6 @@ function getStack(){
   return stack
 }
 
-
-
 etcdserver.stop(tape, true)
 etcdserver.reset(tape)
 etcdserver.start(tape)
@@ -62,6 +60,13 @@ tape('job', function(t){
 
     var job = stack.getJob('logic')
 
+    if(!job){
+      t.fail('there was no job found')
+      t.end()
+      return
+    }
+
+
     t.equal(job.stack, 'ragnar', 'stack')
     t.equal(job.tag, 'default', 'tag')
     t.equal(job.name, 'logic', 'name')
@@ -71,7 +76,6 @@ tape('job', function(t){
   })
   
 })
-
 
 tape('deploy with default tag', function(t){
 
@@ -188,7 +192,10 @@ tape('destroy stacks', function(t){
 
         result = flatten(result.node)
 
-        t.equal(Object.keys(result).length<=0, 'there are no stacks after delete')
+        console.log('-------------------------------------------');
+        console.dir(result)
+
+        t.equal(Object.keys(result).length, 0, 'there are no stacks after delete')
         t.end()
       })
 
