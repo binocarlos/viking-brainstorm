@@ -24,7 +24,6 @@ etcdserver.start(tape)
 tools.pause(tape, 2)
 etcdserver.check(tape)
 
-
 tape('boot order', function(t){
   var stack = getStack()
   stack.load(function(){
@@ -191,9 +190,6 @@ tape('destroy stacks', function(t){
         }
 
         result = flatten(result.node)
-
-        console.log('-------------------------------------------');
-        console.dir(result)
 
         t.equal(Object.keys(result).length, 0, 'there are no stacks after delete')
         t.end()

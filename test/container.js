@@ -29,7 +29,7 @@ function getArgsTest(){
 	  env:{
 	    TEST:10
 	  },
-	  volumes:[
+	  volume:[
 	    vol
 	  ],
 	  dockerargs:[
@@ -58,7 +58,7 @@ function getJob(){
 	  env:{
 	    TEST:10
 	  },
-	  volumes:[
+	  volume:[
 	    vol,
 	    __dirname + '/simplewebsite:/app'
 	  ],
@@ -83,10 +83,10 @@ function getServer(){
 	  env:{
 	    TEST:10
 	  },
-	  volumes:[
+	  volume:[
 	    __dirname + '/simplewebsite:/app'
 	  ],
-	  ports:[
+	  expose:[
 	    '80'
 	  ],
 	  entrypoint:'node',
@@ -137,7 +137,7 @@ tape('get the docker arguments from the container', function(t){
 	t.equal(options.stack, 'test', 'stack')
 	t.equal(options.name, 'test1', 'name')
 	t.equal(options.image, 'quarry/monnode', 'image')
-	t.equal(options.volumes[0], '/var/lib/viking/volumes/test/test1/store:/test1/store', 'volume')
+	t.equal(options.volume[0], '/var/lib/viking/volumes/test/test1/store:/test1/store', 'volume')
 
 	t.end()
 
