@@ -28,3 +28,7 @@ this enables metrics in apps easily (by writing to stdout)
 ## docker event listener
 
 each slave should be hooked up to docker events
+
+## private github keys
+
+find a way to inject github keys and pull repos instead of ADD command
