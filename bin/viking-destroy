@@ -4,6 +4,7 @@ var args = require('minimist')(process.argv, {
   alias:{
     s:'stack',
     t:'tag',
+    p:'phase',
     n:'node'
   },
   default:{
