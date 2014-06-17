@@ -52,6 +52,27 @@ tape('phase', function(t){
   
 })
 
+
+
+tape('job', function(t){
+  var stack = getStack()
+  stack.load(function(){
+
+    stack.setPhase('staging')
+
+    var job = stack.getJob('logic')
+
+    t.equal(job.stack, 'ragnar', 'stack')
+    t.equal(job.tag, 'default', 'tag')
+    t.equal(job.name, 'logic', 'name')
+    t.equal(job.phase, 'staging', 'phase')
+
+    t.end()  
+  })
+  
+})
+
+
 tape('deploy with default tag', function(t){
 
   var dir = __dirname + '/example'
@@ -80,9 +101,9 @@ tape('deploy with default tag', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/staging/default'], 'the stack has written itself')
+      t.ok(result['/stack/ragnar/default/staging'], 'the stack has written itself')
 
-      var obj = JSON.parse(result['/stack/ragnar/staging/default'])
+      var obj = JSON.parse(result['/stack/ragnar/default/staging'])
 
       t.equal(obj.stack.config.name, 'ragnar', 'the stack has been written in JSON')
       
@@ -101,7 +122,7 @@ tape('check no double deploy', function(t){
 
     var err = stderr.toString()
 
-    t.ok(err.indexOf('ragnar/staging/default already exists')>=0, 'the error message is correct')
+    t.ok(err.indexOf('ragnar/default/staging already exists')>=0, 'the error message is correct')
     
     t.end()
     
@@ -137,9 +158,9 @@ tape('deploy with specific tag and phase', function(t){
 
       result = flatten(result.node)
 
-      t.ok(result['/stack/ragnar/production/apples'], 'the stack has written itself with apples tag')
+      t.ok(result['/stack/ragnar/apples/production'], 'the stack has written itself with apples tag')
 
-      var obj = JSON.parse(result['/stack/ragnar/production/apples'])
+      var obj = JSON.parse(result['/stack/ragnar/apples/production'])
 
       t.equal(obj.stack.config.name, 'ragnar', 'the apples stack has been written in JSON')
       
@@ -148,5 +169,37 @@ tape('deploy with specific tag and phase', function(t){
   })
 
 })
+
+
+tape('destroy stacks', function(t){
+
+  exec('viking destroy ragnar/default/staging', function(err, stdout, stderr){
+
+    exec('viking destroy -s ragnar -t apples -p production', function(err, stdout, stderr){
+
+      etcd.get('/stack', {
+        recursive:true
+      }, function(err, result){
+        if(err){
+          t.fail(err, 'load stacks')
+          t.end()
+          return
+        }
+
+        result = flatten(result.node)
+
+        t.equal(Object.keys(result).length<=0, 'there are no stacks after delete')
+        t.end()
+      })
+
+
+    })
+
+    
+    
+  })
+
+})
+
 
 etcdserver.stop(tape)
