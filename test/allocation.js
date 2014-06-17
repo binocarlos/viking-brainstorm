@@ -20,8 +20,6 @@ etcdserver.start(tape)
 tools.pause(tape, 3)
 etcdserver.check(tape)
 
-
-
 stubwriter.network(etcd, tape)
 stubwriter.proc(etcd, schedule, tape)
 
