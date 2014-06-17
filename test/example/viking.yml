@@ -77,15 +77,16 @@ deploy:
   # a service - these are fixed containers (with volumes) that are not restarted
   mongo:
     image: quarry/mongo
-    # dont restart this process when we push code - multiple versions of code can use the same service this way
-    restart: false
+    # static means run once and dont restart
+    # this is useful for database servers
+    static: true
     expose:
       - 27017
     volume:
       - /data/mongo:/data/db
   redis:
     image: quarry/redis
-    restart: false
+    static: true
     expose:
       - 6379
     volume:

@@ -31,4 +31,8 @@ each slave should be hooked up to docker events
 
 ## private github keys
 
-find a way to inject github keys and pull repos instead of ADD command
+inject environment into build instructions so github keys can be saved ready for git pull
+
+## seperate build and update steps for images
+
+sort out workflow where images are built first and then updated every other time
