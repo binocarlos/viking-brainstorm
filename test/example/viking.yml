@@ -70,7 +70,7 @@ deploy:
     # the document_root triggers static website mode
     document_root: ./help/www
     # static websites get hooked up to the front router too
-    domains:
+    route:
       - "help.testviking.digger.io"
       - "help.testviking.local.digger.io"
   # a service - these are fixed containers (with volumes) that are not restarted
