@@ -41,10 +41,10 @@ tape('registry config', function(t){
 	t.ok(systemFilter, 'there is a system filter on the registry')
 	t.equal(settings.env.SETTINGS_FLAVOR, 'dev', 'development mode')
 
-	t.equal(settings.ports.length, 1, '1 port')
-	t.equal(settings.ports[0], '5000:5000', 'expose 5000')
+	t.equal(settings.expose.length, 1, '1 port')
+	t.equal(settings.expose[0], '5000:5000', 'expose 5000')
 
-	t.equal(settings.volumes[0], '/tmp', 'conf volume')
+	t.equal(settings.volume[0], '/tmp', 'conf volume')
 	t.end()
 	
 })
@@ -81,7 +81,7 @@ tape('run the registry', function(t){
 			registryData = data
 
 			t.ok(data.State.Running, 'the container is running')
-			t.equal(data.Name, '/core-default-registry-' + job.pid, 'container name')
+			t.equal(data.Name, '/core-static-registry-' + job.pid, 'container name')
 			t.end()
 
 		})
