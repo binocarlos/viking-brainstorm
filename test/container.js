@@ -149,6 +149,14 @@ tape('run a container that writes to a volume and returns the env and args', fun
 
 	var container = Container(getJob())
 
+	container.on('stream', function(stream){
+		stream.pipe(concat(function(result){
+
+			t.ok(result.toString().indexOf('hello 10 apples')>=0, 'the result from the container is correct')
+
+		}))
+	})
+
 	container.run(function(err, result){
 
 		if(err){
@@ -156,10 +164,6 @@ tape('run a container that writes to a volume and returns the env and args', fun
 			t.end()
 			return
 		}
-
-		result = result.replace(/\r?\n/g, '')
-
-		t.equal(result, 'hello 10 apples', 'the result from the container is correct')
 
 		var filePath = '/var/lib/viking/volumes/test/test1/store/output.txt'
 		if(fs.existsSync(filePath)){
