@@ -54,11 +54,11 @@ tape('etcd keys', function(t){
 		var pid = job.pid
 
 		t.ok(result['/host/viking-0/config'], 'the host has registered')
-		t.ok(result['/proc/core/default/registry/' + pid], 'registry /proc is written')
-		t.equal(result['/run/core/default/registry/' + pid], 'viking-0', 'registry is allocated to viking-0')
-		t.equal(result['/fixed/core/default/registry/' + pid], 'viking-0', 'registry is fixed to viking-0')
-		t.equal(result['/deploy/viking-0/core/default/registry/' + pid], 'core-default-registry-' + pid, 'registry /deploy is written')
-		t.equal(result['/ports/core/default/registry/' + pid + '/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
+		t.ok(result['/proc/core/static/registry/' + pid], 'registry /proc is written')
+		t.equal(result['/run/core/static/registry/' + pid], 'viking-0', 'registry is allocated to viking-0')
+		t.equal(result['/fixed/core/static/registry/' + pid], 'viking-0', 'registry is fixed to viking-0')
+		t.equal(result['/deploy/viking-0/core/static/registry/' + pid], 'core-static-registry-' + pid, 'registry /deploy is written')
+		t.equal(result['/ports/core/static/registry/' + pid + '/5000/tcp/' + config.network.private + '/5000'], config.network.private + ':5000', 'registry /ports is written')
 
 		t.end()
 	})
