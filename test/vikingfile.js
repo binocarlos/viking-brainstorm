@@ -10,12 +10,12 @@ tape('vikingfile', function(t){
   file.load(function(err, data){
   	t.ok(!err, 'no error returned')
 
-  	t.equal(data.config.name, 'ragnar')
-  	t.equal(data.config.comment, 'Ragnarr Hamster Loðbrók')
+  	t.equal(data.config.name, 'ragnar', 'name')
+  	t.equal(data.config.comment, 'Ragnarr Hamster Loðbrók', 'comment')
 
-  	t.deepEqual(data.buildOrder, ['src', 'inherit'])
+  	t.deepEqual(data.buildOrder, ['src', 'inherit'], 'buildOrder')
 
-  	t.deepEqual(data.bootOrder, [['mongo', 'redis'], ['db', 'logic', 'website', 'help']])
+  	t.deepEqual(data.bootOrder, [['mongo', 'redis'], ['db', 'logic', 'website', 'help']], 'bootOrder')
 
   	t.deepEqual(data.images.src, {
   		add:[{
@@ -25,7 +25,7 @@ tape('vikingfile', function(t){
   		expose:[],
   		volume:[],
   		run:[
-  			'cd /srv/app && npm --registry http://registry.npmjs.eu/ install'
+  			'cd /srv/app && npm install'
   		],
   		from:'quarry/monnode'
   	}, 'images src')
@@ -35,7 +35,7 @@ tape('vikingfile', function(t){
       expose:[80],
       link:['mongo'],
       volume:['/data/custom:/data/db'],
-      run:'mon node db/index.js --volume /data/db',
+      command:'mon node db/index.js --volume /data/db',
       cwd:'/srv/app'
     }, 'containers db')
 
