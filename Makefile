@@ -86,6 +86,7 @@ clean:
 	viking host stop --clean
 	viking etcd stop
 	sudo viking etcd reset
+	docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
 
 #links:
 #	rm -f /usr/local/bin/viking
