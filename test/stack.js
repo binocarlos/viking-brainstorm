@@ -24,6 +24,22 @@ etcdserver.start(tape)
 tools.pause(tape, 2)
 etcdserver.check(tape)
 
+tape('start host', function(t){
+  
+  exec('viking host start -d', function(err, stdout, stderr){
+    if(err){
+      t.fail(err, 'start host')
+      return
+    }
+
+    if(stderr){
+      t.fail(stderr.toString(), 'start host')
+      return
+    }
+  })
+})
+
+
 tape('boot order', function(t){
   var stack = getStack()
   stack.load(function(){
@@ -195,14 +211,26 @@ tape('destroy stacks', function(t){
         t.end()
       })
 
-
     })
 
-    
-    
   })
 
 })
 
+
+tape('stop host', function(t){
+  
+  exec('viking host stop', function(err, stdout, stderr){
+    if(err){
+      t.fail(err, 'stop host')
+      return
+    }
+
+    if(stderr){
+      t.fail(stderr.toString(), 'stop host')
+      return
+    }
+  })
+})
 
 etcdserver.stop(tape)
