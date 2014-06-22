@@ -1,0 +1,30 @@
+# our viking is born
+viking:
+  name: smallragnar
+  comment: Small Ragnarr Hamster Loðbrók
+
+# must build boats before sail
+# can use local boats in FROM statements using:
+# FROM viking:<stackname>/<boatname>
+build:
+  src: |
+    FROM quarry/monnode
+    ADD . /srv/app
+    RUN cd /srv/app && npm install
+
+# our warrior viking formation
+deploy:
+  # the db viking - this is a node.js process that wraps a leveldb
+  # we save the leveldb data into a volume so when we push new code - the data is still there
+  app:
+    # what boat this warrior will use
+    image: viking:smallragnar/src
+    scale: 3
+    # expose docker ports - this automatically writes an endpoint to etcd for everything to see
+    expose:
+      - 80
+    # the command we run for this node
+    command: mon node app/index.js
+    route:
+      - "smalltestviking.digger.io"
+      - "smalltestviking.local.digger.io"

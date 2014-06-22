@@ -1,0 +1,12 @@
+{
+  "name": "smallteststack",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {},
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "littleid":"*"
+  }
+}

@@ -1,5 +1,3 @@
- * the location of where to stream the output of a job should be part of the job JSON and not fixed to the leader
+# wait after container start
 
- * fix up tests
-
- * start again
+once container is started on slave - wait a small time and then check that it is actually running before writing the log with the status
