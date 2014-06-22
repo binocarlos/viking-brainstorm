@@ -80,6 +80,7 @@ deploy:
     # static means run once and dont restart
     # this is useful for database servers
     static: true
+    filter: db
     expose:
       - 27017
     volume:
@@ -87,6 +88,7 @@ deploy:
   redis:
     image: quarry/redis
     static: true
+    filter: db
     expose:
       - 6379
     volume:
