@@ -111,7 +111,7 @@ tape('check the registry is running elsewhere', function(t){
 		var procPath = Object.keys(state.proc)[0]
 		var pid = procPath.split('/').pop()
 
-		var choosenServer = state.run['/core/default/registry/' + pid]
+		var choosenServer = state.run['/core/static/registry/' + pid]
 
 		t.ok(choosenServer=='viking-1'||choosenServer=='viking-2', 'the registry is on a new server in the db')
 
