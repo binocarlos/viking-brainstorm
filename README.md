@@ -5,7 +5,7 @@ Docker PaaS Platform for node.js applications.
 
 The main objective of viking is to help you move westward and colonize server-farms with viking apps.
 
-STATUS - PRE-ALPHA - do not try to use at the moment
+STATUS - Defunct - this version was the brainstorm - version 2 is composed out of bits
 
 ```
  /-\  //\ (-)  ~  ~  (-)  ~~~~     ~~~~ 
