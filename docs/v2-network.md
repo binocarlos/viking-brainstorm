@@ -16,37 +16,29 @@ for example - I have a 'shared database' stack:
 
 ```yaml
 mongo:
-	type: job
 	image: quarry/mongo
-	ports:
+	expose:
 		- 27017
 	volume:
 		- /db/data
 auth:
-	type: job
 	image: binocarlos/gandalf
-	ports:
-		- 80
-	volume:
-		- /db/data
+	expose: 80
+	volume: /db/data
 ```
 
 And then a simple webapp stack:
 
 ```yaml
 middleware:
-	type: job
 	image: myapp/web
-	ports:
-		- 80
+	expose: 80
 	link:
 		- shared/mongo
 		- shared/auth
 web:
-	type: job
 	image: myapp/web
-	ports:
-		- 80
+	expose: 80
 	link:
 		- shared/mongo
 		- shared/auth
@@ -75,11 +67,13 @@ The stackname is defined when the stack is deployed (e.g. viking deploy . --name
 
 The `<service-name>` variable is defined by `<stackname>_<jobname>`
 
+Every actual job gets a pid - this can also be used to distinquish multiple copies of the same job
+
 Slashes are replaced e.g. our link to `shared/mongo` in the web container is turned into `shared_mongo` as a link name
 
 This would result in the standard docker environment variables appearing in the container as though the containers were all on the same host:
 
- * SHARED_MONGO_PORT_27017 (127.0.0.1:8934)
+ * SHARED_MONGO_PORT (tcp://127.0.0.1:8934)
  * SHARED_MONGO_PORT_27017_TCP (tcp://127.0.0.1:8934) - this omits tcp because it is inferred by the name
  * SHARED_MONGO_PORT_27017_TCP_PROTO (tcp)
  * SHARED_MONGO_PORT_27017_TCP_PORT (8934)
@@ -91,7 +85,7 @@ Using these to connect to a service:
 var hyperquest = require('hyperquest')
 var concat = require('concat-stream')
 
-var address = 'http://' + process.env.SHARED_MONGO_PORT_27017 + '/v1/thing'
+var address = 'http://' + process.env.SHARED_MONGO_PORT_27017_ADDR + ':' + process.env.SHARED_MONGO_PORT_27017_PORT + '/v1/thing'
 hyperquest(address).pipe(concat(function(answer){
 	// connected
 }))
@@ -163,23 +157,87 @@ var hyperquest = require('hyperquest')
 var address = 'http://' + process.env.AUTH_PORT_80_TCP_ADDRESS + ':' + process.env.AUTH_PORT_80_TCP_ADDRESS
 ```
 
-#### environment and links
+There needs to be a viking step called: `allocate_port`
 
-Because we are kind of faking the --link flag of a normal docker command - we are responsible for setting up the environment of a linked container as docker would for a proper link.
-
-The actual link is to the ambassador container running on the same host.
+This will accept the name of a service (stack/job) and return a new or previously recorded port for that service
 
 #### prepare the service
 
-First - the linked to container will run - the viking sequencer will ensure that linked to containers come before linked from containers
+The service container will be run first because the viking scheduler will realise it is linked too.
 
-The registrator running on the host will look after registering the service with etcd
+For a mystack/mongo service - we notice that port 27017 is exposed and so create a new port mapping for port 27017
 
+This might return 1432 as our port and this is saved so if the same service is restarted elsewhere - we are still using 1432 for mystack/mongo:
 
+#### run the service
 
+The service will publish its exposed ports to the etcd path `/viking/network`
+
+It triggers registrator to do this by using the SERVICE_<PORT> syntax
+
+ISSUE - we need to know the exposed ports of a container (so a pure dockerfile approach is tricky)
+
+```bash
+$ docker run -d --name mystack_mongo.e8c8a2 -p 27017 \
+    -e "SERVICE_27017_NAME=mystack_mongo_27017" \
+    -e "SERVICE_27017_ID=mystack_mongo_27017_a6df32" \
+    mystack/mongo
+```
+
+#### run the linked container
+
+we notice the webapp has a link to mongo - a service in the same stack - the stackname is 'mystack' - the webapp is in the same stack:
+
+the original job:
+
+```bash
+$ docker run -d --name app_web_ba6d82 -p 80 \
+		--link mystack_mongo mystack/webapp
+```
+
+The link `mystack_mongo` indicates that we want to hook up ambassadord
+
+We will create a link for each port exposed
+
+This is processed into:
+
+```bash
+$ MYSTACK_MONGO_27017=`viking allocateport mystack/mongo`
+$ VIKING_ETCD_HOST=`viking etcdhost`
+$ VIKING_ETCD_HOSTS=`viking etcdhosts`
+$ docker run -d --name app_web_ba6d82 -p 80 \
+		--link backends:backends \
+		-e "BACKEND_$MYSTACK_MONGO_27017=etcd://$VIKING_ETCD_HOST/viking/network/mystack_mongo_27017" \
+		-e "MYSTACK_MONGO_PORT=tcp://backends:$MYSTACK_MONGO_27017" \
+		-e "MYSTACK_MONGO_PORT_27017_TCP=tcp://backends:$MYSTACK_MONGO_27017" \
+		-e "MYSTACK_MONGO_PORT_27017_TCP_PROTO=tcp \
+		-e "MYSTACK_MONGO_PORT_27017_TCP_PORT=$MYSTACK_MONGO_27017" \
+		-e "MYSTACK_MONGO_PORT_27017_TCP_ADDR=backends" \
+    -e "SERVICE_80_NAME=app_web_80" \
+    -e "SERVICE_80_ID=app_web_80_ba6d82" \
+    mystack/webapp
+```
 
 ## registrator
 
+registrator is what will automatically register endpoints with etcd.
+
+start:
+
+```bash
+$ docker run -d \
+    -v /var/run/docker.sock:/tmp/docker.sock \
+    -h $HOSTNAME progrium/registrator -ip=$VIKING_IP etcd://$VIKING_ETCD_HOST/viking/network
+```
+
+## ambassadord
+
+our reverse tcp proxy for routing to end points above:
+
+```bash
+$ docker run -d -v /var/run/docker.sock:/var/run/docker.sock --name backends progrium/ambassadord --omnimode
+$ docker run --rm --privileged --net container:backends progrium/ambassadord --setup-iptables
+```
 
 ## vpc
 
