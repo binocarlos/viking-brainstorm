@@ -176,6 +176,7 @@ The service will publish its exposed ports to the etcd path `/viking/network`
 It triggers registrator to do this by using the SERVICE_<PORT> syntax
 
 ISSUE - we need to know the exposed ports of a container (so a pure dockerfile approach is tricky)
+(solved - flocker-cache looks after this by loading the image data before /containers/create is run)
 
 ```bash
 $ docker run -d --name mystack_mongo.e8c8a2 -p 27017 \
@@ -202,16 +203,16 @@ We will create a link for each port exposed
 This is processed into:
 
 ```bash
-$ MYSTACK_MONGO_27017=`viking allocateport mystack/mongo`
+$ ALLOCATED_MONGO_PORT=`viking allocateport mystack/mongo`
 $ VIKING_ETCD_HOST=`viking etcdhost`
 $ VIKING_ETCD_HOSTS=`viking etcdhosts`
 $ docker run -d --name app_web_ba6d82 -p 80 \
 		--link backends:backends \
-		-e "BACKEND_$MYSTACK_MONGO_27017=etcd://$VIKING_ETCD_HOST/viking/network/mystack_mongo_27017" \
-		-e "MYSTACK_MONGO_PORT=tcp://backends:$MYSTACK_MONGO_27017" \
-		-e "MYSTACK_MONGO_PORT_27017_TCP=tcp://backends:$MYSTACK_MONGO_27017" \
+		-e "BACKEND_$ALLOCATED_MONGO_PORT=etcd://$VIKING_ETCD/viking/network/mystack_mongo_27017" \
+		-e "MYSTACK_MONGO_PORT=tcp://backends:$ALLOCATED_MONGO_PORT" \
+		-e "MYSTACK_MONGO_PORT_27017_TCP=tcp://backends:$ALLOCATED_MONGO_PORT" \
 		-e "MYSTACK_MONGO_PORT_27017_TCP_PROTO=tcp \
-		-e "MYSTACK_MONGO_PORT_27017_TCP_PORT=$MYSTACK_MONGO_27017" \
+		-e "MYSTACK_MONGO_PORT_27017_TCP_PORT=$ALLOCATED_MONGO_PORT" \
 		-e "MYSTACK_MONGO_PORT_27017_TCP_ADDR=backends" \
     -e "SERVICE_80_NAME=app_web_80" \
     -e "SERVICE_80_ID=app_web_80_ba6d82" \
